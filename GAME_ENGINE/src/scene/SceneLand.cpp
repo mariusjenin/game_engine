@@ -34,9 +34,10 @@ SceneLand::SceneLand(const std::string &vertex_shader_path, const std::string &f
     GLint has_hm_location = shader_data_manager->get_location(HAS_HM_LOC_NAME);
 
     //MESHES
-//    auto *land_mesh = create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, {0, 1, 0});
-    auto *land_mesh = new LODMesh(*create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, {0, 1, 0}), 0, 200, 10, 95, 8);
-    auto *ball_mesh = new LODMesh(*create_sphere(1, 60, 60), 10, 50, 5, 60, 6);
+    auto *land_mesh = create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, {0, 1, 0});
+    auto *ball_mesh = create_sphere(1, 60, 60);
+//    auto *land_mesh = new LODMesh(*create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, {0, 1, 0}), 0, 200, 10, 95, 8);
+//    auto *ball_mesh = new LODMesh(*create_sphere(1, 60, 60), 10, 50, 5, 60, 6);
 
     //Land
     auto *land_node = new NodeSG(m_shaders, m_root, "LAND");

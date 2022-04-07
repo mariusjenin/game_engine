@@ -132,7 +132,6 @@ void main() {
     color = vec3(0,0,0);
     for(int i = 0 ; i < nb_lights ; i ++) {
         color += compute_phong(lights_from_buffer[i], material, view_pos);
-
     }
 
 }

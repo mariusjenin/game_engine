@@ -8,9 +8,9 @@ using namespace mesh;
 using namespace shader;
 
 LODMesh::LODMesh(Mesh &mesh, float min_dist, float max_dist, int min_resolution, int max_resolution,
-                 int levels) : Mesh(mesh.get_vertex_positions(), mesh.get_triangle_indices(),
+                 int levels,int bb_type) : Mesh(mesh.get_vertex_positions(), mesh.get_triangle_indices(),
                                     mesh.get_vertex_tex_coords(),
-                                    mesh.get_vertex_normals(), false) {
+                                    mesh.get_vertex_normals(), false,bb_type) {
     m_min_dist = min_dist;
     m_max_dist = max_dist;
     m_levels = levels;
@@ -28,6 +28,7 @@ LODMesh::LODMesh(Mesh &mesh, float min_dist, float max_dist, int min_resolution,
         curr_mesh->simplify((int)
                                     std::round(resol)
         );
+        curr_mesh->load_bb(bb_type);
         curr_mesh->load_mesh_in_vao();
         m_lod_meshes.push_back(curr_mesh);
         dist -= d_dist;
@@ -49,10 +50,10 @@ void LODMesh::update_mesh(float dist_to_camera) {
     }
 }
 
-LODMesh::LODMesh(const Mesh &mesh, float dist_treshold, int resolution) : Mesh(mesh.get_vertex_positions(),
+LODMesh::LODMesh(const Mesh &mesh, float dist_treshold, int resolution,int bb_type) : Mesh(mesh.get_vertex_positions(),
                                                                                mesh.get_triangle_indices(),
                                                                                mesh.get_vertex_tex_coords(),
-                                                                               mesh.get_vertex_normals(), false) {
+                                                                               mesh.get_vertex_normals(), false,bb_type) {
     m_min_dist = dist_treshold;
     m_max_dist = dist_treshold;
     m_levels = 1;
@@ -71,6 +72,7 @@ void LODMesh::load_mesh_at_index(int index) {
     m_vbo_tex_coords_id = m_lod_meshes.at(index)->get_vbo_tex_coords_id();
     m_vbo_normals_id = m_lod_meshes.at(index)->get_vbo_normals_id();
     m_ebo_triangle_indices_id = m_lod_meshes.at(index)->get_ebo_triangle_indices_id();
+    m_bb = m_lod_meshes.at(index)->get_bb();
 }
 
 LODMesh::~LODMesh() {

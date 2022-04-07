@@ -80,6 +80,11 @@ add_executable(main
 		src/light/PositionLight.cpp src/light/PositionLight.hpp
 		src/light/DirectionLight.cpp src/light/DirectionLight.hpp
 		src/light/SpotLight.cpp src/light/SpotLight.hpp
+		src/physics/RigidBody.cpp src/physics/RigidBody.hpp
+		src/physics/BoundingBox.cpp src/physics/BoundingBox.hpp
+		src/physics/AABB.cpp src/physics/AABB.hpp
+		src/physics/BBFactory.cpp src/physics/BBFactory.hpp
+		src/scene/SimpleScene.cpp src/scene/SimpleScene.hpp
 		)
 target_link_libraries(main
 	${ALL_LIBS}

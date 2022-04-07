@@ -2,22 +2,30 @@
 // Created by marius.jenin@etu.umontpellier.fr on 17/02/2022.
 //
 
+#include <src/physics/AABB.hpp>
+#include <src/physics/BBFactory.hpp>
 #include "Mesh.hpp"
 
+#include <src/utils/printer.hpp>
 
 using namespace mesh;
 using namespace shader;
 
 Mesh::Mesh(const std::vector<glm::vec3> &vp, const std::vector<unsigned short> &ti, const std::vector<glm::vec2> &vtc,
-           const std::vector<glm::vec3> &vn, bool load_data_now) {
+           const std::vector<glm::vec3> &vn, bool load_data_now, int bb_type) {
     m_vertex_positions = vp;
     m_triangle_indices = ti;
     m_vertex_tex_coords = vtc;
     m_vertex_normals = vn;
     m_center = center();
-    m_aabb = get_aabb();
+    load_bb(bb_type);
     if (load_data_now) load_mesh_in_vao();
     m_loaded_vao = load_data_now;
+}
+
+void Mesh::load_bb(int bb_type){
+    m_bb = BBFactory::generate_bb(bb_type);
+    m_bb->compute(m_vertex_positions);
 }
 
 void Mesh::load_mesh_in_vao() {
@@ -38,31 +46,6 @@ void Mesh::load_mesh_in_vao() {
     VAODataManager::enable_attrib_vbo(VAODataManager::ID_VERTEX_BUFFER, m_vbo_position_id, 3, GL_FALSE);
     VAODataManager::enable_attrib_vbo(VAODataManager::ID_UV_BUFFER, m_vbo_tex_coords_id, 2, GL_FALSE);
     VAODataManager::enable_attrib_vbo(VAODataManager::ID_NORMAL_BUFFER, m_vbo_normals_id, 3, GL_TRUE);
-}
-
-std::pair<glm::vec3, glm::vec3> Mesh::get_aabb(float enlargement) {
-    std::pair<glm::vec3, glm::vec3> bb;
-    bb.first = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
-    bb.second = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-    for (auto &vertex_position: m_vertex_positions) {
-        if (vertex_position[0] < bb.first[0]) bb.first[0] = vertex_position[0];
-        if (vertex_position[1] < bb.first[1]) bb.first[1] = vertex_position[1];
-        if (vertex_position[2] < bb.first[2]) bb.first[2] = vertex_position[2];
-        if (vertex_position[0] > bb.second[0]) bb.second[0] = vertex_position[0];
-        if (vertex_position[1] > bb.second[1]) bb.second[1] = vertex_position[1];
-        if (vertex_position[2] > bb.second[2]) bb.second[2] = vertex_position[2];
-    }
-
-    if (enlargement != 0.) {
-        bb.first[0] -= enlargement;
-        bb.first[1] -= enlargement;
-        bb.first[2] -= enlargement;
-        bb.second[0] += enlargement;
-        bb.second[1] += enlargement;
-        bb.second[2] += enlargement;
-    }
-
-    return bb;
 }
 
 void Mesh::simplify(int r, float enlargement) {
@@ -89,7 +72,12 @@ void Mesh::simplify(int r, float enlargement) {
     float dx, dy, dz;
     int x, y, z;
 
-    std::pair<glm::vec3, glm::vec3> bb = get_aabb(enlargement);
+    std::pair<glm::vec3, glm::vec3> bb;
+    AABB aabb = AABB();
+    aabb.compute(m_vertex_positions);
+    bb.first = aabb.get_min() - glm::vec3(enlargement);
+    bb.second = aabb.get_max() + glm::vec3(enlargement);
+
     dx = (bb.second[0] - bb.first[0]) / (float) r;
     dy = (bb.second[1] - bb.first[1]) / (float) r;
     dz = (bb.second[2] - bb.first[2]) / (float) r;
@@ -221,7 +209,12 @@ bool Mesh::get_data_at_coords(glm::vec2 pos_in_plan_xz, Transform on_top_trsf, g
             return u >= 0 && v >= 0 && w >= 0;
         }
     };
-    std::pair<glm::vec3, glm::vec3> bb = m_aabb;
+    std::pair<glm::vec3, glm::vec3> bb;
+    AABB aabb = AABB();
+    aabb.compute(m_vertex_positions);
+    bb.first = aabb.get_min();
+    bb.second = aabb.get_max();
+
     bb.first = on_top_trsf.apply_to_point(bb.first);
     bb.second = on_top_trsf.apply_to_point(bb.second);
     if (bb.first[0] > pos_in_plan_xz[0] || bb.second[0] < pos_in_plan_xz[0] ||
@@ -294,4 +287,8 @@ Mesh::~Mesh() {
         VAODataManager::delete_bo(m_ebo_triangle_indices_id);
         VAODataManager::delete_vao(m_vao_id);
     }
+}
+
+BoundingBox* Mesh::get_bb() {
+    return m_bb;
 }

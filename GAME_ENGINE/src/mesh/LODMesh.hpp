@@ -35,7 +35,7 @@ namespace mesh {
          * @param max_resolution maximum resolution of the simplification of the levels of details
          * @param levels number of levels of details
          */
-        LODMesh(Mesh &mesh, float min_dist, float max_dist, int min_resolution, int max_resolution, int levels);
+        LODMesh(Mesh &mesh, float min_dist, float max_dist, int min_resolution, int max_resolution, int levels,int bb_type = BBFactory::AABB_TYPE);
 
         /**
          * Simple constructor of a LODMesh
@@ -43,7 +43,7 @@ namespace mesh {
          * @param dist_treshold treshold of the level of details (only one level here)
          * @param resolution resolution of the simplification of the levels of details
          */
-        LODMesh(const Mesh &mesh, float dist_treshold, int resolution);
+        LODMesh(const Mesh &mesh, float dist_treshold, int resolution,int bb_type = BBFactory::AABB_TYPE);
 
         ~LODMesh();
     };

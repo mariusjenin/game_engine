@@ -5,6 +5,9 @@
 #include "NodeSG.hpp"
 
 #include <utility>
+#include <src/physics/BBFactory.hpp>
+#include <src/physics/AABB.hpp>
+#include <src/utils/printer.hpp>
 
 
 using namespace scene_graph;
@@ -206,7 +209,11 @@ std::pair<glm::vec3, glm::vec3> NodeSG::get_aabb(glm::vec3 pos_camera) {
     for (auto mesh: m_meshes) {
 
         mesh->update_mesh(glm::distance(get_position_in_world(mesh->get_center()), pos_camera));
-        std::pair<glm::vec3, glm::vec3> bb_curr = mesh->get_aabb();
+        std::pair<glm::vec3, glm::vec3> bb_curr;
+        AABB aabb = AABB();
+        aabb.compute(mesh->get_vertex_positions());
+        bb_curr.first = aabb.get_min();
+        bb_curr.second = aabb.get_max();
         bb_curr.first = trsf.apply_to_point(bb_curr.first);
         bb_curr.second = trsf.apply_to_point(bb_curr.second);
         for (int i = 0; i < 3; i++) {
@@ -223,6 +230,7 @@ std::pair<glm::vec3, glm::vec3> NodeSG::get_aabb(glm::vec3 pos_camera) {
         if (bb_curr.second[1] > bb.second[1]) bb.second[1] = bb_curr.second[1];
         if (bb_curr.second[2] > bb.second[2]) bb.second[2] = bb_curr.second[2];
     }
+
     return bb;
 }
 

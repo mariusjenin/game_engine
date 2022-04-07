@@ -16,6 +16,8 @@
 #include <cmath>
 #include <src/utils/Transform.hpp>
 #include <src/shader/VAODataManager.hpp>
+#include <src/physics/BBFactory.hpp>
+#include <src/physics/BoundingBox.hpp>
 
 namespace mesh {
     /// Base %Mesh
@@ -29,7 +31,7 @@ namespace mesh {
         std::vector<glm::vec2> m_vertex_tex_coords;
         std::vector<glm::vec3> m_vertex_normals;
 
-        std::pair<glm::vec3, glm::vec3> m_aabb;
+        BoundingBox* m_bb;
         glm::vec3 m_center;
 
         GLuint m_vao_id{};
@@ -42,7 +44,7 @@ namespace mesh {
          * @param vn vertex normals
          */
         Mesh(const std::vector<glm::vec3> &vp, const std::vector<unsigned short> &ti, const std::vector<glm::vec2> &vtc,
-             const std::vector<glm::vec3> &vn = *new std::vector<glm::vec3>(), bool load_data_now = true);
+             const std::vector<glm::vec3> &vn = *new std::vector<glm::vec3>(), bool load_data_now = true, int bb_type = BBFactory::AABB_TYPE);
 
         /// Load Mesh datas in his VAO
         void load_mesh_in_vao();
@@ -103,11 +105,17 @@ namespace mesh {
         void simplify(int r, float enlargement = 0.001);
 
         /**
-         * Getter of the aligned axis bounding box of the Mesh
+         * Getter of the bounding box of the Mesh
          * @param enlargement
-         * @return aabb
+         * @return bb
          */
-        std::pair<glm::vec3, glm::vec3> get_aabb(float enlargement = 0.001);
+        BoundingBox* get_bb();
+
+        /**
+         * Load the Bounding box of the Mesh
+         * @param bb_type
+         */
+        void load_bb(int bb_type);
 
         /**
          * Getter of the VAO id
