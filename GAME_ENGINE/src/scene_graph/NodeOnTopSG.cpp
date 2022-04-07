@@ -18,7 +18,7 @@ bool NodeOnTopSG::get_data_on(glm::vec3 pos_camera, glm::vec3 &position, glm::ve
                               float &height_adjustement) {
 
     std::vector<Mesh *> meshes = m_on_node->get_meshes();
-    std::pair<glm::vec3, glm::vec3> bb = get_bounding_box(pos_camera);
+    std::pair<glm::vec3, glm::vec3> bb = get_aabb(pos_camera);
     glm::vec3 center = get_center(pos_camera);
     Transform trsf = Transform();
     trsf.set_matrix(get_matrix_recursive_intern());

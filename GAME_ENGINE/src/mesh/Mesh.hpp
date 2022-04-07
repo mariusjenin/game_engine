@@ -29,7 +29,7 @@ namespace mesh {
         std::vector<glm::vec2> m_vertex_tex_coords;
         std::vector<glm::vec3> m_vertex_normals;
 
-        std::pair<glm::vec3, glm::vec3> m_bounding_box;
+        std::pair<glm::vec3, glm::vec3> m_aabb;
         glm::vec3 m_center;
 
         GLuint m_vao_id{};
@@ -103,11 +103,11 @@ namespace mesh {
         void simplify(int r, float enlargement = 0.001);
 
         /**
-         * Getter of the bounding box of the Mesh
+         * Getter of the aligned axis bounding box of the Mesh
          * @param enlargement
-         * @return bounding_box
+         * @return aabb
          */
-        std::pair<glm::vec3, glm::vec3> get_bounding_box(float enlargement = 0.001);
+        std::pair<glm::vec3, glm::vec3> get_aabb(float enlargement = 0.001);
 
         /**
          * Getter of the VAO id

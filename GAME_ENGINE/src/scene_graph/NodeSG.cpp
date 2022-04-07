@@ -196,7 +196,7 @@ glm::vec3 NodeSG::get_center(glm::vec3 pos_camera) {
     return center;
 }
 
-std::pair<glm::vec3, glm::vec3> NodeSG::get_bounding_box(glm::vec3 pos_camera) {
+std::pair<glm::vec3, glm::vec3> NodeSG::get_aabb(glm::vec3 pos_camera) {
     std::pair<glm::vec3, glm::vec3> bb;
     bb.first = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
     bb.second = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
@@ -206,7 +206,7 @@ std::pair<glm::vec3, glm::vec3> NodeSG::get_bounding_box(glm::vec3 pos_camera) {
     for (auto mesh: m_meshes) {
 
         mesh->update_mesh(glm::distance(get_position_in_world(mesh->get_center()), pos_camera));
-        std::pair<glm::vec3, glm::vec3> bb_curr = mesh->get_bounding_box();
+        std::pair<glm::vec3, glm::vec3> bb_curr = mesh->get_aabb();
         bb_curr.first = trsf.apply_to_point(bb_curr.first);
         bb_curr.second = trsf.apply_to_point(bb_curr.second);
         for (int i = 0; i < 3; i++) {
@@ -228,7 +228,7 @@ std::pair<glm::vec3, glm::vec3> NodeSG::get_bounding_box(glm::vec3 pos_camera) {
 
 float NodeSG::get_distance_from(glm::vec3 cam_position, glm::vec3 position) {
 
-    std::pair<glm::vec3, glm::vec3> bb = get_bounding_box(cam_position);
+    std::pair<glm::vec3, glm::vec3> bb = get_aabb(cam_position);
     glm::vec3 min_vals;
     float curr_val;
     for (int i = 0; i < 3; i++) {

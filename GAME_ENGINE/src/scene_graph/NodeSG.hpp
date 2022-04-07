@@ -125,11 +125,11 @@ namespace scene_graph {
         glm::vec3 get_center(glm::vec3 pos_camera);
 
         /**
-         * Gives the bounding box of the node (bounding box of \link mesh::Mesh Mesh\endlink bounding boxes)
+         * Gives the aligned axis bounding box of the node (bounding box of \link mesh::Mesh Mesh\endlink bounding boxes)
          * @param pos_camera
          * @return bounding_box
          */
-        std::pair<glm::vec3, glm::vec3> get_bounding_box(glm::vec3 pos_camera);
+        std::pair<glm::vec3, glm::vec3> get_aabb(glm::vec3 pos_camera);
 
         void compute_trsf_scene_graph() override;
 

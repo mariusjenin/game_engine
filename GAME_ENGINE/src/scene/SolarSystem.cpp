@@ -133,7 +133,7 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     m_camera_index = 0;
 
     //PROJECTION
-    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 100000.0f);
+    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 100000000.0f);
     glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
                        GL_FALSE, &projection_mat[0][0]);
 

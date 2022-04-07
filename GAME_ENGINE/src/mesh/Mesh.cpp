@@ -15,7 +15,7 @@ Mesh::Mesh(const std::vector<glm::vec3> &vp, const std::vector<unsigned short> &
     m_vertex_tex_coords = vtc;
     m_vertex_normals = vn;
     m_center = center();
-    m_bounding_box = get_bounding_box();
+    m_aabb = get_aabb();
     if (load_data_now) load_mesh_in_vao();
     m_loaded_vao = load_data_now;
 }
@@ -40,7 +40,7 @@ void Mesh::load_mesh_in_vao() {
     VAODataManager::enable_attrib_vbo(VAODataManager::ID_NORMAL_BUFFER, m_vbo_normals_id, 3, GL_TRUE);
 }
 
-std::pair<glm::vec3, glm::vec3> Mesh::get_bounding_box(float enlargement) {
+std::pair<glm::vec3, glm::vec3> Mesh::get_aabb(float enlargement) {
     std::pair<glm::vec3, glm::vec3> bb;
     bb.first = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
     bb.second = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
@@ -89,7 +89,7 @@ void Mesh::simplify(int r, float enlargement) {
     float dx, dy, dz;
     int x, y, z;
 
-    std::pair<glm::vec3, glm::vec3> bb = get_bounding_box(enlargement);
+    std::pair<glm::vec3, glm::vec3> bb = get_aabb(enlargement);
     dx = (bb.second[0] - bb.first[0]) / (float) r;
     dy = (bb.second[1] - bb.first[1]) / (float) r;
     dz = (bb.second[2] - bb.first[2]) / (float) r;
@@ -221,7 +221,7 @@ bool Mesh::get_data_at_coords(glm::vec2 pos_in_plan_xz, Transform on_top_trsf, g
             return u >= 0 && v >= 0 && w >= 0;
         }
     };
-    std::pair<glm::vec3, glm::vec3> bb = m_bounding_box;
+    std::pair<glm::vec3, glm::vec3> bb = m_aabb;
     bb.first = on_top_trsf.apply_to_point(bb.first);
     bb.second = on_top_trsf.apply_to_point(bb.second);
     if (bb.first[0] > pos_in_plan_xz[0] || bb.second[0] < pos_in_plan_xz[0] ||
