@@ -3,3 +3,5 @@
 //
 
 #include "RigidBody.hpp"
+
+RigidBody::~RigidBody() = default;

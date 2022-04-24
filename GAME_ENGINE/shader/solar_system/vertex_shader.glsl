@@ -55,8 +55,10 @@ void main(){
         } else {
             vertex_position_locally = vec4(vertex_position ,1);
         }
-    } else {
+    } else if(star_id == SUN_ID || star_id == MOON_ID) {
         vertex_position_locally = vec4(vertex_position + (vertex_normal * value_hm * 0.25),1);
+    } else {
+        vertex_position_locally = vec4(vertex_position ,1);
     }
     fragment_pos = vec3(model_mat*vertex_position_locally);
     gl_Position = mvp* vertex_position_locally;

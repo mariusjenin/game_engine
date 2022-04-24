@@ -4,7 +4,16 @@
 
 #include "meshloader.hpp"
 
-Mesh *create_plane(
+#include <utility>
+
+MeshData::MeshData(std::vector<glm::vec3> vp,std::vector<unsigned short int> ti,std::vector<glm::vec2> vtc,std::vector<glm::vec3> vn){
+    vertex_positions = std::move(vp);
+    triangle_indices = std::move(ti);
+    vertex_tex_coords = std::move(vtc);
+    vertex_normals = std::move(vn);
+}
+
+MeshData create_plane(
         int nb_vertex_1,
         int nb_vertex_2,
         vec3 pos_vertex_start,
@@ -55,11 +64,11 @@ Mesh *create_plane(
             }
         }
     }
-    return new Mesh(vertices, indices, uv, normals, false);
+    return MeshData(vertices, indices, uv, normals);
 }
 
 
-Mesh *create_sphere(
+MeshData create_sphere(
         float radius, int slices, int stacks) {
     std::vector<vec3> vertices = std::vector<vec3>();
     std::vector<vec3> normals = std::vector<vec3>();
@@ -94,5 +103,5 @@ Mesh *create_sphere(
             indices.push_back(row2 + i + 1);
         }
     }
-    return new Mesh(vertices, indices, uv, normals, false);
+    return MeshData(vertices, indices, uv, normals);
 }

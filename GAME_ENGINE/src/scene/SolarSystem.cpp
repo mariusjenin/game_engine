@@ -47,11 +47,10 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     float inclination_sun_earth = 5.14f;
 
     //MESHES
-    auto *sky_mesh = create_sphere(1000, 10, 20);
-    auto *sun_mesh = new LODMesh(*create_sphere(2, 50, 100), 20, 60, 2, 12, 5);
-//    auto *sun_mesh = create_plane(10,10,{-1,0,-1},{1,0,1},{0,1,0});
-    auto *earth_mesh = new LODMesh(*create_sphere(1, 30, 60), 15, 50, 2, 12, 5);
-    auto *moon_mesh = new LODMesh(*create_sphere(0.25, 20, 40), 10, 40, 2, 12, 5);
+    auto *sky_mesh = new Mesh(create_sphere(100, 10, 20));
+    auto *sun_mesh = new LODMesh(create_sphere(2, 50, 100), 20, 60, 12, 2, 5);
+    auto *earth_mesh = new LODMesh(create_sphere(1, 30, 60), 20, 60, 12, 2, 5);
+    auto *moon_mesh = new LODMesh(create_sphere(0.25, 20, 40), 20, 60, 12, 2, 5);
 
     //TEXTURES
     int id_skymap_texture = id_texture++;

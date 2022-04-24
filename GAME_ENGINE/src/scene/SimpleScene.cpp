@@ -21,8 +21,7 @@ SimpleScene::SimpleScene(const std::string &vertex_shader_path, const std::strin
     load_bmp_custom("../assets/texture/rock.bmp", id_land_texture);
 
     //MESHES
-//    auto *ball_mesh = create_sphere(1, 60, 60); ball_mesh->load_mesh_in_vao();
-    auto *ball_mesh = new LODMesh(*create_sphere(1, 60, 60), 10, 50, 5, 60, 6);
+    auto *ball_mesh = new LODMesh(create_sphere(1, 60, 60), 2, 30, 60, 5, 10,SphereBB_TYPE);
 
     //Light
     auto *light_source = new DirectionLight({0.1, 0.1, 0.1}, {1., 1., 1.}, {0.8, 0.8, 0.8}, {0., -1., 0.});

@@ -81,9 +81,14 @@ add_executable(main
 		src/light/DirectionLight.cpp src/light/DirectionLight.hpp
 		src/light/SpotLight.cpp src/light/SpotLight.hpp
 		src/physics/RigidBody.cpp src/physics/RigidBody.hpp
-		src/physics/BoundingBox.cpp src/physics/BoundingBox.hpp
-		src/physics/AABB.cpp src/physics/AABB.hpp
-		src/physics/BBFactory.cpp src/physics/BBFactory.hpp
+		src/physics/bounding_box/BoundingBox.cpp src/physics/bounding_box/BoundingBox.hpp
+		src/physics/bounding_box/AABB.cpp src/physics/bounding_box/AABB.hpp
+		src/physics/bounding_box/OBB.cpp src/physics/bounding_box/OBB.hpp
+		src/physics/bounding_box/RCBB.cpp src/physics/bounding_box/RCBB.hpp
+		src/physics/bounding_box/SphereBB.cpp src/physics/bounding_box/SphereBB.hpp
+		src/physics/bounding_box/BBFactory.cpp src/physics/bounding_box/BBFactory.hpp
+		src/physics/RigidBodyVolume.cpp src/physics/RigidBodyVolume.hpp
+		src/physics/PhysicsGeometry.cpp src/physics/PhysicsGeometry.hpp
 		src/scene/SimpleScene.cpp src/scene/SimpleScene.hpp
 		)
 target_link_libraries(main

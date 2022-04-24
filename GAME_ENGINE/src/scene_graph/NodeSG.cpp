@@ -5,8 +5,8 @@
 #include "NodeSG.hpp"
 
 #include <utility>
-#include <src/physics/BBFactory.hpp>
-#include <src/physics/AABB.hpp>
+#include <src/physics/bounding_box/BBFactory.hpp>
+#include <src/physics/bounding_box/AABB.hpp>
 #include <src/utils/printer.hpp>
 
 

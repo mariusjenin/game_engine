@@ -16,10 +16,27 @@
 #include <cmath>
 #include <src/utils/Transform.hpp>
 #include <src/shader/VAODataManager.hpp>
-#include <src/physics/BBFactory.hpp>
-#include <src/physics/BoundingBox.hpp>
+#include <src/physics/bounding_box/BBFactory.hpp>
+#include <src/physics/bounding_box/BoundingBox.hpp>
 
 namespace mesh {
+    /// Datas of a Mesh
+    struct MeshData{
+        std::vector<glm::vec3> vertex_positions;
+        std::vector<unsigned short int> triangle_indices;
+        std::vector<glm::vec2> vertex_tex_coords;
+        std::vector<glm::vec3> vertex_normals;
+
+        /**
+         * Constructor of MeshData
+         * @param vp
+         * @param ti
+         * @param vtc
+         * @param vn
+         */
+        MeshData(std::vector<glm::vec3> vp,std::vector<unsigned short int> ti,std::vector<glm::vec2> vtc,std::vector<glm::vec3> vn);
+    };
+
     /// Base %Mesh
     class Mesh {
     protected:
@@ -44,7 +61,15 @@ namespace mesh {
          * @param vn vertex normals
          */
         Mesh(const std::vector<glm::vec3> &vp, const std::vector<unsigned short> &ti, const std::vector<glm::vec2> &vtc,
-             const std::vector<glm::vec3> &vn = *new std::vector<glm::vec3>(), bool load_data_now = true, int bb_type = BBFactory::AABB_TYPE);
+             const std::vector<glm::vec3> &vn = *new std::vector<glm::vec3>(), bool load_data_now = true, BB_TYPE bb_type = AABB_TYPE);
+
+        /**
+         * Constructor of a Mesh with MeshData
+         * @param md
+         * @param load_data_now
+         * @param bb_type
+         */
+        Mesh(const MeshData& md, bool load_data_now = true, BB_TYPE bb_type = AABB_TYPE);
 
         /// Load Mesh datas in his VAO
         void load_mesh_in_vao();
@@ -115,7 +140,7 @@ namespace mesh {
          * Load the Bounding box of the Mesh
          * @param bb_type
          */
-        void load_bb(int bb_type);
+        void load_bb(BB_TYPE bb_type);
 
         /**
          * Getter of the VAO id

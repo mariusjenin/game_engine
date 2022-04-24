@@ -2,8 +2,8 @@
 // Created by marius.jenin@etu.umontpellier.fr on 17/02/2022.
 //
 
-#include <src/physics/AABB.hpp>
-#include <src/physics/BBFactory.hpp>
+#include <src/physics/bounding_box/AABB.hpp>
+#include <src/physics/bounding_box/BBFactory.hpp>
 #include "Mesh.hpp"
 
 #include <src/utils/printer.hpp>
@@ -12,7 +12,7 @@ using namespace mesh;
 using namespace shader;
 
 Mesh::Mesh(const std::vector<glm::vec3> &vp, const std::vector<unsigned short> &ti, const std::vector<glm::vec2> &vtc,
-           const std::vector<glm::vec3> &vn, bool load_data_now, int bb_type) {
+           const std::vector<glm::vec3> &vn, bool load_data_now, BB_TYPE bb_type) {
     m_vertex_positions = vp;
     m_triangle_indices = ti;
     m_vertex_tex_coords = vtc;
@@ -23,7 +23,20 @@ Mesh::Mesh(const std::vector<glm::vec3> &vp, const std::vector<unsigned short> &
     m_loaded_vao = load_data_now;
 }
 
-void Mesh::load_bb(int bb_type){
+
+Mesh::Mesh(const MeshData& md, bool load_data_now, BB_TYPE bb_type) {
+    m_vertex_positions = md.vertex_positions;
+    m_triangle_indices = md.triangle_indices;
+    m_vertex_tex_coords = md.vertex_tex_coords;
+    m_vertex_normals = md.vertex_normals;
+    m_center = center();
+    load_bb(bb_type);
+    if (load_data_now) load_mesh_in_vao();
+    m_loaded_vao = load_data_now;
+}
+
+
+void Mesh::load_bb(BB_TYPE bb_type){
     m_bb = BBFactory::generate_bb(bb_type);
     m_bb->compute(m_vertex_positions);
 }

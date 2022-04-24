@@ -13,6 +13,7 @@
 
 using namespace glm;
 using namespace mesh;
+
 /**
  * Create a plane Mesh
  * @param nb_vertex_1 first resolution
@@ -20,9 +21,9 @@ using namespace mesh;
  * @param pos_vertex_start first vertex
  * @param pos_vertex_end last vertex
  * @param normal normal direction
- * @return plane
+ * @return plane mesh datas
  */
-Mesh *create_plane(
+MeshData create_plane(
         int nb_vertex_1,
         int nb_vertex_2,
         glm::vec3 pos_vertex_start,
@@ -35,9 +36,9 @@ Mesh *create_plane(
  * @param radius
  * @param slices
  * @param stacks
- * @return sphere
+ * @return sphere mesh datas
  */
-Mesh *create_sphere(
+MeshData create_sphere(
         float radius = 0.5, int slices = 32, int stacks = 16);
 
 #endif //GAME_ENGINE_MESHLOADER_HPP
