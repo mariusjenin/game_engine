@@ -52,18 +52,24 @@ add_definitions(
 	-D_CRT_SECURE_NO_WARNINGS
 )
 
-add_executable(main
+add_executable(
+#		MAIN
+		main
 		main/main.cpp
+#		UTILS
 		src/utils/meshloader.cpp src/utils/meshloader.hpp
 		src/utils/texture.cpp src/utils/texture.hpp
 		src/utils/objloader.cpp src/utils/objloader.hpp
 		src/utils/printer.cpp src/utils/printer.hpp
 		src/utils/Transform.cpp src/utils/Transform.hpp
+#		SHADERS
         src/shader/ShadersDataManager.cpp src/shader/ShadersDataManager.hpp
         src/shader/VAODataManager.cpp src/shader/VAODataManager.hpp
 		src/shader/Shaders.cpp src/shader/Shaders.hpp
+#		MESH
 		src/mesh/Mesh.cpp src/mesh/Mesh.hpp
 		src/mesh/LODMesh.cpp src/mesh/LODMesh.hpp
+#		Scene
 		src/scene_graph/NodeSG.cpp src/scene_graph/NodeSG.hpp
 		src/scene_graph/NodeOnTopSG.cpp src/scene_graph/NodeOnTopSG.hpp
 		src/scene_graph/RootSG.cpp src/scene_graph/RootSG.hpp
@@ -73,13 +79,22 @@ add_executable(main
 		src/scene/SolarSystem.cpp src/scene/SolarSystem.hpp
 		src/scene/SceneLand.cpp src/scene/SceneLand.hpp
 		src/scene/Scene.cpp src/scene/Scene.hpp
+		src/scene/SimpleScene.cpp src/scene/SimpleScene.hpp
+#		MATERIAL
 		src/material/Material.cpp src/material/Material.hpp
 		src/material/MaterialColor.cpp src/material/MaterialColor.hpp
 		src/material/MaterialTexture.cpp src/material/MaterialTexture.hpp
+#		LIGHT
 		src/light/Light.cpp src/light/Light.hpp
+		src/light/LightShader.hpp
+		src/light/LightBehavior.cpp src/light/LightBehavior.hpp
 		src/light/PositionLight.cpp src/light/PositionLight.hpp
 		src/light/DirectionLight.cpp src/light/DirectionLight.hpp
 		src/light/SpotLight.cpp src/light/SpotLight.hpp
+		src/light/DirectionLightBehavior.cpp src/light/DirectionLightBehavior.hpp
+		src/light/PositionLightBehavior.cpp src/light/PositionLightBehavior.hpp
+		src/light/SpotLightBehavior.cpp src/light/SpotLightBehavior.hpp
+#		PHYSICS
 		src/physics/RigidBody.cpp src/physics/RigidBody.hpp
 		src/physics/bounding_box/BoundingBox.cpp src/physics/bounding_box/BoundingBox.hpp
 		src/physics/bounding_box/AABB.cpp src/physics/bounding_box/AABB.hpp
@@ -89,7 +104,6 @@ add_executable(main
 		src/physics/bounding_box/BBFactory.cpp src/physics/bounding_box/BBFactory.hpp
 		src/physics/RigidBodyVolume.cpp src/physics/RigidBodyVolume.hpp
 		src/physics/PhysicsGeometry.cpp src/physics/PhysicsGeometry.hpp
-		src/scene/SimpleScene.cpp src/scene/SimpleScene.hpp
 		)
 target_link_libraries(main
 	${ALL_LIBS}

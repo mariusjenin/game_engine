@@ -8,15 +8,19 @@
 
 #include "BoundingBox.hpp"
 #include <cfloat>
+namespace physics {
+    class SphereBB : public BoundingBox {
+    private:
+        float m_radius;
+    public:
+        void compute(std::vector<glm::vec3> vertices) override;
 
-class SphereBB : public BoundingBox {
-private:
-    float m_radius;
-public:
-    void compute(std::vector<glm::vec3> vertices) override;
-
-    float get_radius() const;
-};
-
+        /**
+         * Getter of the radius of the SphereBB
+         * @return
+         */
+        float get_radius() const;
+    };
+}
 
 #endif //GAME_ENGINE_SPHEREBB_H

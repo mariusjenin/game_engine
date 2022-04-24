@@ -45,6 +45,8 @@ void main(){
         value_hm = texture2D(hm_earth, vertex_uv).x;
     } else if(star_id == MOON_ID){
         value_hm = texture2D(hm_moon, vertex_uv).x;
+    } else {
+        value_hm = 0;
     }
     if(star_id == EARTH_ID){
         float height_water = 0.3;
@@ -55,10 +57,8 @@ void main(){
         } else {
             vertex_position_locally = vec4(vertex_position ,1);
         }
-    } else if(star_id == SUN_ID || star_id == MOON_ID) {
-        vertex_position_locally = vec4(vertex_position + (vertex_normal * value_hm * 0.25),1);
     } else {
-        vertex_position_locally = vec4(vertex_position ,1);
+        vertex_position_locally = vec4(vertex_position + (vertex_normal * value_hm * 0.25),1);
     }
     fragment_pos = vec3(model_mat*vertex_position_locally);
     gl_Position = mvp* vertex_position_locally;

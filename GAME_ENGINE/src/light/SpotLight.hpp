@@ -6,18 +6,17 @@
 #define GAME_ENGINE_SPOTLIGHT_HPP
 
 
-#include "PositionLight.hpp"
-#include "DirectionLight.hpp"
+#include "Light.hpp"
+#include "SpotLightBehavior.hpp"
+#include "PositionLightBehavior.hpp"
+#include "DirectionLightBehavior.hpp"
 
 namespace light {
     /// Light with a direction, a position and angles of diffusion
-    class SpotLight : public DirectionLight, public PositionLight {
-    private:
-        float m_inner_cut_off;
-        float m_outer_cut_off; // if inner == outer then no smooth edge
+    class SpotLight : public Light {
     public:
         /**
-         * Constructor of a Spot Light
+         * Constructor of a Spot Light (has a DirectionLightBehavior, a PositionLightBehavior and a SpotLightBehavior)
          * @param ambient
          * @param diffuse
          * @param specular

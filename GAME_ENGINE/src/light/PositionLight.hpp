@@ -7,17 +7,14 @@
 
 
 #include "Light.hpp"
+#include "PositionLightBehavior.hpp"
 
 namespace light {
     /// Light with a position and whose intensity can be attenuated
     class PositionLight : public virtual Light {
-    private:
-        float m_constant_attenuation;
-        float m_linear_attenuation;
-        float m_quadratic_attenuation;
     public:
         /**
-         * Constructor of a Positionned Light
+         * Constructor of a Positionned Light (has a PositionLightBehavior)
          * @param ambient
          * @param diffuse
          * @param specular

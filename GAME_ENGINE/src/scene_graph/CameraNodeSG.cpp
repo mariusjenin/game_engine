@@ -9,7 +9,7 @@
 using namespace scene_graph;
 
 void CameraNodeSG::update_view_mat() {
-    glm::mat4 mat = get_matrix_recursive_intern();
+    glm::mat4 mat = get_matrix_recursive_local();
     Transform trsf_tmp = Transform();
     trsf_tmp.set_matrix(mat);
     glm::vec3 camera_init_position = CAMERA_INIT_POSITION;
@@ -30,7 +30,7 @@ void CameraNodeSG::update_view_mat() {
 
 void CameraNodeSG::update_view_pos() {
     Transform trsf_tmp = Transform();
-    trsf_tmp.set_matrix(get_matrix_recursive_intern());
+    trsf_tmp.set_matrix(get_matrix_recursive_local());
     glm::vec3 position_tmp = glm::vec3(0, 0, 0);
     position_tmp = trsf_tmp.apply_to_point(position_tmp);
     glUniform3fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::VIEW_POS_LOC_NAME), 1,

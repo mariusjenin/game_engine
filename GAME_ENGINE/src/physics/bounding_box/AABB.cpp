@@ -4,6 +4,8 @@
 
 #include "AABB.hpp"
 
+using namespace physics;
+
 AABB::AABB() {
     m_type = AABB_TYPE;
 }

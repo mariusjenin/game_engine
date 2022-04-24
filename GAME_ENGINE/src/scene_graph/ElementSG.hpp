@@ -23,8 +23,8 @@ namespace scene_graph {
     class ElementSG {
     protected:
         std::string m_name;
-        /// Transformations applied to the ElementSG and all the children
-        std::vector<Transform *> m_trsfs_general;
+        /// Transformation applied to the ElementSG and all the children
+        Transform * m_trsf;
         Shaders *m_shaders;
         std::vector<ElementSG *> m_children;
         std::map<GLuint, int> m_uniform_1i; //add others type of uniform value possible
@@ -51,9 +51,15 @@ namespace scene_graph {
 
         /**
          * Getter of the name of the ElementSG
-         * @return
+         * @return name
          */
         std::string get_name();
+
+        /**
+         * Getter of the transformation matrix of the ElementSG
+         * @return trsf
+         */
+        Transform* get_trsf();
 
         /**
          * Test if the name is equal to a given other one
@@ -61,12 +67,6 @@ namespace scene_graph {
          * @return is_same_name
          */
         bool is_name(const std::string &name);
-
-        /**
-         * Setter of the general Transform list
-         * @param trsfs
-         */
-        void set_trsfs_general(std::vector<Transform *> trsfs);
 
         /**
          * Find recursively among the children if one as a given name
@@ -80,7 +80,7 @@ namespace scene_graph {
          * Give the matrix for an extern object (like a child) (recursive function)
          * @return matrix
          */
-        virtual glm::mat4 get_matrix_recursive_extern() = 0;
+        virtual glm::mat4 get_matrix_recursive() = 0;
 
         /// Compute all the Transform list (itself and children)
         virtual void compute_trsf_scene_graph();
@@ -90,12 +90,6 @@ namespace scene_graph {
 
         /// Destructor of the ElementSG
         virtual ~ElementSG();
-
-        /**
-         * Getter of the general Transform list
-         * @return trsfs
-         */
-        virtual std::vector<Transform *> get_trsfs_general();
     };
 }
 

@@ -8,11 +8,9 @@
 
 using namespace scene_graph;
 
-glm::mat4 RootSG::get_matrix_recursive_extern() {
+glm::mat4 RootSG::get_matrix_recursive() {
     glm::mat4 mat = glm::mat4(1.f);
-    for (auto trsf: m_trsfs_general) {
-        mat *= trsf->get_matrix();
-    }
+    mat *= m_trsf->get_matrix();
     return mat;
 }
 

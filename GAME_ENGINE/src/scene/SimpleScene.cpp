@@ -31,7 +31,6 @@ SimpleScene::SimpleScene(const std::string &vertex_shader_path, const std::strin
 
     //Ball
     m_ball = new NodeSG(m_shaders, m_root);
-    m_ball->set_trsfs_general({new Transform({0,0,0})});
     m_ball->set_meshes({ball_mesh});
     m_ball->set_material(
             new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
@@ -39,7 +38,7 @@ SimpleScene::SimpleScene(const std::string &vertex_shader_path, const std::strin
 
     //CAMERA
     auto *camera_node = new CameraNodeSG(m_shaders, m_root);
-    camera_node->set_trsfs_general({new Transform({0, 0, 20})});
+    camera_node->get_trsf()->set_translation({0, 0, 20});
     m_cameras.push_back(camera_node);
 
     //PROJECTION
@@ -56,7 +55,7 @@ void SimpleScene::process_input(GLFWwindow *window, float delta_time) {
     float camera_speed_rot = 150 * delta_time;
     float ball_translate_speed = 15 * delta_time;
 
-    Transform *camera_trsf = m_cameras.at(m_camera_index)->get_trsfs_general()[0];
+    Transform *camera_trsf = m_cameras.at(m_camera_index)->get_trsf();
     //Camera Translation
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
         glm::vec3 dir;
@@ -100,7 +99,7 @@ void SimpleScene::process_input(GLFWwindow *window, float delta_time) {
     }
     if (!camera_trsf->is_up_to_date()) camera_trsf->compute();
 
-    Transform *ball_trsf = m_ball->get_trsfs_general()[0];
+    Transform *ball_trsf = m_ball->get_trsf();
     glm::vec3 translate_ball;
     //Scene rotation
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
@@ -117,8 +116,4 @@ void SimpleScene::process_input(GLFWwindow *window, float delta_time) {
     }
     ball_trsf->set_translation(ball_trsf->get_translation() + translate_ball);
     if (!ball_trsf->is_up_to_date()) ball_trsf->compute();
-}
-
-SimpleScene::~SimpleScene() {
-    delete m_ball;
 }

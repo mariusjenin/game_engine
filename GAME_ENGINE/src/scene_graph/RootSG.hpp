@@ -19,7 +19,7 @@ namespace scene_graph {
          */
         explicit RootSG(Shaders *shaders, std::string name = "");
 
-        glm::mat4 get_matrix_recursive_extern() override;
+        glm::mat4 get_matrix_recursive() override;
 
         void draw(glm::vec3 pos_camera) override;
     };

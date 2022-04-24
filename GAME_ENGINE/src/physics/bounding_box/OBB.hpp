@@ -7,11 +7,14 @@
 
 
 #include "RCBB.hpp"
+namespace physics {
+    class OBB : public RCBB {
+    public:
+        /**
+         * Constructor of an OBB
+         */
+        OBB();
+    };
 
-class OBB : public RCBB {
-public:
-    OBB();
-};
-
-
+}
 #endif //GAME_ENGINE_OBB_H

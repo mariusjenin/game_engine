@@ -4,6 +4,8 @@
 
 #include "BoundingBox.hpp"
 
+using namespace physics;
+
 BB_TYPE BoundingBox::get_type() const {
     return m_type;
 }

@@ -31,8 +31,12 @@ namespace scene {
         float m_timing;
         LightNodeSG *m_sun{};
         NodeSG *m_sky{};
-        NodeSG *m_earth{};
-        NodeSG *m_moon{};
+        NodeSG *m_earth1{};
+        NodeSG *m_earth2{};
+        NodeSG *m_earth3{};
+        NodeSG *m_moon1{};
+        NodeSG *m_moon2{};
+        NodeSG *m_moon3{};
     protected:
         void process_input(GLFWwindow *window, float delta_time) override;
 
@@ -48,9 +52,6 @@ namespace scene {
         SolarSystem(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
 
         void update(GLFWwindow *window, float delta_time) override;
-
-        ~SolarSystem() override;
-
     };
 }
 

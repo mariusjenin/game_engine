@@ -40,7 +40,7 @@ SceneLand::SceneLand(const std::string &vertex_shader_path, const std::string &f
     //Land
     auto *land_node = new NodeSG(m_shaders, m_root, "LAND");
     land_node->set_material(new MaterialTexture(m_shaders, id_land_texture));
-    land_node->set_trsfs_self_before({new Transform({0, 0, 0}, {0, 0, 0}, {5, 5, 5})});
+    land_node->get_local_trsf()->set_scale({5, 5, 5});
     land_node->set_meshes({land_mesh});
     land_node->set_see_both_face(true);
     land_node->add_uniform_1i(has_hm_location, true);
@@ -54,16 +54,16 @@ SceneLand::SceneLand(const std::string &vertex_shader_path, const std::string &f
 
     //Ball
     m_ball = new NodeOnTopSG(m_shaders, land_node, land_node);
-    m_ball->set_trsfs_general({new Transform({-8, 0, 10})});
+    m_ball->get_trsf()->set_translation({-8, 0, 10});
     m_ball->set_meshes({ball_mesh});
-    m_ball->set_material(
-            new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
+    m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
     m_ball->add_uniform_1i(has_hm_location, false);
     m_nodes.push_back(m_ball);
 
     //CAMERA
     auto *camera_node = new CameraNodeSG(m_shaders, m_root);
-    camera_node->set_trsfs_general({new Transform({-7, -10, 40}, {-5, 0, 0})});
+    camera_node->get_trsf()->set_translation({-7, -10, 40});
+    camera_node->get_trsf()->set_rotation({-5, 0, 0});
     m_cameras.push_back(camera_node);
 
     //PROJECTION
@@ -80,7 +80,7 @@ void SceneLand::process_input(GLFWwindow *window, float delta_time) {
     float camera_speed_rot = 150 * delta_time;
     float ball_translate_speed = 15 * delta_time;
 
-    Transform *camera_trsf = m_cameras.at(m_camera_index)->get_trsfs_general()[0];
+    Transform *camera_trsf = m_cameras.at(m_camera_index)->get_trsf();
     //Camera Translation
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
         glm::vec3 dir;
@@ -124,7 +124,7 @@ void SceneLand::process_input(GLFWwindow *window, float delta_time) {
     }
     if (!camera_trsf->is_up_to_date()) camera_trsf->compute();
 
-    Transform *ball_trsf = m_ball->get_trsfs_general()[0];
+    Transform *ball_trsf = m_ball->get_trsf();
     glm::vec3 translate_ball;
     //Scene rotation
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
@@ -142,8 +142,3 @@ void SceneLand::process_input(GLFWwindow *window, float delta_time) {
     ball_trsf->set_translation(ball_trsf->get_translation() + translate_ball);
     if (!ball_trsf->is_up_to_date()) ball_trsf->compute();
 }
-
-SceneLand::~SceneLand() {
-    delete m_ball;
-}
-

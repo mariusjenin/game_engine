@@ -70,8 +70,8 @@ int main() {
 
     //CREATE THE SCENE
 //    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
-    SimpleScene scene = SimpleScene("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
-//    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl");
+//    SimpleScene scene = SimpleScene("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
+    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl");
     scene.setup();
     Shaders *shaders = scene.get_shaders();
     GLuint program_id = shaders->get_program_id();

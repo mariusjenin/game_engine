@@ -18,15 +18,7 @@ namespace scene_graph {
     /// Base Node of the scene graph
     class NodeSG : public ElementSG {
     private:
-
-        /// Transform list applied only to the NodeSG and after the general Transform list
-        std::vector<Transform *> m_trsfs_self_after;
-        /// Transform list applied only to the NodeSG and before the general Transform list
-        std::vector<Transform *> m_trsfs_self_before;
-        /// Transform list applied only to the children and after the general Transform list
-        std::vector<Transform *> m_trsfs_children_after;
-        /// Transform list applied only to the children and after the general Transform list
-        std::vector<Transform *> m_trsfs_children_before;
+        Transform * m_local_trsf;
         std::vector<Mesh *> m_meshes;
         Material *m_material{};
         bool m_has_material;
@@ -44,52 +36,10 @@ namespace scene_graph {
         NodeSG(Shaders *shaders, ElementSG *parent, std::string name = "");
 
         /**
-         * Getter of the Transform list for itself after general Transform list (see declaration)
-         * @return trsfs
+         * Getter of the local transformation matrix of the NodeSG
+         * @return trsf
          */
-        std::vector<Transform *> get_trsfs_self_after();
-
-        /**
-         * Getter of the Transform list for itself before general Transform list (see declaration)
-         * @return trsfs
-         */
-        std::vector<Transform *> get_trsfs_self_before();
-
-        /**
-         * Getter of the Transform list for children after general Transform list (see declaration)
-         * @return trsfs
-         */
-        std::vector<Transform *> get_trsfs_children_after();
-
-        /**
-         * Getter of the Transform list for children before general Transform list (see declaration)
-         * @return trsfs
-         */
-        std::vector<Transform *> get_trsfs_children_before();
-
-        /**
-         * Setter of the Transform list for itself after general Transform list (see declaration)
-         * @param trsfs
-         */
-        void set_trsfs_self_after(std::vector<Transform *> trsfs);
-
-        /**
-         * Setter of the Transform list for itself before general Transform list (see declaration)
-         * @param trsfs
-         */
-        void set_trsfs_self_before(std::vector<Transform *> trsfs);
-
-        /**
-         * Setter of the Transform list for children after general Transform list (see declaration)
-         * @param trsfs
-         */
-        void set_trsfs_children_after(std::vector<Transform *> trsfs);
-
-        /**
-         * Setter of the Transform list for children before general Transform list (see declaration)
-         * @param trsfs
-         */
-        void set_trsfs_children_before(std::vector<Transform *> trsfs);
+        Transform* get_local_trsf();
 
         /**
          * Setter of the \link mesh::Mesh Mesh\endlink list of the NodeSG
@@ -109,13 +59,13 @@ namespace scene_graph {
          */
         const std::vector<Mesh *> &get_meshes() const;
 
-        glm::mat4 get_matrix_recursive_extern() override;
+        glm::mat4 get_matrix_recursive() override;
 
         /**
          * Give the matrix for the NodeSG (recursive function)
          * @return matrix
          */
-        glm::mat4 get_matrix_recursive_intern();
+        glm::mat4 get_matrix_recursive_local();
 
         /**
          * Gives the center of the NodSG (mean of each \link mesh::Mesh Mesh\endlink centers)

@@ -5,7 +5,9 @@
 #include "BBFactory.hpp"
 #include "AABB.hpp"
 
-BoundingBox* BBFactory::generate_bb(BB_TYPE bb_type) {
+using namespace physics;
+
+BoundingBox *BBFactory::generate_bb(BB_TYPE bb_type) {
     switch (bb_type) {
         case AABB_TYPE:
             return new AABB();

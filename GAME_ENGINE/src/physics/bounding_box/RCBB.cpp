@@ -4,6 +4,8 @@
 
 #include "RCBB.hpp"
 
+using namespace physics;
+
 void RCBB::compute(std::vector<glm::vec3> vertices) {
     std::pair<glm::vec3, glm::vec3> bb;
     bb.first = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);

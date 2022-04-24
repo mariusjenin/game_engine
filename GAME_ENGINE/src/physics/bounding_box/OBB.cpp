@@ -4,6 +4,8 @@
 
 #include "OBB.hpp"
 
+using namespace physics;
+
 OBB::OBB() {
     m_type = OBB_TYPE;
 }

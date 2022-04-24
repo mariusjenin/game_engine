@@ -4,18 +4,19 @@
 
 #include "PhysicsGeometry.hpp"
 
-//Collision get_data_collision(RCBB, RCBB){
+using namespace physics;
+
+//Collision PhysicsGeometry::get_data_collision(const RCBB &bb1, const RCBB &bb2){
 //    //TODO
 //}
 
-
-Collision get_data_collision(const SphereBB& bb1, const SphereBB& bb2){
+Collision PhysicsGeometry::get_data_collision(const SphereBB &bb1, const SphereBB &bb2) {
     Collision collision;
 
     float sum_radius = bb1.get_radius() + bb2.get_radius();
     glm::vec3 dist = bb2.get_position() - bb1.get_position();
 
-    if((glm::length(dist) * glm::length(dist) - sum_radius*sum_radius ) > 0.f || glm::length(dist) == 0.f)
+    if ((glm::length(dist) * glm::length(dist) - sum_radius * sum_radius) > 0.f || glm::length(dist) == 0.f)
         return collision;                  // pas de collision
 
     dist = glm::normalize(dist);

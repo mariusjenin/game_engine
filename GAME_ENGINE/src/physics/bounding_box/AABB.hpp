@@ -6,11 +6,14 @@
 #define GAME_ENGINE_AABB_H
 
 #include "RCBB.hpp"
-
-class AABB : public RCBB {
-public :
-    AABB();
-};
-
+namespace physics {
+    class AABB : public RCBB {
+    public :
+        /**
+         * Constructor of an AABB
+         */
+        AABB();
+    };
+}
 
 #endif //GAME_ENGINE_AABB_H

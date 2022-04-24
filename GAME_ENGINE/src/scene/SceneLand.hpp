@@ -31,8 +31,6 @@ namespace scene {
          * @param fragment_shader_path
          */
         SceneLand(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
-
-        ~SceneLand() override;
     };
 
 }

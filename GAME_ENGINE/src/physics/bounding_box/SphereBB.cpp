@@ -4,6 +4,8 @@
 
 #include "SphereBB.hpp"
 
+using namespace physics;
+
 void SphereBB::compute(std::vector<glm::vec3> vertices) {
     std::pair<glm::vec3, glm::vec3> bb;
     bb.first = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
@@ -19,7 +21,7 @@ void SphereBB::compute(std::vector<glm::vec3> vertices) {
 
     m_position = (bb.first + bb.second) / 2.f;
     glm::vec3 radius = bb.second - m_position;
-    m_radius = std::max(radius.x,std::max(radius.y,radius.z));
+    m_radius = std::max(radius.x, std::max(radius.y, radius.z));
 }
 
 float SphereBB::get_radius() const {

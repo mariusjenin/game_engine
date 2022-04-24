@@ -19,6 +19,7 @@
 #include <src/physics/bounding_box/BBFactory.hpp>
 #include <src/physics/bounding_box/BoundingBox.hpp>
 
+using namespace physics;
 namespace mesh {
     /// Datas of a Mesh
     struct MeshData{

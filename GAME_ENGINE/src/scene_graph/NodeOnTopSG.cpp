@@ -21,10 +21,10 @@ bool NodeOnTopSG::get_data_on(glm::vec3 pos_camera, glm::vec3 &position, glm::ve
     std::pair<glm::vec3, glm::vec3> bb = get_aabb(pos_camera);
     glm::vec3 center = get_center(pos_camera);
     Transform trsf = Transform();
-    trsf.set_matrix(get_matrix_recursive_intern());
+    trsf.set_matrix(get_matrix_recursive_local());
     center = trsf.apply_to_point(center);
     Transform trsf_on_node = Transform();
-    trsf_on_node.set_matrix(m_on_node->get_matrix_recursive_intern());
+    trsf_on_node.set_matrix(m_on_node->get_matrix_recursive_local());
     for (Mesh *mesh: meshes) {
         mesh->update_mesh(get_distance_from(pos_camera, pos_camera));
         if (mesh->get_data_at_coords(glm::vec2(center[0], center[2]), trsf_on_node, position, uv, normal)) {
@@ -49,7 +49,7 @@ void NodeOnTopSG::draw(glm::vec3 pos_camera) {
     glUniform3fv(shader_data_manager->get_location(ShadersDataManager::ON_TOP_NORMAL_LOC_NAME), 1, &normal[0]);
     glUniform1i(shader_data_manager->get_location(ShadersDataManager::IS_NODE_ON_TOP_LOC_NAME), is_on_top_bounds);
     glUniformMatrix4fv(shader_data_manager->get_location(ShadersDataManager::ON_TOP_MODEL_LOC_NAME), 1, GL_FALSE,
-                       &m_on_node->get_matrix_recursive_intern()[0][0]);
+                       &m_on_node->get_matrix_recursive_local()[0][0]);
     NodeSG::draw(pos_camera);
 }
 

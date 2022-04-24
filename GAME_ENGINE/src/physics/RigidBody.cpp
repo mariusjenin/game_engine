@@ -4,4 +4,6 @@
 
 #include "RigidBody.hpp"
 
+using namespace physics;
+
 RigidBody::~RigidBody() = default;

@@ -16,40 +16,27 @@ NodeSG::NodeSG(Shaders *shaders, ElementSG *parent, std::string name)
         : ElementSG(shaders, std::move(name)) {
     m_parent = parent;
     m_parent->add_child(this);
-    m_trsfs_self_after = {};
-    m_trsfs_children_after = {};
-    m_trsfs_self_before = {};
-    m_trsfs_children_before = {};
+    m_local_trsf = new Transform();
     m_has_material = false;
     m_is_node_on_top = false;
     m_see_both_face = false;
 }
 
-glm::mat4 NodeSG::get_matrix_recursive_extern() {
-    glm::mat4 mat = m_parent->get_matrix_recursive_extern();
-    for (auto trsf: m_trsfs_children_after) {
-        mat *= trsf->get_matrix();
-    }
-    for (auto trsf: m_trsfs_general) {
-        mat *= trsf->get_matrix();
-    }
-    for (auto trsf: m_trsfs_children_before) {
-        mat *= trsf->get_matrix();
-    }
+glm::mat4 NodeSG::get_matrix_recursive() {
+    glm::mat4 mat = m_parent->get_matrix_recursive();
+
+    mat *= m_trsf->get_matrix();
+
     return mat;
 }
 
-glm::mat4 NodeSG::get_matrix_recursive_intern() {
-    glm::mat4 mat = m_parent->get_matrix_recursive_extern();
-    for (auto trsf: m_trsfs_self_after) {
-        mat *= trsf->get_matrix();
-    }
-    for (auto trsf: m_trsfs_general) {
-        mat *= trsf->get_matrix();
-    }
-    for (auto trsf: m_trsfs_self_before) {
-        mat *= trsf->get_matrix();
-    }
+glm::mat4 NodeSG::get_matrix_recursive_local() {
+    glm::mat4 mat = m_parent->get_matrix_recursive();
+
+    mat *= m_trsf->get_matrix();
+
+    mat *= m_local_trsf->get_matrix();
+
     return mat;
 }
 
@@ -63,7 +50,7 @@ void NodeSG::draw(glm::vec3 pos_camera) {
         glEnable(GL_CULL_FACE);
     }
     //Model matrix and Normal model (if non scalar transform)
-    glm::mat4 model = get_matrix_recursive_intern();
+    glm::mat4 model = get_matrix_recursive_local();
     glm::mat4 normal_model = glm::transpose(glm::inverse(model));
     glUniformMatrix4fv(shader_data_manager->get_location(ShadersDataManager::MODEL_MAT_LOC_NAME), 1, GL_FALSE,
                        &model[0][0]);
@@ -96,56 +83,11 @@ NodeSG::~NodeSG() {
         delete mesh;
     }
     m_meshes.clear();
-    for (auto trsf: m_trsfs_self_after) {
-        delete trsf;
-    }
-    m_trsfs_self_after.clear();
-    for (auto trsf: m_trsfs_self_before) {
-        delete trsf;
-    }
-    m_trsfs_self_before.clear();
-    for (auto trsf: m_trsfs_children_after) {
-        delete trsf;
-    }
-    m_trsfs_children_after.clear();
-    for (auto trsf: m_trsfs_children_before) {
-        delete trsf;
-    }
-    m_trsfs_children_before.clear();
+    delete m_local_trsf;
+
     delete m_parent;
 }
 
-std::vector<Transform *> NodeSG::get_trsfs_self_after() {
-    return m_trsfs_self_after;
-}
-
-std::vector<Transform *> NodeSG::get_trsfs_self_before() {
-    return m_trsfs_self_before;
-}
-
-std::vector<Transform *> NodeSG::get_trsfs_children_after() {
-    return m_trsfs_children_after;
-}
-
-std::vector<Transform *> NodeSG::get_trsfs_children_before() {
-    return m_trsfs_children_before;
-}
-
-void NodeSG::set_trsfs_self_after(std::vector<Transform *> trsfs) {
-    m_trsfs_self_after = std::move(trsfs);
-}
-
-void NodeSG::set_trsfs_self_before(std::vector<Transform *> trsfs) {
-    m_trsfs_self_before = std::move(trsfs);
-}
-
-void NodeSG::set_trsfs_children_after(std::vector<Transform *> trsfs) {
-    m_trsfs_children_after = std::move(trsfs);
-}
-
-void NodeSG::set_trsfs_children_before(std::vector<Transform *> trsfs) {
-    m_trsfs_children_before = std::move(trsfs);
-}
 
 void NodeSG::set_meshes(std::vector<Mesh *> meshes) {
     m_meshes = std::move(meshes);
@@ -162,26 +104,14 @@ void NodeSG::set_see_both_face(bool see_both_face) {
 
 glm::vec3 NodeSG::get_position_in_world(glm::vec3 center) {
     Transform trsf = Transform();
-    trsf.set_matrix(get_matrix_recursive_intern());
+    trsf.set_matrix(get_matrix_recursive_local());
     return trsf.apply_to_point(center);
 }
 
 void NodeSG::compute_trsf_scene_graph() {
 
-    for (auto trsf: m_trsfs_self_before) {
-        trsf->compute();
-    }
+    m_local_trsf->compute();
 
-    for (auto trsf: m_trsfs_self_after) {
-        trsf->compute();
-    }
-    for (auto trsf: m_trsfs_children_before) {
-        trsf->compute();
-    }
-
-    for (auto trsf: m_trsfs_children_after) {
-        trsf->compute();
-    }
     ElementSG::compute_trsf_scene_graph();
 }
 
@@ -205,7 +135,7 @@ std::pair<glm::vec3, glm::vec3> NodeSG::get_aabb(glm::vec3 pos_camera) {
     bb.second = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
     Transform trsf = Transform();
-    trsf.set_matrix(get_matrix_recursive_intern());
+    trsf.set_matrix(get_matrix_recursive_local());
     for (auto mesh: m_meshes) {
 
         mesh->update_mesh(glm::distance(get_position_in_world(mesh->get_center()), pos_camera));
@@ -251,6 +181,10 @@ float NodeSG::get_distance_from(glm::vec3 cam_position, glm::vec3 position) {
         }
     }
     return std::max(min_vals[0], std::max(min_vals[1], min_vals[2]));
+}
+
+Transform *NodeSG::get_local_trsf() {
+    return m_local_trsf;
 }
 
 

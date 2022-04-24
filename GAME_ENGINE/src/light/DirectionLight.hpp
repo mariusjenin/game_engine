@@ -7,17 +7,16 @@
 
 
 #include "Light.hpp"
+#include "DirectionLightBehavior.hpp"
 
 
 namespace light {
 
     /// Light with a direction
     class DirectionLight : public virtual Light {
-    private:
-        glm::vec3 m_direction;
     public:
         /**
-         * Construct a Direction Light (A light with a direction)
+         * Construct a Direction Light (has a DirectionLightBehavior)
          * @param ambient
          * @param diffuse
          * @param specular

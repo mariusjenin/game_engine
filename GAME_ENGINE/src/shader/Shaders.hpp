@@ -1,6 +1,3 @@
-//
-// Created by mariusjenin on 21/03/2022.
-//
 
 #ifndef GAME_ENGINE_SHADERS_HPP
 #define GAME_ENGINE_SHADERS_HPP

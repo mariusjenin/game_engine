@@ -16,11 +16,7 @@ ElementSG::ElementSG(Shaders *shaders, std::string name) {
     m_shaders = shaders;
     m_children = {};
     m_name = std::move(name);
-    m_trsfs_general = {};
-}
-
-std::vector<Transform *> ElementSG::get_trsfs_general() {
-    return m_trsfs_general;
+    m_trsf = new Transform();
 }
 
 void ElementSG::add_child(NodeSG *node) {
@@ -62,10 +58,7 @@ ElementSG::~ElementSG() {
         delete m_child;
     }
     m_children.clear();
-    for (auto m_trsf: m_trsfs_general) {
-        delete m_trsf;
-    }
-    m_trsfs_general.clear();
+    delete m_trsf;
     m_uniform_1i.clear();
 }
 
@@ -73,17 +66,14 @@ void ElementSG::add_uniform_1i(GLint location, int val) {
     m_uniform_1i[location] = val;
 }
 
-void ElementSG::set_trsfs_general(std::vector<Transform *> trsfs) {
-    m_trsfs_general = std::move(trsfs);
-}
-
 void ElementSG::compute_trsf_scene_graph() {
-
-    for (auto trsf: m_trsfs_general) {
-        trsf->compute();
-    }
+    m_trsf->compute();
 
     for (auto child: m_children) {
         child->compute_trsf_scene_graph();
     }
+}
+
+Transform *ElementSG::get_trsf() {
+    return m_trsf;
 }
