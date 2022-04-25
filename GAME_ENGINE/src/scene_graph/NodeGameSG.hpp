@@ -16,6 +16,7 @@ using namespace mesh;
 using namespace material;
 
 namespace scene_graph {
+    ///NodeSG that can have \link mesh::Mesh Meshes\endlink, light and camera
     class NodeGameSG : public NodeSG {
 
     #define CAMERA_INIT_POSITION glm::vec3(0, 0, 0)
@@ -31,7 +32,7 @@ namespace scene_graph {
         BB_TYPE m_bb_type;
     public:
         /**
-         * Constructor of the NodeSG
+         * Constructor of the NodeGameSG
          * @param shaders
          * @param parent parent in the scene graph
          * @param name
@@ -39,7 +40,7 @@ namespace scene_graph {
         NodeGameSG(Shaders *shaders, ElementSG *parent, BB_TYPE bb_type = AABB_TYPE);
 
         /**
-         * Refresh the BoundingBox
+         * Refresh the BoundingBox of the NodeGameSG
          * @param pos_camera
          */
         void refresh_bb(glm::vec3 pos_camera);
@@ -75,25 +76,25 @@ namespace scene_graph {
 
         void draw(glm::vec3 pos_camera) override;
         /**
-        * Setter of the \link mesh::Mesh Mesh\endlink list of the NodeSG
+        * Setter of the \link mesh::Mesh Mesh\endlink list of the NodeGameSG
         * @param meshes
         */
         void set_meshes(std::vector<Mesh *> meshes);
 
         /**
-         * Setter of the material applied to the NodeSG
+         * Setter of the material applied to the NodeGameSG
          * @param material
          */
         void set_material(Material *material);
 
         /**
-         * Getter of the \link mesh::Mesh Mesh\endlink list of the NodeSG
+         * Getter of the \link mesh::Mesh Mesh\endlink list of the NodeGameSG
          * @return meshes
          */
         const std::vector<Mesh *> &get_meshes() const;
 
         /**
-        * Gives the center of the NodSG (mean of each \link mesh::Mesh Mesh\endlink centers)
+        * Gives the center of the NodeGameSG (mean of each \link mesh::Mesh Mesh\endlink centers)
         * @param pos_camera
         * @return center
         */
@@ -106,7 +107,7 @@ namespace scene_graph {
         void set_see_both_face(bool see_both_face);
 
         /**
-         * Gives the aligned axis bounding box of the node (bounding box of \link mesh::Mesh Mesh\endlink bounding boxes)
+         * Gives the aligned axis bounding box of the NodeGameSG (bounding box of \link mesh::Mesh Mesh\endlink bounding boxes)
          * @param pos_camera
          * @return bounding_box
          */

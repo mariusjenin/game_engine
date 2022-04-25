@@ -8,7 +8,7 @@
 #include "NodeGameSG.hpp"
 
 namespace scene_graph {
-    /// NodeSG on top of another
+    /// NodeGameSG on top of another
     class NodeOnTopSG : public NodeGameSG {
     private:
         NodeGameSG *m_on_node;
@@ -17,13 +17,13 @@ namespace scene_graph {
          * Constructor of NodeOnTopSG
          * @param shaders
          * @param parent
-         * @param on_node NodeSG under
+         * @param on_node NodeGameSG under
          * @param name
          */
         NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeGameSG *on_node, BB_TYPE bb_type = AABB_TYPE);
 
         /**
-         * Compute the data according to the NodeSG under
+         * Compute the data according to the NodeGameSG under
          * @param pos_camera
          * @param position
          * @param uv
