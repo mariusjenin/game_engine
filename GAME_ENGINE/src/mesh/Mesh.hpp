@@ -49,7 +49,7 @@ namespace mesh {
         std::vector<glm::vec2> m_vertex_tex_coords;
         std::vector<glm::vec3> m_vertex_normals;
 
-        BoundingBox* m_bb;
+        BoundingBox* m_bb{};
         glm::vec3 m_center;
 
         GLuint m_vao_id{};
@@ -70,7 +70,7 @@ namespace mesh {
          * @param load_data_now
          * @param bb_type
          */
-        Mesh(const MeshData& md, bool load_data_now = true, BB_TYPE bb_type = AABB_TYPE);
+        explicit Mesh(const MeshData& md, bool load_data_now = true, BB_TYPE bb_type = AABB_TYPE);
 
         /// Load Mesh datas in his VAO
         void load_mesh_in_vao();

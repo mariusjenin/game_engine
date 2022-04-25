@@ -1,8 +1,17 @@
 #include "RigidBodyVolume.hpp"
+#include "Collision.hpp"
+#include "src/utils/printer.hpp"
+#include <glm/gtx/matrix_decompose.hpp>
 
 using namespace physics;
+using namespace scene_graph;
 
-RigidBodyVolume::RigidBodyVolume() = default;
+RigidBodyVolume::RigidBodyVolume(NodeGameSG *ng,float mass, float friction, float cor) {
+    m_node_game = ng;
+    m_mass = mass;
+    m_friction = friction;
+    m_cor = cor;
+}
 
 RigidBodyVolume::~RigidBodyVolume() = default;
 
@@ -13,8 +22,37 @@ void RigidBodyVolume::update(float delta_time) {
     m_velocity += acceleration * delta_time;
     m_velocity *= damping;
 
-    m_position += m_velocity * delta_time;
-    synchro_collision_volumes();
+    // recup la matrice monde du noeud
+    // Appliquer le mouvement
+    // calculer l'inverse de la matrice resultante
+    // retrouver la translation et la rotation
+
+//    m_position += m_velocity * delta_time;
+
+    glm::vec3 translation_modification_world = m_velocity * delta_time;
+    //TODO
+//    //Get the local to world matrix
+//    glm::mat4 mat_world = ((NodeSG *) m_node_game)->get_matrix_recursive_local();
+//    //inverse it
+//    glm::mat4 inv_mat_world = glm::inverse(mat_world);
+//    print_mat4(mat_world);
+//    print_mat4(inv_mat_world);
+//
+//    //Get the translation modification and get it in the local space of the node
+//    Transform local_trsf = Transform();
+//    local_trsf.set_matrix(inv_mat_world);
+//    glm::vec3 translation_modification = local_trsf.apply_to_point(translation_modification_world);
+//    //Apply this modification
+//    glm::vec3 translation_base = ((NodeSG *) m_node_game)->get_trsf()->get_translation();
+//
+//
+//    print_mat4(mat_world);
+//    print_mat4(inv_mat_world);
+//
+//        std::cout<< m_node_game->get_bb()->get_position()[1]<< std::endl;
+    ((NodeSG *) m_node_game)->get_trsf()->set_translation(
+            ((NodeSG *) m_node_game)->get_trsf()->get_translation() + translation_modification_world);
+    ((NodeSG *) m_node_game)->get_trsf()->compute();
 }
 
 void RigidBodyVolume::apply_forces() {
@@ -22,29 +60,28 @@ void RigidBodyVolume::apply_forces() {
 }
 
 Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
-    switch (m_bb->get_type()) {
+    Collision collision;
+
+    BoundingBox *bb1 = m_node_game->get_bb();
+    BoundingBox *bb2 = rbv.m_node_game->get_bb();
+    switch (bb1->get_type()) {
         case SphereBB_TYPE:
-            switch (m_bb->get_type()) {
+            switch (bb2->get_type()) {
                 case SphereBB_TYPE:
-                    return PhysicsGeometry::get_data_collision((SphereBB &) *m_bb, (SphereBB &) *rbv.get_bb());
+                    collision = ((SphereBB &) *bb1).get_data_collision((SphereBB &) *bb2);
+//                    collision = PhysicsGeometry::get_data_collision((SphereBB &) *bb1, (SphereBB &) *bb2);
+                    break;
                 default:
                     break;
             }
             break;
         default:
+            collision = Collision();
             break;
     }
-    Collision res;
-    res.reset();
-    return res;
-}
-
-BoundingBox *RigidBodyVolume::get_bb() const {
-    return m_bb;
-}
-
-void RigidBodyVolume::synchro_collision_volumes() {
-    m_bb->set_position(m_position);
+    collision.rigid_body_1 = this;
+    collision.rigid_body_2 = &rbv;
+    return collision;
 }
 
 float RigidBodyVolume::inverse_mass() const {
@@ -59,7 +96,7 @@ void RigidBodyVolume::add_linear_impulse(glm::vec3 &impulse) {
     m_velocity += impulse;
 }
 
-void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, Collision c) {
+void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &collision) {
     float inv_ma = inverse_mass();
     float inv_mb = rbv.inverse_mass();
 
@@ -67,7 +104,7 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, Collision c) {
         return;
 
     glm::vec3 rel_velocity = rbv.m_velocity - m_velocity;
-    glm::vec3 rel_normal = glm::normalize(c.normal);
+    glm::vec3 rel_normal = glm::normalize(collision.normal);
 
     //Les objets s'éloignent
     if (glm::dot(rel_normal, rel_velocity) > 0.f)
@@ -76,8 +113,8 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, Collision c) {
     float bounce = fminf(m_cor, rbv.m_cor);
     float numerator = (-(1.f + bounce) * glm::dot(rel_normal, rel_velocity));
     float j = numerator / (inv_ma + inv_mb);
-    if (c.contacts.size() >= 0 && j != 0.f) {
-        j /= (float) c.contacts.size();
+    if (collision.contacts.size() >= 0 && j != 0.f) {
+        j /= (float) collision.contacts.size();
     }
 
     //impulsion linéaire
@@ -94,8 +131,8 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, Collision c) {
     t = glm::normalize(t);
     numerator = -glm::dot(rel_velocity, t);
     float jt = numerator / (inv_ma + inv_mb);
-    if (c.contacts.size() >= 0 && jt != 0.f) {
-        jt /= (float) c.contacts.size();
+    if (collision.contacts.size() >= 0 && jt != 0.f) {
+        jt /= (float) collision.contacts.size();
     }
 
     float friction = sqrtf(m_friction * rbv.m_friction);
@@ -108,4 +145,8 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, Collision c) {
     glm::vec3 tan_impulse = t * jt;
     m_velocity -= tan_impulse * inv_ma;
     rbv.m_velocity += tan_impulse * inv_mb;
+}
+
+NodeGameSG *RigidBodyVolume::get_node() {
+    return m_node_game;
 }

@@ -81,7 +81,7 @@ add_executable(
 		src/scene/SolarSystem.cpp src/scene/SolarSystem.hpp
 		src/scene/SceneLand.cpp src/scene/SceneLand.hpp
 		src/scene/Scene.cpp src/scene/Scene.hpp
-		src/scene/SimpleScene.cpp src/scene/SimpleScene.hpp
+		src/scene/BounceScene.cpp src/scene/BounceScene.hpp
 #		MATERIAL
 		src/material/Material.cpp src/material/Material.hpp
 		src/material/MaterialColor.cpp src/material/MaterialColor.hpp
@@ -105,7 +105,8 @@ add_executable(
 		src/physics/bounding_box/SphereBB.cpp src/physics/bounding_box/SphereBB.hpp
 		src/physics/bounding_box/BBFactory.cpp src/physics/bounding_box/BBFactory.hpp
 		src/physics/RigidBodyVolume.cpp src/physics/RigidBodyVolume.hpp
-		src/physics/PhysicsGeometry.cpp src/physics/PhysicsGeometry.hpp
+		src/physics/Collision.cpp src/physics/Collision.hpp
+		src/physics/PhysicsSystem.cpp src/physics/PhysicsSystem.hpp
 		)
 target_link_libraries(main
 	${ALL_LIBS}

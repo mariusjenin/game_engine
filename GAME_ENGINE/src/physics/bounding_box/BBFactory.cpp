@@ -4,6 +4,7 @@
 
 #include "BBFactory.hpp"
 #include "AABB.hpp"
+#include "SphereBB.hpp"
 
 using namespace physics;
 
@@ -12,7 +13,7 @@ BoundingBox *BBFactory::generate_bb(BB_TYPE bb_type) {
         case AABB_TYPE:
             return new AABB();
         case SphereBB_TYPE:
-            return new AABB();
+            return new SphereBB();
         default:
             return nullptr;
     }

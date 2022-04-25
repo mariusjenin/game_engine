@@ -38,7 +38,7 @@ SceneLand::SceneLand(const std::string &vertex_shader_path, const std::string &f
     auto *ball_mesh = new LODMesh(create_sphere(1, 60, 60), 10, 50, 60, 5, 6);
 
     //Land
-    auto *land_node = new NodeGameSG(m_shaders, m_root, "LAND");
+    auto *land_node = new NodeGameSG(m_shaders, m_root);
     land_node->set_material(new MaterialTexture(m_shaders, id_land_texture));
     land_node->get_local_trsf()->set_scale({5, 5, 5});
     land_node->set_meshes({land_mesh});

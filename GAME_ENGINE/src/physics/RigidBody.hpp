@@ -1,6 +1,3 @@
-//
-// Created by mariusjenin on 07/04/2022.
-//
 
 #ifndef GAME_ENGINE_RIGIDBODY_H
 #define GAME_ENGINE_RIGIDBODY_H

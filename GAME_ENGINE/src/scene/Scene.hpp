@@ -13,6 +13,7 @@
 #include <src/utils/meshloader.hpp>
 #include <src/utils/texture.hpp>
 #include <src/utils/meshloader.hpp>
+#include <src/physics/PhysicsSystem.hpp>
 #include "src/shader/Shaders.hpp"
 
 using namespace scene_graph;
@@ -20,13 +21,12 @@ namespace scene {
     /// Base %Scene (Abstract)
     class Scene {
     protected :
-        static constexpr const char *ROOT_NAME = "root";
-
         RootSG *m_root{};
         std::vector<NodeGameSG *> m_cameras;
         std::vector<NodeGameSG *> m_lights;
         int m_camera_index{};
         Shaders *m_shaders{};
+        PhysicsSystem m_physics_system;
 
         /**
          * Process the input of the user to have actions on the Scene

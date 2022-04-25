@@ -20,7 +20,7 @@ namespace scene_graph {
          * @param on_node NodeSG under
          * @param name
          */
-        NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeGameSG *on_node, std::string name = "");
+        NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeGameSG *on_node, BB_TYPE bb_type = AABB_TYPE);
 
         /**
          * Compute the data according to the NodeSG under

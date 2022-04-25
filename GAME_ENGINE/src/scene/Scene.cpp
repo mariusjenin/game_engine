@@ -18,12 +18,14 @@ Scene::~Scene() {
 }
 
 void Scene::update(GLFWwindow *window, float delta_time) {
-    process_input(window, delta_time);
-
     //CAMERA
     NodeGameSG *camera_node = m_cameras[m_camera_index];
     camera_node->update_view_mat();
     camera_node->update_view_pos();
+
+    process_input(window, delta_time);
+
+    m_physics_system.update(camera_node->get_position_in_world(),delta_time);
 }
 
 Scene::Scene(const std::string &vertex_shader_path, const std::string &fragment_shader_path) {
@@ -31,10 +33,12 @@ Scene::Scene(const std::string &vertex_shader_path, const std::string &fragment_
     GLuint program_id = m_shaders->get_program_id();
     glUseProgram(program_id);
 
+    m_physics_system = PhysicsSystem();
+
     m_camera_index = 0;
 
     //ROOT
-    m_root = new RootSG(m_shaders, ROOT_NAME);
+    m_root = new RootSG(m_shaders);
 
     //LOCATION DATA
     m_shaders->load_location();
@@ -47,7 +51,7 @@ Scene::Scene(const std::string &vertex_shader_path, const std::string &fragment_
 }
 
 void Scene::setup() {
-    //COMPUTE ALL TRASNFORMATIONS
+    //COMPUTE ALL TRANSFORMATIONS
     m_root->compute_trsf_scene_graph();
 
     //LOAD LIGHTS

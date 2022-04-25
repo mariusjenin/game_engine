@@ -24,7 +24,7 @@ namespace scene_graph {
          * @param parent parent in the scene graph
          * @param name
          */
-        NodeSG(Shaders *shaders, ElementSG *parent, std::string name = "");
+        NodeSG(Shaders *shaders, ElementSG *parent);
     public:
 
         /**

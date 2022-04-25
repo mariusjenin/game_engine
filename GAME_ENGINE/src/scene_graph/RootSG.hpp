@@ -14,7 +14,7 @@ namespace scene_graph {
          * @param shaders
          * @param name
          */
-        explicit RootSG(Shaders *shaders, std::string name = "");
+        explicit RootSG(Shaders *shaders);
 
         glm::mat4 get_matrix_recursive() override;
 

@@ -11,39 +11,14 @@
 
 using namespace scene_graph;
 
-ElementSG::ElementSG(Shaders *shaders, std::string name) {
+ElementSG::ElementSG(Shaders *shaders) {
     m_shaders = shaders;
     m_children = {};
-    m_name = std::move(name);
     m_trsf = new Transform();
 }
 
 void ElementSG::add_child(NodeSG *node) {
     m_children.push_back(node);
-}
-
-bool ElementSG::find_node_by_name(ElementSG **elem, const std::string &name) {
-    for (auto m_child: m_children) {
-        if (m_child->is_name(name)) {
-            *elem = m_child;
-            return true;
-        }
-    }
-    //Try recursively
-    for (auto m_child: m_children) {
-        if (m_child->find_node_by_name(elem, name)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-std::string ElementSG::get_name() {
-    return m_name;
-}
-
-bool ElementSG::is_name(const std::string &name) {
-    return name == m_name;
 }
 
 void ElementSG::draw(glm::vec3 pos_camera) {

@@ -6,10 +6,8 @@
 
 using namespace scene_graph;
 
-NodeOnTopSG::NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeGameSG *on_node, std::string name) : NodeGameSG(shaders,
-                                                                                                          parent,
-                                                                                                          std::move(
-                                                                                                                  name)) {
+NodeOnTopSG::NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeGameSG *on_node,  BB_TYPE bb_type) : NodeGameSG(shaders,
+                                                                                                          parent,bb_type) {
     m_on_node = on_node;
 }
 

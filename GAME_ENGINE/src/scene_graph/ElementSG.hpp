@@ -22,7 +22,6 @@ namespace scene_graph {
     /// Base Element of the scene graph (Abstract)
     class ElementSG {
     protected:
-        std::string m_name;
         /// Transformation applied to the ElementSG and all the children
         Transform * m_trsf;
         Shaders *m_shaders;
@@ -57,34 +56,13 @@ namespace scene_graph {
          * @param shaders
          * @param name
          */
-        explicit ElementSG(Shaders *shaders, std::string name = "");
-
-        /**
-         * Getter of the name of the ElementSG
-         * @return name
-         */
-        std::string get_name();
+        explicit ElementSG(Shaders *shaders);
 
         /**
          * Getter of the transformation matrix of the ElementSG
          * @return trsf
          */
         Transform* get_trsf();
-
-        /**
-         * Test if the name is equal to a given other one
-         * @param name
-         * @return is_same_name
-         */
-        bool is_name(const std::string &name);
-
-        /**
-         * Find recursively among the children if one as a given name
-         * @param elem
-         * @param name
-         * @return is_found
-         */
-        bool find_node_by_name(ElementSG **elem, const std::string &name);
 
         /**
          * Give the matrix for an extern object (like a child) (recursive function)

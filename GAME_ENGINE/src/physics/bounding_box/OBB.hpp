@@ -14,6 +14,10 @@ namespace physics {
          * Constructor of an OBB
          */
         OBB();
+
+        Collision get_data_collision(const SphereBB &bb) override;
+        Collision get_data_collision(const AABB &bb) override;
+        Collision get_data_collision(const OBB &bb) override;
     };
 
 }

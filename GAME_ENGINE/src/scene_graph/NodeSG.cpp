@@ -12,8 +12,8 @@
 
 using namespace scene_graph;
 
-NodeSG::NodeSG(Shaders *shaders, ElementSG *parent, std::string name)
-        : ElementSG(shaders, std::move(name)) {
+NodeSG::NodeSG(Shaders *shaders, ElementSG *parent)
+        : ElementSG(shaders) {
     m_parent = parent;
     m_parent->add_child(this);
     m_local_trsf = new Transform();

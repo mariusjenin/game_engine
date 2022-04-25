@@ -18,9 +18,6 @@ namespace scene {
         static const int SUN_ID = 0;
         static const int EARTH_ID = 1;
         static const int MOON_ID = 2;
-        static constexpr const char *SUN_NAME = "sun";
-        static constexpr const char *EARTH_NAME = "earth";
-        static constexpr const char *MOON_NAME = "moon";
 
         static constexpr const char *SUN_LOC_NAME = "SUN_ID";
         static constexpr const char *EARTH_LOC_NAME = "EARTH_ID";

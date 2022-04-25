@@ -7,6 +7,7 @@
 #include <utility>
 
 using namespace scene_graph;
+using namespace physics;
 
 void NodeGameSG::draw(glm::vec3 pos_camera) {
 
@@ -118,10 +119,11 @@ float NodeGameSG::get_distance_from(glm::vec3 cam_position, glm::vec3 position) 
     return std::max(min_vals[0], std::max(min_vals[1], min_vals[2]));
 }
 
-NodeGameSG::NodeGameSG(Shaders *shaders, ElementSG *parent, std::string name) : NodeSG(shaders, parent, std::move(name)) {
+NodeGameSG::NodeGameSG(Shaders *shaders, ElementSG *parent, BB_TYPE bb_type) : NodeSG(shaders, parent) {
     m_see_both_face = false;
     m_has_material = false;
     m_light = nullptr;
+    m_bb_type = bb_type;
 }
 
 void NodeGameSG::set_light(Light *light) {
@@ -178,4 +180,24 @@ LightShader NodeGameSG::generate_light_struct() {
         light_struct.position = glsl_vec3(light_position_tmp);
     }
     return light_struct;
+}
+
+void NodeGameSG::refresh_bb(glm::vec3 pos_camera) {
+    m_bb = BBFactory::generate_bb(m_bb_type);
+    std::vector<BoundingBox*> bbs = {};
+    //Compute bounding box of childs TODO
+    for(auto mesh : m_meshes){
+        mesh->update_mesh(glm::distance(get_position_in_world(mesh->get_center()), pos_camera));
+        bbs.push_back(mesh->get_bb());
+    }
+    m_bb->compute(bbs);
+
+    Transform trsf = Transform();
+    trsf.set_matrix(get_matrix_recursive_local());
+    glm::vec3 pos = m_bb->get_position();
+    m_bb->set_position(trsf.apply_to_point(pos));
+}
+
+BoundingBox* NodeGameSG::get_bb(){
+    return m_bb;
 }

@@ -6,12 +6,15 @@
 #include "NodeSG.hpp"
 #include <src/material/Material.hpp>
 #include <src/light/Light.hpp>
+#include <src/physics/bounding_box/BoundingBox.hpp>
 #include <src/physics/bounding_box/AABB.hpp>
 #include "src/mesh/Mesh.hpp"
+#include <src/physics/RigidBodyVolume.hpp>
 
 using namespace light;
 using namespace mesh;
 using namespace material;
+
 namespace scene_graph {
     class NodeGameSG : public NodeSG {
 
@@ -24,6 +27,8 @@ namespace scene_graph {
         bool m_has_material;
         bool m_see_both_face;
         Light *m_light;
+        BoundingBox* m_bb{};
+        BB_TYPE m_bb_type;
     public:
         /**
          * Constructor of the NodeSG
@@ -31,7 +36,13 @@ namespace scene_graph {
          * @param parent parent in the scene graph
          * @param name
          */
-        NodeGameSG(Shaders *shaders, ElementSG *parent, std::string name = "");
+        NodeGameSG(Shaders *shaders, ElementSG *parent, BB_TYPE bb_type = AABB_TYPE);
+
+        /**
+         * Refresh the BoundingBox
+         * @param pos_camera
+         */
+        void refresh_bb(glm::vec3 pos_camera);
 
         /**
          * Set a light at this NodeGameSG
@@ -109,6 +120,12 @@ namespace scene_graph {
          * @return distance
          */
         float get_distance_from(glm::vec3 cam_position, glm::vec3 position);
+
+        /**
+         * Getter of the BoundingBox
+         * @return bb
+         */
+        BoundingBox *get_bb();
     };
 }
 

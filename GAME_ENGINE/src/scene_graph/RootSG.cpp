@@ -18,6 +18,6 @@ void RootSG::draw(glm::vec3 pos_camera) {
     ElementSG::draw(pos_camera);
 }
 
-RootSG::RootSG(Shaders *shaders, std::string name) : ElementSG(shaders, std::move(name)) {
+RootSG::RootSG(Shaders *shaders) : ElementSG(shaders) {
 
 }

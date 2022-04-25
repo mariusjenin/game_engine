@@ -81,7 +81,7 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     //EARTH
     m_earth1 = new NodeGameSG(m_shaders, (ElementSG *) m_sun);
     m_earth2 = new NodeGameSG(m_shaders, (ElementSG *) m_earth1);
-    m_earth3 = new NodeGameSG(m_shaders, (ElementSG *) m_earth2, EARTH_NAME);
+    m_earth3 = new NodeGameSG(m_shaders, (ElementSG *) m_earth2);
     m_earth3->get_local_trsf()->set_rotation({-90, 180, -tilt_earth});
     m_earth3->get_local_trsf()->set_order_rotation(ORDER_ZYX);
     m_earth1->get_trsf()->set_rotation({0, 0, -inclination_sun_earth});
@@ -93,9 +93,9 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     m_earth3->add_uniform_1i(always_enlightened_location, false);
 
     //MOON
-    m_moon1 = new NodeGameSG(m_shaders, (ElementSG *) m_earth3, MOON_NAME);
-    m_moon2 = new NodeGameSG(m_shaders, (ElementSG *) m_moon1, MOON_NAME);
-    m_moon3 = new NodeGameSG(m_shaders, (ElementSG *) m_moon2, MOON_NAME);
+    m_moon1 = new NodeGameSG(m_shaders, (ElementSG *) m_earth3);
+    m_moon2 = new NodeGameSG(m_shaders, (ElementSG *) m_moon1);
+    m_moon3 = new NodeGameSG(m_shaders, (ElementSG *) m_moon2);
     m_moon3->get_local_trsf()->set_rotation({-90, 0, tilt_moon});
     m_moon3->get_local_trsf()->set_order_rotation(ORDER_ZYX);
 //    m_moon->set_trsfs_general({moon_trsf_1, moon_trsf_2, moon_trsf_3});

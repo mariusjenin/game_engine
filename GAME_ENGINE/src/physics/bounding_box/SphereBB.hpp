@@ -8,11 +8,18 @@
 
 #include "BoundingBox.hpp"
 #include <cfloat>
+#include <src/physics/Collision.hpp>
+
 namespace physics {
     class SphereBB : public BoundingBox {
     private:
-        float m_radius;
+        float m_radius{};
     public:
+        /**
+         * Constructor of SphereBB
+         */
+        SphereBB();
+
         void compute(std::vector<glm::vec3> vertices) override;
 
         /**
@@ -20,6 +27,12 @@ namespace physics {
          * @return
          */
         float get_radius() const;
+
+        Collision get_data_collision(const SphereBB &bb) override;
+        Collision get_data_collision(const AABB &bb) override;
+        Collision get_data_collision(const OBB &bb) override;
+
+        AABB* to_AABB() override;
     };
 }
 

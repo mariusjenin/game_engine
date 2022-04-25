@@ -3,6 +3,7 @@
 //
 
 #include "RCBB.hpp"
+#include "AABB.hpp"
 
 using namespace physics;
 
@@ -29,4 +30,9 @@ glm::vec3 RCBB::get_min() {
 
 glm::vec3 RCBB::get_max() {
     return m_position + m_size;
+}
+
+AABB* RCBB::to_AABB() {
+    auto* aabb = new AABB();
+    return aabb;
 }

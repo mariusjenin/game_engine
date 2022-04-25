@@ -1,27 +1,37 @@
 #ifndef GAME_ENGINE_RIGIDBODYVOLUME_H
 #define GAME_ENGINE_RIGIDBODYVOLUME_H
 
-
 #include "RigidBody.hpp"
-#include "PhysicsGeometry.hpp"
+#include "bounding_box/BoundingBox.hpp"
+#include "bounding_box/SphereBB.hpp"
+#include "src/scene_graph/NodeGameSG.hpp"
+
+namespace scene_graph {
+    class NodeGameSG;
+}
+
+using namespace scene_graph;
 
 namespace physics {
+    struct Collision;
     class RigidBodyVolume : public RigidBody {
     private:
-        BoundingBox *m_bb{};
-        glm::vec3 m_position;
+        NodeGameSG* m_node_game;
         glm::vec3 m_velocity;
         glm::vec3 m_forces;
         float m_mass{};
         /// Coefficient of restitution
         float m_cor{};
         float m_friction{};
-
     public:
         /**
-         * Constructor of a RigidBodyVolume
+         * Constructor of a RigidBodyVolume with a NodeGameSG and configurable coefficients
+         * @param ng
+         * @param mass
+         * @param friction
+         * @param cor
          */
-        RigidBodyVolume();
+        RigidBodyVolume(NodeGameSG *ng , float mass = 1.0f, float friction = 0.6f, float cor = 0.5f);
 
         /**
          * Destructor of a RigidBodyVolume
@@ -31,11 +41,6 @@ namespace physics {
         void update(float delta_time) override;
 
         void apply_forces() override;
-
-        /**
-         * Synchronize the Bounding to be like the RigidBodyVolume
-         */
-        void synchro_collision_volumes();
 
         /**
          * Getter of the inverse of the mass
@@ -52,9 +57,9 @@ namespace physics {
         /**
          * Apply an impulse to the RigidBodyVolume
          * @param rbv
-         * @param c
+         * @param collision
          */
-        void apply_impulse(RigidBodyVolume &rbv, Collision c);
+        void apply_impulse(RigidBodyVolume &rbv, const Collision& collision);
 
         /**
          * Compute if there is a Collision between this RigidBodyVolume and another
@@ -64,10 +69,10 @@ namespace physics {
         Collision find_data_collision(RigidBodyVolume &rbv);
 
         /**
-         * Getter of the %BoundingBox
-         * @return bb
+         * Getter of the NodeGameSG
+         * @return node
          */
-        BoundingBox *get_bb() const;
+        NodeGameSG* get_node();
     };
 
 }

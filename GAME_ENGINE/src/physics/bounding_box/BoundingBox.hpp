@@ -8,7 +8,12 @@
 
 #include <glm/vec3.hpp>
 #include <vector>
+
 namespace physics {
+    struct Collision;
+    struct AABB;
+    struct SphereBB;
+    struct OBB;
     /**
      * Enum of the different types of BoundingBox
      */
@@ -23,11 +28,18 @@ namespace physics {
         glm::vec3 m_position;
         BB_TYPE m_type;
     public:
+
         /**
          * Compute the BoundingBox according to vertices
          * @param vertices
          */
         virtual void compute(std::vector<glm::vec3> vertices) = 0;
+
+        /**
+         * Compute the BoundingBox according to a list of BoundingBox
+         * @param bbs
+         */
+        void compute(std::vector<BoundingBox *> bbs);
 
         /**
          * Getter of the type of the BoundingBox
@@ -46,6 +58,30 @@ namespace physics {
          * @param position
          */
         void set_position(const glm::vec3 &position);
+
+        /**
+         * Convert the BoundingBox to an AABB
+         * @return aabb
+         */
+        virtual AABB *to_AABB() = 0;
+
+        /**
+         * Compute the Collision with a SphereBB
+         * @return collision
+         */
+        virtual Collision get_data_collision(const SphereBB &bb) =0;
+
+        /**
+         * Compute the Collision with an AABB
+         * @return collision
+         */
+        virtual Collision get_data_collision(const AABB &bb) =0;
+
+        /**
+         * Compute the Collision with an OBB
+         * @return collision
+         */
+        virtual Collision get_data_collision(const OBB &bb) =0;
     };
 }
 
