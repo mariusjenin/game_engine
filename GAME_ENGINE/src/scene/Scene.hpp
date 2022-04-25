@@ -6,22 +6,16 @@
 #define GAME_ENGINE_SCENE_HPP
 
 #include "glm/ext.hpp"
+#include <src/scene_graph/RootSG.hpp>
+#include <src/scene_graph/NodeGameSG.hpp>
+#include <src/light/Light.hpp>
+#include <src/material/Material.hpp>
+#include <src/utils/meshloader.hpp>
+#include <src/utils/texture.hpp>
+#include <src/utils/meshloader.hpp>
 #include "src/shader/Shaders.hpp"
 
-#include <src/scene_graph/CameraNodeSG.hpp>
-#include <src/scene_graph/RootSG.hpp>
-#include <src/scene_graph/LightNodeSG.hpp>
-#include <src/scene_graph/RootSG.hpp>
-
-#include <src/light/Light.hpp>
-
-#include <src/material/Material.hpp>
-
-#include <src/utils/meshloader.hpp>
-#include <src/utils/texture.hpp>
-#include <src/utils/meshloader.hpp>
-#include <src/utils/texture.hpp>
-
+using namespace scene_graph;
 namespace scene {
     /// Base %Scene (Abstract)
     class Scene {
@@ -29,9 +23,8 @@ namespace scene {
         static constexpr const char *ROOT_NAME = "root";
 
         RootSG *m_root{};
-        std::vector<NodeSG *> m_nodes;
-        std::vector<CameraNodeSG *> m_cameras;
-        std::vector<LightNodeSG *> m_lights;
+        std::vector<NodeGameSG *> m_cameras;
+        std::vector<NodeGameSG *> m_lights;
         int m_camera_index{};
         Shaders *m_shaders{};
 

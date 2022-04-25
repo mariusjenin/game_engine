@@ -3,11 +3,12 @@
 //
 
 #include "ShadersDataManager.hpp"
-#include <src/scene_graph/LightNodeSG.hpp>
-#include <src/material/MaterialColor.hpp>
+#include <src/material/Material.hpp>
+#include <src/light/Light.hpp>
 
 using namespace shader;
-using namespace scene_graph;
+using namespace material;
+using namespace light;
 
 GLint ShadersDataManager::get_location(const std::string &name) {
     return m_locations[name];
@@ -72,14 +73,7 @@ void ShadersDataManager::load_custom_uniform_location(GLuint program_id, const s
     m_locations[name] = glGetUniformLocation(program_id, name.c_str());
 }
 
-void ShadersDataManager::load_lights(GLuint program_id, const std::vector<LightNodeSG *> &lights) {
-    size_t size_lights = lights.size();
-    LightShader lights_struct_array[size_lights];
-    int i = 0;
-    for (const auto &light: lights) {
-        lights_struct_array[i] = light->generate_light_struct();
-        i++;
-    }
+void ShadersDataManager::load_lights(GLuint program_id, LightShader lights_shader[], int size_lights) {
 
     //NB LIGHTS
     GLint nb_lights_location = get_location(ShadersDataManager::NB_LIGTHS_LOC_NAME);
@@ -93,7 +87,7 @@ void ShadersDataManager::load_lights(GLuint program_id, const std::vector<LightN
     GLuint ssbo;
     glGenBuffers(1, &ssbo);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, (int) sizeof(lights_struct_array), &lights_struct_array, GL_STATIC_READ);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, (int) sizeof(LightShader) * size_lights, &lights_shader[0], GL_STATIC_READ);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, ssbo_binding_point_index, ssbo);
 }

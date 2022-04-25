@@ -32,7 +32,7 @@ int main() {
     // Open a window and create its OpenGL context
     const unsigned int SCR_WIDTH = 1024;
     const unsigned int SCR_HEIGHT = 768;
-    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "TP1 - GLFW", nullptr, nullptr);
+    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "GAME ENGINE", nullptr, nullptr);
     if (window == nullptr) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -69,9 +69,9 @@ int main() {
 //    glEnable(GL_CULL_FACE);
 
     //CREATE THE SCENE
-//    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
+    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
 //    SimpleScene scene = SimpleScene("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
-    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl");
+//    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl");
     scene.setup();
     Shaders *shaders = scene.get_shaders();
     GLuint program_id = shaders->get_program_id();
@@ -96,8 +96,6 @@ int main() {
         scene.update(window, delta_time);
         scene.draw();
 
-//        VAODataManager::disable_attrib_vertex_arrays();
-
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -105,10 +103,6 @@ int main() {
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
            glfwWindowShouldClose(window) == 0);
-
-    // Cleanup VAO VBO
-//    vbo_manager->delete_buffers();
-    glDeleteProgram(program_id);
 
     // Close OpenGL window and terminate GLFW
     glfwTerminate();

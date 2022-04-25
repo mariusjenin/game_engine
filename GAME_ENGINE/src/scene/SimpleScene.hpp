@@ -5,21 +5,21 @@
 #ifndef GAME_ENGINE_SIMPLESCENE_H
 #define GAME_ENGINE_SIMPLESCENE_H
 
-
-
-
 #include "Scene.hpp"
-#include "../mesh/LODMesh.hpp"
-#include "../material/MaterialTexture.hpp"
-#include "../material/MaterialColor.hpp"
-#include "../light/DirectionLight.hpp"
-#include "../utils/objloader.hpp"
+#include "src/mesh/LODMesh.hpp"
+#include "src/material/MaterialTexture.hpp"
+#include "src/material/MaterialColor.hpp"
+#include "src/light/DirectionLight.hpp"
+#include "src/utils/objloader.hpp"
+#include <src/light/PositionLight.hpp>
+#include <src/scene_graph/NodeOnTopSG.hpp>
+#include <src/light/SpotLight.hpp>
 
 namespace scene {
     /// Simple scene
     class SimpleScene : public Scene {
     private:
-        NodeSG *m_ball;
+        NodeGameSG *m_ball;
     protected:
         void process_input(GLFWwindow *window, float delta_time) override;
 

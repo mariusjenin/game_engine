@@ -69,13 +69,15 @@ add_executable(
 #		MESH
 		src/mesh/Mesh.cpp src/mesh/Mesh.hpp
 		src/mesh/LODMesh.cpp src/mesh/LODMesh.hpp
-#		Scene
+#		SCENE GRAPH
 		src/scene_graph/NodeSG.cpp src/scene_graph/NodeSG.hpp
 		src/scene_graph/NodeOnTopSG.cpp src/scene_graph/NodeOnTopSG.hpp
 		src/scene_graph/RootSG.cpp src/scene_graph/RootSG.hpp
 		src/scene_graph/ElementSG.cpp src/scene_graph/ElementSG.hpp
-		src/scene_graph/CameraNodeSG.cpp src/scene_graph/CameraNodeSG.hpp
-		src/scene_graph/LightNodeSG.cpp src/scene_graph/LightNodeSG.hpp
+#		src/scene_graph/CameraNodeSG.cpp src/scene_graph/CameraNodeSG.hpp
+#		src/scene_graph/LightNodeSG.cpp src/scene_graph/LightNodeSG.hpp
+		src/scene_graph/NodeGameSG.cpp src/scene_graph/NodeGameSG.hpp
+#		SCENE
 		src/scene/SolarSystem.cpp src/scene/SolarSystem.hpp
 		src/scene/SceneLand.cpp src/scene/SceneLand.hpp
 		src/scene/Scene.cpp src/scene/Scene.hpp

@@ -17,7 +17,7 @@ namespace scene {
     /// Scene with a land and a ball on it
     class SceneLand : public Scene {
     private:
-        NodeSG *m_ball;
+        NodeGameSG *m_ball;
     protected:
         void process_input(GLFWwindow *window, float delta_time) override;
 

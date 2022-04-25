@@ -12,7 +12,6 @@
 #include <sstream>
 #include "GL/glew.h"
 
-#include <src/shader/VAODataManager.hpp>
 #include <src/shader/ShadersDataManager.hpp>
 
 namespace shader {

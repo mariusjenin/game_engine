@@ -2,10 +2,6 @@
 // Created by mariusjenin on 05/03/2022.
 //
 
-#include <src/material/MaterialColor.hpp>
-#include <src/material/MaterialTexture.hpp>
-#include <src/light/PositionLight.hpp>
-#include <src/mesh/LODMesh.hpp>
 #include "SolarSystem.hpp"
 
 using namespace scene;
@@ -63,30 +59,29 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     load_bmp_custom("../assets/texture/moon.bmp", id_moon_texture);
 
     //SKY
-    m_sky = new NodeSG(m_shaders, (ElementSG *) m_root);
+    m_sky = new NodeGameSG(m_shaders, (ElementSG *) m_root);
     m_sky->get_local_trsf()->set_rotation({-90, 0, 0});
     m_sky->set_meshes({sky_mesh});
     m_sky->set_material(new MaterialTexture(m_shaders, id_skymap_texture));
     m_sky->add_uniform_1i(star_id_location, NOT_STAR_ID);
     m_sky->add_uniform_1i(always_enlightened_location, true);
     m_sky->set_see_both_face(true);
-    m_nodes.push_back(m_sky);
 
     //SUN
     auto *sun_light = new PositionLight({0.1, 0.1, 0.1}, {1., 1., 1.}, {0.5, 0.5, 0.5}, 1.0, 0.007, 0.0002);
-    m_sun = new LightNodeSG(m_shaders, (ElementSG *) m_sky, sun_light, SUN_NAME);
+    m_sun = new NodeGameSG(m_shaders, (ElementSG *) m_sky);
+    m_sun->set_light(sun_light);
     m_sun->get_local_trsf()->set_rotation({-90, 0, 0});
     m_sun->set_meshes({sun_mesh});
     m_sun->set_material(new MaterialTexture(m_shaders, id_sun_texture));
     m_sun->add_uniform_1i(star_id_location, SUN_ID);
     m_sun->add_uniform_1i(always_enlightened_location, true);
-    m_nodes.push_back(m_sun);
     m_lights.push_back(m_sun);
 
     //EARTH
-    m_earth1 = new NodeSG(m_shaders, (ElementSG *) m_sun);
-    m_earth2 = new NodeSG(m_shaders, (ElementSG *) m_earth1);
-    m_earth3 = new NodeSG(m_shaders, (ElementSG *) m_earth2, EARTH_NAME);
+    m_earth1 = new NodeGameSG(m_shaders, (ElementSG *) m_sun);
+    m_earth2 = new NodeGameSG(m_shaders, (ElementSG *) m_earth1);
+    m_earth3 = new NodeGameSG(m_shaders, (ElementSG *) m_earth2, EARTH_NAME);
     m_earth3->get_local_trsf()->set_rotation({-90, 180, -tilt_earth});
     m_earth3->get_local_trsf()->set_order_rotation(ORDER_ZYX);
     m_earth1->get_trsf()->set_rotation({0, 0, -inclination_sun_earth});
@@ -96,14 +91,11 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     m_earth3->set_material(new MaterialTexture(m_shaders, id_earth_texture));
     m_earth3->add_uniform_1i(star_id_location, EARTH_ID);
     m_earth3->add_uniform_1i(always_enlightened_location, false);
-    m_nodes.push_back(m_earth1);
-    m_nodes.push_back(m_earth2);
-    m_nodes.push_back(m_earth3);
 
     //MOON
-    m_moon1 = new NodeSG(m_shaders, (ElementSG *) m_earth3, MOON_NAME);
-    m_moon2 = new NodeSG(m_shaders, (ElementSG *) m_moon1, MOON_NAME);
-    m_moon3 = new NodeSG(m_shaders, (ElementSG *) m_moon2, MOON_NAME);
+    m_moon1 = new NodeGameSG(m_shaders, (ElementSG *) m_earth3, MOON_NAME);
+    m_moon2 = new NodeGameSG(m_shaders, (ElementSG *) m_moon1, MOON_NAME);
+    m_moon3 = new NodeGameSG(m_shaders, (ElementSG *) m_moon2, MOON_NAME);
     m_moon3->get_local_trsf()->set_rotation({-90, 0, tilt_moon});
     m_moon3->get_local_trsf()->set_order_rotation(ORDER_ZYX);
 //    m_moon->set_trsfs_general({moon_trsf_1, moon_trsf_2, moon_trsf_3});
@@ -114,19 +106,16 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     m_moon3->set_material(new MaterialTexture(m_shaders, id_moon_texture));
     m_moon3->add_uniform_1i(star_id_location, MOON_ID);
     m_moon3->add_uniform_1i(always_enlightened_location, false);
-    m_nodes.push_back(m_moon1);
-    m_nodes.push_back(m_moon2);
-    m_nodes.push_back(m_moon3);
 
     //CAMERA
-    auto *camera_node = new CameraNodeSG(m_shaders,
+    auto *camera_node = new NodeGameSG(m_shaders,
                                          (ElementSG *) m_root);
     camera_node->get_trsf()->set_translation({0, 5, 20});
     camera_node->get_trsf()->set_rotation({-15, 0, 0});
     m_cameras.push_back(camera_node);
 
     //CAMERA 2
-    auto *camera_node_2 = new CameraNodeSG(m_shaders,
+    auto *camera_node_2 = new NodeGameSG(m_shaders,
                                            (ElementSG *) m_earth3);
 
     camera_node_2->get_trsf()->set_rotation({0, -90, 0});
@@ -153,7 +142,7 @@ void SolarSystem::update(GLFWwindow *window, float delta_time) {
     float speed_revolution_earth = 10 * delta_time * m_speed_anime;
     float speed_revolution_moon = speed_rotation_moon;
 
-    CameraNodeSG *camera_node = m_cameras[m_camera_index];
+    NodeGameSG *camera_node = m_cameras[m_camera_index];
 
     //ROTATION SKY
     glm::vec3 rotation_sky = glm::vec3(0.f, speed_rotation_sky, speed_rotation_sky);

@@ -6,6 +6,10 @@
 #define GAME_ENGINE_SOLARSYSTEM_HPP
 
 #include "Scene.hpp"
+#include <src/material/MaterialColor.hpp>
+#include <src/material/MaterialTexture.hpp>
+#include <src/light/PositionLight.hpp>
+#include <src/mesh/LODMesh.hpp>
 
 namespace scene {
     /// Scene with the sun, the earth, the moon end the sky
@@ -29,14 +33,14 @@ namespace scene {
     private:
         float m_speed_anime{};
         float m_timing;
-        LightNodeSG *m_sun{};
-        NodeSG *m_sky{};
-        NodeSG *m_earth1{};
-        NodeSG *m_earth2{};
-        NodeSG *m_earth3{};
-        NodeSG *m_moon1{};
-        NodeSG *m_moon2{};
-        NodeSG *m_moon3{};
+        NodeGameSG *m_sun{};
+        NodeGameSG *m_sky{};
+        NodeGameSG *m_earth1{};
+        NodeGameSG *m_earth2{};
+        NodeGameSG *m_earth3{};
+        NodeGameSG *m_moon1{};
+        NodeGameSG *m_moon2{};
+        NodeGameSG *m_moon3{};
     protected:
         void process_input(GLFWwindow *window, float delta_time) override;
 

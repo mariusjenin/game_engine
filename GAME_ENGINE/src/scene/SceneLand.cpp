@@ -34,22 +34,21 @@ SceneLand::SceneLand(const std::string &vertex_shader_path, const std::string &f
     GLint has_hm_location = shader_data_manager->get_location(HAS_HM_LOC_NAME);
 
     //MESHES
-    auto *land_mesh = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, {0, 1, 0}), 0, 200, 95, 10, 8);
+    auto *land_mesh = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_NORMAL_DIRECTION), 0, 200, 95, 10, 8);
     auto *ball_mesh = new LODMesh(create_sphere(1, 60, 60), 10, 50, 60, 5, 6);
 
     //Land
-    auto *land_node = new NodeSG(m_shaders, m_root, "LAND");
+    auto *land_node = new NodeGameSG(m_shaders, m_root, "LAND");
     land_node->set_material(new MaterialTexture(m_shaders, id_land_texture));
     land_node->get_local_trsf()->set_scale({5, 5, 5});
     land_node->set_meshes({land_mesh});
     land_node->set_see_both_face(true);
     land_node->add_uniform_1i(has_hm_location, true);
-    m_nodes.push_back(land_node);
 
     //Light
     auto *light_source = new DirectionLight({0.1, 0.1, 0.1}, {1., 1., 1.}, {0.8, 0.8, 0.8}, {0., -1., 0.});
-    auto *light_node = new LightNodeSG(m_shaders, m_root, light_source);
-    m_nodes.push_back(light_node);
+    auto *light_node = new NodeGameSG(m_shaders, m_root);
+    light_node->set_light(light_source);
     m_lights.push_back(light_node);
 
     //Ball
@@ -58,10 +57,9 @@ SceneLand::SceneLand(const std::string &vertex_shader_path, const std::string &f
     m_ball->set_meshes({ball_mesh});
     m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
     m_ball->add_uniform_1i(has_hm_location, false);
-    m_nodes.push_back(m_ball);
 
     //CAMERA
-    auto *camera_node = new CameraNodeSG(m_shaders, m_root);
+    auto *camera_node = new NodeGameSG(m_shaders, m_root);
     camera_node->get_trsf()->set_translation({-7, -10, 40});
     camera_node->get_trsf()->set_rotation({-5, 0, 0});
     m_cameras.push_back(camera_node);

@@ -28,6 +28,11 @@ namespace scene_graph {
         Shaders *m_shaders;
         std::vector<ElementSG *> m_children;
         std::map<GLuint, int> m_uniform_1i; //add others type of uniform value possible
+    private:
+        /**
+         * Load all the uniform int datas to the shader
+         */
+        void load_uniforms_1i();
     public :
         /**
          * Add a child to the ElementSG
@@ -41,6 +46,11 @@ namespace scene_graph {
          * @param val
          */
         void add_uniform_1i(GLint location, int val = 0);
+
+        /**
+         * Load all the uniform datas to the shader
+         */
+        void load_uniforms();
 
         /**
          * Constructor of the ElementSG

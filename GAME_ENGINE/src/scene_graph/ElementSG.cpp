@@ -6,7 +6,6 @@
 #include "NodeSG.hpp"
 
 #include <utility>
-#include <src/shader/ShadersDataManager.hpp>
 
 #include <src/shader/Shaders.hpp>
 
@@ -76,4 +75,14 @@ void ElementSG::compute_trsf_scene_graph() {
 
 Transform *ElementSG::get_trsf() {
     return m_trsf;
+}
+
+void ElementSG::load_uniforms_1i() {
+    for (const auto &unif_1i_pair: m_uniform_1i) {
+        glUniform1i((GLint) unif_1i_pair.first, unif_1i_pair.second);
+    }
+}
+
+void ElementSG::load_uniforms() {
+    load_uniforms_1i();
 }

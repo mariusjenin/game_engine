@@ -18,10 +18,10 @@
 #include <map>
 #include <vector>
 
-namespace scene_graph {
-    class LightNodeSG;
+namespace light {
+    class LightShader;
 }
-using namespace scene_graph;
+using namespace light;
 namespace shader {
     /// Manager of the locations in shaders
     class ShadersDataManager {
@@ -119,11 +119,12 @@ namespace shader {
         GLint get_location(const std::string &name);
 
         /**
-         * Load the data of the lights given a list of \link scene_graph::LightNodeSG LightNodeSG\endlink
+         * Load the data of the lights given a list of \link light::LightShader LightShader\endlink
          * @param program_id
-         * @param lights
+         * @param lights_shader
+         * @param size_lights
          */
-        void load_lights(GLuint program_id, const std::vector<LightNodeSG *> &lights);
+        void load_lights(GLuint program_id,  LightShader lights_shader[], int size_lights);
     };
 }
 #endif //GAME_ENGINE_SHADERSDATAMANAGER_HPP

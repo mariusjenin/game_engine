@@ -14,6 +14,15 @@
 using namespace glm;
 using namespace mesh;
 
+enum NormalDirection{
+    X_NORMAL_DIRECTION,
+    Y_NORMAL_DIRECTION,
+    Z_NORMAL_DIRECTION,
+    X_INV_NORMAL_DIRECTION,
+    Y_INV_NORMAL_DIRECTION,
+    Z_INV_NORMAL_DIRECTION
+};
+
 /**
  * Create a plane Mesh
  * @param nb_vertex_1 first resolution
@@ -28,7 +37,7 @@ MeshData create_plane(
         int nb_vertex_2,
         glm::vec3 pos_vertex_start,
         glm::vec3 pos_vertex_end,
-        glm::vec3 normal
+        NormalDirection normal_dir
 );
 
 /**

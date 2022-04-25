@@ -1,6 +1,3 @@
-//
-// Created by mariusjenin on 21/03/2022.
-//
 
 #include "Shaders.hpp"
 

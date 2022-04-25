@@ -11,14 +11,9 @@ void Scene::draw() {
 }
 
 Scene::~Scene() {
-    for (auto m_camera: m_cameras) {
-        delete m_camera;
-    }
-    m_cameras.clear();
-    for (auto m_node: m_nodes) {
-        delete m_node;
-    }
-    m_nodes.clear();
+
+    glDeleteProgram(m_shaders->get_program_id());
+
     delete m_root;
 }
 
@@ -26,7 +21,7 @@ void Scene::update(GLFWwindow *window, float delta_time) {
     process_input(window, delta_time);
 
     //CAMERA
-    CameraNodeSG *camera_node = m_cameras[m_camera_index];
+    NodeGameSG *camera_node = m_cameras[m_camera_index];
     camera_node->update_view_mat();
     camera_node->update_view_pos();
 }
@@ -48,15 +43,22 @@ Scene::Scene(const std::string &vertex_shader_path, const std::string &fragment_
     ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
     shader_data_manager->load_material_const(program_id);
     shader_data_manager->load_lights_const(program_id);
-//    m_shaders->load_type_light_to_shader();
 
 }
 
 void Scene::setup() {
     //COMPUTE ALL TRASNFORMATIONS
     m_root->compute_trsf_scene_graph();
+
     //LOAD LIGHTS
-    m_shaders->get_shader_data_manager()->load_lights(m_shaders->get_program_id(), m_lights);
+    size_t size_lights = m_lights.size();
+    LightShader lights_struct_array[size_lights];
+    int i = 0;
+    for (const auto &light: m_lights) {
+        lights_struct_array[i] = light->generate_light_struct();
+        i++;
+    }
+    m_shaders->get_shader_data_manager()->load_lights(m_shaders->get_program_id(), lights_struct_array,(int)size_lights);
 }
 
 Shaders *Scene::get_shaders() const {

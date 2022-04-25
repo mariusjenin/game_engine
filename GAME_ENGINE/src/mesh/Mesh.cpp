@@ -176,6 +176,7 @@ glm::vec3 Mesh::center() {
 }
 
 void Mesh::update_mesh(float dist_to_camera) {
+    //Nothing
 }
 
 const std::vector<glm::vec3> &Mesh::get_vertex_positions() const {

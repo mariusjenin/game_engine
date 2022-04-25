@@ -11,7 +11,6 @@
 #include <cstdlib>
 #include <string>
 #include <utility>
-#include <src/light/Light.hpp>
 #include <iostream>
 #include <src/shader/Shaders.hpp>
 

@@ -5,13 +5,13 @@
 #ifndef GAME_ENGINE_NODEONTOPSG_HPP
 #define GAME_ENGINE_NODEONTOPSG_HPP
 
-#include "NodeSG.hpp"
+#include "NodeGameSG.hpp"
 
 namespace scene_graph {
     /// NodeSG on top of another
-    class NodeOnTopSG : public NodeSG {
+    class NodeOnTopSG : public NodeGameSG {
     private:
-        NodeSG *m_on_node;
+        NodeGameSG *m_on_node;
     public:
         /**
          * Constructor of NodeOnTopSG
@@ -20,7 +20,7 @@ namespace scene_graph {
          * @param on_node NodeSG under
          * @param name
          */
-        NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeSG *on_node, std::string name = "");
+        NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeGameSG *on_node, std::string name = "");
 
         /**
          * Compute the data according to the NodeSG under

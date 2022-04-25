@@ -1,6 +1,3 @@
-//
-// Created by mariusjenin on 01/03/2022.
-//
 
 #ifndef GAME_ENGINE_ROOTSG_HPP
 #define GAME_ENGINE_ROOTSG_HPP

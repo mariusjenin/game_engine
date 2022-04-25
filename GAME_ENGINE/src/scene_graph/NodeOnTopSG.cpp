@@ -6,12 +6,11 @@
 
 using namespace scene_graph;
 
-NodeOnTopSG::NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeSG *on_node, std::string name) : NodeSG(shaders,
+NodeOnTopSG::NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeGameSG *on_node, std::string name) : NodeGameSG(shaders,
                                                                                                           parent,
                                                                                                           std::move(
                                                                                                                   name)) {
     m_on_node = on_node;
-    m_is_node_on_top = true;
 }
 
 bool NodeOnTopSG::get_data_on(glm::vec3 pos_camera, glm::vec3 &position, glm::vec2 &uv, glm::vec3 &normal,
@@ -50,6 +49,6 @@ void NodeOnTopSG::draw(glm::vec3 pos_camera) {
     glUniform1i(shader_data_manager->get_location(ShadersDataManager::IS_NODE_ON_TOP_LOC_NAME), is_on_top_bounds);
     glUniformMatrix4fv(shader_data_manager->get_location(ShadersDataManager::ON_TOP_MODEL_LOC_NAME), 1, GL_FALSE,
                        &m_on_node->get_matrix_recursive_local()[0][0]);
-    NodeSG::draw(pos_camera);
+    NodeGameSG::draw(pos_camera);
 }
 

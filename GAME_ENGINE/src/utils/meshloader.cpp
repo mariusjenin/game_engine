@@ -18,7 +18,7 @@ MeshData create_plane(
         int nb_vertex_2,
         vec3 pos_vertex_start,
         vec3 pos_vertex_end,
-        vec3 normal
+        NormalDirection normal_dir
 ) {
 
     std::vector<vec3> vertices;
@@ -27,12 +27,33 @@ MeshData create_plane(
     std::vector<vec2> uv;
 
     srand(time(nullptr));
-
+    vec3 normal;
+    bool is_inv_normal = normal_dir == X_INV_NORMAL_DIRECTION || normal_dir == Y_INV_NORMAL_DIRECTION|| normal_dir == Z_INV_NORMAL_DIRECTION;
+    switch (normal_dir) {
+        case X_NORMAL_DIRECTION:
+            normal = {1,0,0};
+            break;
+        case Y_NORMAL_DIRECTION:
+            normal = {0,1,0};
+            break;
+        case Z_NORMAL_DIRECTION:
+            normal = {0,0,1};
+            break;
+        case X_INV_NORMAL_DIRECTION:
+            normal = {-1,0,0};
+            break;
+        case Y_INV_NORMAL_DIRECTION:
+            normal = {0,-1,0};
+            break;
+        case Z_INV_NORMAL_DIRECTION:
+            normal = {0,0,-1};
+            break;
+    }
     float step_1, step_2;
-    if (normal[0] == 1.f) {
+    if (normal_dir == X_NORMAL_DIRECTION || normal_dir == X_INV_NORMAL_DIRECTION) {
         step_1 = (pos_vertex_end[1] - pos_vertex_start[1]) / (float)nb_vertex_1;
         step_2 = (pos_vertex_end[2] - pos_vertex_start[2]) / (float)nb_vertex_2;
-    } else if (normal[1] == 1.f) {
+    } else if (normal_dir == Y_NORMAL_DIRECTION || normal_dir == Y_INV_NORMAL_DIRECTION) {
         step_1 = (pos_vertex_end[0] - pos_vertex_start[0]) /(float) nb_vertex_1;
         step_2 = (pos_vertex_end[2] - pos_vertex_start[2]) / (float)nb_vertex_2;
     } else {
@@ -46,25 +67,27 @@ MeshData create_plane(
             uv.emplace_back((float) i / (float) nb_vertex_1, (float) j / (float) nb_vertex_2);
 
             normals.push_back(normal);
-            if (normal[0] == 1.f) {
+            if (normal_dir == X_NORMAL_DIRECTION || normal_dir == X_INV_NORMAL_DIRECTION) {
                 vertices.push_back(pos_vertex_start + vec3(0.f, (float)i * step_1, (float)j * step_2));
-            } else if (normal[1] == 1.f) {
+            } else if (normal_dir == Y_NORMAL_DIRECTION || normal_dir == Y_INV_NORMAL_DIRECTION) {
                 vertices.push_back(pos_vertex_start + vec3((float)i * step_1, 0.f, (float)j * step_2));
             } else {
                 vertices.push_back(pos_vertex_start + vec3((float)i * step_1, (float)j * step_2, 0.f));
             }
             if (i < nb_vertex_1 - 1 && j < nb_vertex_2 - 1) {
                 indices.push_back(i * nb_vertex_2 + j);
+                if(!is_inv_normal)indices.push_back((i + 1) * nb_vertex_2 + (j + 1));
                 indices.push_back((i + 1) * nb_vertex_2 + j);
-                indices.push_back((i + 1) * nb_vertex_2 + (j + 1));
+                if(is_inv_normal)indices.push_back((i + 1) * nb_vertex_2 + (j + 1));
 
                 indices.push_back(i * nb_vertex_2 + j);
+                if(!is_inv_normal)indices.push_back(i * nb_vertex_2 + j + 1);
                 indices.push_back((i + 1) * nb_vertex_2 + (j + 1));
-                indices.push_back(i * nb_vertex_2 + j + 1);
+                if(is_inv_normal)indices.push_back(i * nb_vertex_2 + j + 1);
             }
         }
     }
-    return MeshData(vertices, indices, uv, normals);
+    return {vertices, indices, uv, normals};
 }
 
 
@@ -103,5 +126,5 @@ MeshData create_sphere(
             indices.push_back(row2 + i + 1);
         }
     }
-    return MeshData(vertices, indices, uv, normals);
+    return {vertices, indices, uv, normals};
 }

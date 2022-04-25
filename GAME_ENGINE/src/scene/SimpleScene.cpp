@@ -3,9 +3,6 @@
 //
 
 #include "SimpleScene.hpp"
-#include <src/light/PositionLight.hpp>
-#include <src/scene_graph/NodeOnTopSG.hpp>
-#include <src/light/SpotLight.hpp>
 
 using namespace scene;
 
@@ -22,23 +19,35 @@ SimpleScene::SimpleScene(const std::string &vertex_shader_path, const std::strin
 
     //MESHES
     auto *ball_mesh = new LODMesh(create_sphere(1, 60, 60), 2, 30, 60, 5, 10,SphereBB_TYPE);
+    auto *plane_mesh1 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_NORMAL_DIRECTION), 2, 30, 60, 5, 10,SphereBB_TYPE);
+    auto *plane_mesh2 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), 2, 30, 60, 5, 10,SphereBB_TYPE);
+//    auto *ball_mesh = new Mesh(create_sphere(1, 60, 60),SphereBB_TYPE);
+//    auto *plane_mesh1 = new Mesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_NORMAL_DIRECTION), SphereBB_TYPE);
+//    auto *plane_mesh2 = new Mesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), SphereBB_TYPE);
 
     //Light
     auto *light_source = new DirectionLight({0.1, 0.1, 0.1}, {1., 1., 1.}, {0.8, 0.8, 0.8}, {0., -1., 0.});
-    auto *light_node = new LightNodeSG(m_shaders, m_root, light_source);
-    m_nodes.push_back(light_node);
+    auto *light_node = new NodeGameSG(m_shaders, m_root);
+    light_node->set_light(light_source);
     m_lights.push_back(light_node);
 
+    //Plane
+    auto* plane = new NodeGameSG(m_shaders, m_root);
+    plane->set_meshes({plane_mesh1,plane_mesh2});
+    plane->set_material(
+            new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 10));
+
     //Ball
-    m_ball = new NodeSG(m_shaders, m_root);
+    m_ball = new NodeGameSG(m_shaders, m_root);
+    m_ball->get_trsf()->set_translation({0,5,0});
     m_ball->set_meshes({ball_mesh});
     m_ball->set_material(
             new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
-    m_nodes.push_back(m_ball);
 
     //CAMERA
-    auto *camera_node = new CameraNodeSG(m_shaders, m_root);
-    camera_node->get_trsf()->set_translation({0, 0, 20});
+    auto *camera_node = new NodeGameSG(m_shaders, m_root);
+    camera_node->get_trsf()->set_translation({0, 3, 25});
+    camera_node->get_trsf()->set_rotation({-6, 0, 0});
     m_cameras.push_back(camera_node);
 
     //PROJECTION

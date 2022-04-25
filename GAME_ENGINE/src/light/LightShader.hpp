@@ -1,7 +1,7 @@
 #ifndef GAME_ENGINE_LIGHSHADER_H
 #define GAME_ENGINE_LIGHSHADER_H
 
-#include "../shader/Shaders.hpp"
+#include "src/shader/Shaders.hpp"
 
 using namespace shader;
 
