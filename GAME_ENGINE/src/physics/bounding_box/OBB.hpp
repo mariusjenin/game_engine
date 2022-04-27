@@ -8,17 +8,24 @@
 
 #include "RCBB.hpp"
 namespace physics {
-    class OBB : public RCBB {
-    public:
-        /**
-         * Constructor of an OBB
-         */
-        OBB();
 
-        Collision get_data_collision(const SphereBB &bb) override;
-        Collision get_data_collision(const AABB &bb) override;
-        Collision get_data_collision(const OBB &bb) override;
-    };
+    namespace bounding_box {
+        /// BoundingBox oriented
+        class OBB : public RCBB {
+        public:
+            /**
+             * Constructor of an OBB
+             */
+            OBB();
 
+            void apply_transform(glm::mat4 matrix) override;
+
+            Collision get_data_collision(const SphereBB &bb) override;
+
+            Collision get_data_collision(const AABB &bb) override;
+
+            Collision get_data_collision(const OBB &bb) override;
+        };
+    }
 }
 #endif //GAME_ENGINE_OBB_H

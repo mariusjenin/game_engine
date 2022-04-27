@@ -8,24 +8,32 @@
 #include "RCBB.hpp"
 
 namespace physics {
-    class AABB : public RCBB {
-    public :
-        /**
-         * Empty Constructor of an AABB
-         */
-        AABB();
 
-        /**
-         * Constructor of an AABB
-         */
-        AABB(glm::vec3 position, glm::vec3 size);
+    namespace bounding_box {
+        /// BoundingBox aligned on axis
+        class AABB : public RCBB {
+        public :
+            /**
+             * Empty Constructor of an AABB
+             */
+            AABB();
 
-        AABB *to_AABB() override;
+            /**
+             * Constructor of an AABB
+             */
+            AABB(glm::vec3 position, glm::vec3 size);
 
-        Collision get_data_collision(const SphereBB &bb) override;
-        Collision get_data_collision(const AABB &bb) override;
-        Collision get_data_collision(const OBB &bb) override;
-    };
+            AABB *to_AABB() override;
+
+            void apply_transform(glm::mat4 matrix) override;
+
+            Collision get_data_collision(const SphereBB &bb) override;
+
+            Collision get_data_collision(const AABB &bb) override;
+
+            Collision get_data_collision(const OBB &bb) override;
+        };
+    }
 }
 
 #endif //GAME_ENGINE_AABB_H

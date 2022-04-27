@@ -20,6 +20,8 @@
 #include <src/physics/bounding_box/BoundingBox.hpp>
 
 using namespace physics;
+using namespace physics::bounding_box;
+
 namespace mesh {
     /// Datas of a Mesh
     struct MeshData{

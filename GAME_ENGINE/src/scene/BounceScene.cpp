@@ -2,6 +2,7 @@
 // Created by mariusjenin on 07/04/2022.
 //
 
+#include <src/physics/force/GravityForce.hpp>
 #include "BounceScene.hpp"
 
 using namespace scene;
@@ -14,12 +15,14 @@ BounceScene::BounceScene(const std::string &vertex_shader_path, const std::strin
 
     //TEXTURES
     int id_texture = 0;
-    int id_land_texture = id_texture++;
-    load_bmp_custom("../assets/texture/rock.bmp", id_land_texture);
+//    int id_land_texture = id_texture++;
+//    load_bmp_custom("../assets/texture/rock.bmp", id_land_texture);
 
     //MESHES
     auto *ball_mesh1 = new Mesh(create_sphere(1, 60, 60),true,SphereBB_TYPE);
     auto *ball_mesh2 = new Mesh(create_sphere(5, 120, 120), true,SphereBB_TYPE);
+//    auto *ball_mesh1 = new LODMesh(create_sphere(1, 60, 60),2, 30, 60, 5, 10,SphereBB_TYPE);
+//    auto *ball_mesh2 = new LODMesh(create_sphere(5, 120, 120),  2, 30, 60, 5, 10,SphereBB_TYPE);
 //    auto *plane_mesh1 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
 //    auto *plane_mesh2 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
 
@@ -36,30 +39,45 @@ BounceScene::BounceScene(const std::string &vertex_shader_path, const std::strin
     big_ball->get_trsf()->set_translation({-4,0,-4});
     big_ball->set_meshes({ball_mesh2});
     big_ball->set_material(big_ball_mat_color);
-    m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball,0,0.01,2));
     auto* big_ball2 = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
     big_ball2->get_trsf()->set_translation({-4,0,4});
     big_ball2->set_meshes({ball_mesh2});
     big_ball2->set_material(big_ball_mat_color);
-    m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball2,0,0.01,2));
     auto* big_ball3 = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
     big_ball3->get_trsf()->set_translation({4,0,-4});
     big_ball3->set_meshes({ball_mesh2});
     big_ball3->set_material(big_ball_mat_color);
-    m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball3,0,0.01,2));
     auto* big_ball4 = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
     big_ball4->get_trsf()->set_translation({4,0,4});
     big_ball4->set_meshes({ball_mesh2});
     big_ball4->set_material(big_ball_mat_color);
+    m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball,0,0.01,2));
+    m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball2,0,0.01,2));
+    m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball3,0,0.01,2));
     m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball4,0,0.01,2));
 
 
     //Ball
     m_ball = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
-    m_ball->get_trsf()->set_translation({2.5,30,2});
+    m_ball->get_trsf()->set_translation({2.,30,2.2});
+    m_ball->get_trsf()->set_uniform_scale(1);
     m_ball->set_meshes({ball_mesh1});
     m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
-    m_physics_system.add_rigid_body(new RigidBodyVolume(m_ball,1000,0.01,1.5));
+
+    //Ball2
+    auto* m_ball2 = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
+    m_ball2->get_trsf()->set_translation({3.8,31,3});
+    m_ball2->get_trsf()->set_uniform_scale(.5);
+    m_ball2->set_meshes({ball_mesh1});
+    m_ball2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
+
+    auto* gravity_force = new GravityForce();
+    auto* rbv_ball = new RigidBodyVolume(m_ball,1000,0.01,1);
+    auto* rbv_ball2 = new RigidBodyVolume(m_ball2,1000,0.01,1);
+    rbv_ball->add_force(gravity_force);
+    rbv_ball2->add_force(gravity_force);
+    m_physics_system.add_rigid_body(rbv_ball);
+    m_physics_system.add_rigid_body(rbv_ball2);
 
     //CAMERA
     auto *camera_node = new NodeGameSG(m_shaders, m_root);
@@ -125,21 +143,27 @@ void BounceScene::process_input(GLFWwindow *window, float delta_time) {
     }
     if (!camera_trsf->is_up_to_date()) camera_trsf->compute();
 
-    Transform *ball_trsf = m_ball->get_trsf();
+//    Transform *ball_trsf = m_ball->get_trsf();
     glm::vec3 translate_ball;
+    bool impulse_ball = false;
     //Scene rotation
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         translate_ball += glm::vec3(ball_translate_speed, 0.f, 0.f);
+        impulse_ball =  true;
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
         translate_ball -= glm::vec3(ball_translate_speed, 0.f, 0.f);
+        impulse_ball =  true;
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
         translate_ball += glm::vec3(0.f, 0.f, ball_translate_speed);
+        impulse_ball =  true;
     }
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         translate_ball -= glm::vec3(0.f, 0.f, ball_translate_speed);
+        impulse_ball =  true;
     }
-    ball_trsf->set_translation(ball_trsf->get_translation() + translate_ball);
-    if (!ball_trsf->is_up_to_date()) ball_trsf->compute();
+    if(impulse_ball)m_ball->get_rigid_body()->add_linear_impulse(translate_ball);
+//    ball_trsf->set_translation(ball_trsf->get_translation() + translate_ball);
+//    if (!ball_trsf->is_up_to_date()) ball_trsf->compute();
 }

@@ -18,7 +18,7 @@ namespace physics {
     class RigidBodyVolume;
 
     /**
-     * Represents a collision between 2 BoundingBox
+     * Represents a collision between 2 \link bounding_box::BoundingBox BoundingBox\endlink
      */
     struct Collision {
         bool colliding;

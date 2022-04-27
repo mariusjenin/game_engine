@@ -6,6 +6,7 @@
 #include "AABB.hpp"
 
 using namespace physics;
+using namespace physics::bounding_box;
 
 BB_TYPE BoundingBox::get_type() const {
     return m_type;

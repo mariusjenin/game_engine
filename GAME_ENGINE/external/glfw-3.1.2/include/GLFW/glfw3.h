@@ -3158,7 +3158,7 @@ GLFWAPI void glfwSetTime(double time);
  *  a single thread at a time and each thread can have only a single current
  *  context at a time.
  *
- *  By default, making a context non-current implicitly forces a pipeline flush.
+ *  By default, making a context non-current implicitly force a pipeline flush.
  *  On machines that support `GL_KHR_context_flush_control`, you can control
  *  whether a context performs this flush by setting the
  *  [GLFW_CONTEXT_RELEASE_BEHAVIOR](@ref window_hints_ctx) window hint.

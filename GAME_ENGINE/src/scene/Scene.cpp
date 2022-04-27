@@ -6,8 +6,8 @@
 
 using namespace scene;
 
-void Scene::draw() {
-    m_root->draw(m_cameras.at(m_camera_index)->get_position_in_world());
+void Scene::render() {
+    m_root->draw(m_cameras[m_camera_index]->get_position_in_world());
 }
 
 Scene::~Scene() {
@@ -24,8 +24,6 @@ void Scene::update(GLFWwindow *window, float delta_time) {
     camera_node->update_view_pos();
 
     process_input(window, delta_time);
-
-    m_physics_system.update(camera_node->get_position_in_world(),delta_time);
 }
 
 Scene::Scene(const std::string &vertex_shader_path, const std::string &fragment_shader_path) {
@@ -67,4 +65,9 @@ void Scene::setup() {
 
 Shaders *Scene::get_shaders() const {
     return m_shaders;
+}
+
+void Scene::update_physics(GLFWwindow *window, float delta_time) {
+    NodeGameSG *camera_node = m_cameras[m_camera_index];
+    m_physics_system.update(camera_node->get_position_in_world(),delta_time);
 }

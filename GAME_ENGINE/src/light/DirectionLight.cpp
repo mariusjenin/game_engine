@@ -7,6 +7,7 @@
 #include <utility>
 
 using namespace light;
+using namespace light::behavior;
 
 void DirectionLight::to_light_shader(LightShader *light_shader) {
     Light::to_light_shader(light_shader);

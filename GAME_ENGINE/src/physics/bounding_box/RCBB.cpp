@@ -6,6 +6,7 @@
 #include "AABB.hpp"
 
 using namespace physics;
+using namespace physics::bounding_box;
 
 void RCBB::compute(std::vector<glm::vec3> vertices) {
     std::pair<glm::vec3, glm::vec3> bb;
@@ -33,6 +34,7 @@ glm::vec3 RCBB::get_max() {
 }
 
 AABB* RCBB::to_AABB() {
-    auto* aabb = new AABB();
+    auto* aabb = new AABB(m_position,m_size);
     return aabb;
 }
+

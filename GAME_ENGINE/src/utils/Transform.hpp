@@ -33,14 +33,15 @@ protected:
 
     /**
      * Compute a matrix with given values
-     * @param translate
+     * @param tr
      * @param rot
-     * @param scale
+     * @param sc
      * @param order_rotation
      * @return matrix
      */
     static glm::mat4
-    local_get_matrix_with_values(glm::vec3 translate, glm::vec3 rot, glm::vec3 scale, int order_rotation);
+    local_get_matrix_with_values(glm::vec3 tr, glm::vec3 rot, glm::vec3 sc, int order_rotation, bool inverse = false);
+
 
     /**
      * Compute the matrix of the Transform without saving it
@@ -119,6 +120,9 @@ public:
     /// Setter of the scale
     void set_scale(const glm::vec3 &new_scale);
 
+    /// Setter of the scale with an uniform scale
+    void set_uniform_scale(float scale);
+
     /**
      * Setter of the matrix
      * @param new_matrix
@@ -148,6 +152,12 @@ public:
      * @return matrix
      */
     const glm::mat4 &get_matrix();
+
+    /**
+     * Get the matrix that correspond at the inverse of the transform
+     * @return
+     */
+    glm::mat4 get_inverse();
 
     /**
      * Getter of the flag up_to_date

@@ -7,6 +7,7 @@
 #include "AABB.hpp"
 
 using namespace physics;
+using namespace physics::bounding_box;
 
 SphereBB::SphereBB() {
     m_type = SphereBB_TYPE;
@@ -67,5 +68,12 @@ Collision SphereBB::get_data_collision(const AABB &bb) {
 
 Collision SphereBB::get_data_collision(const OBB &bb) {
     return {}; //TODO
+}
+
+void SphereBB::apply_transform(glm::mat4 matrix) {
+    glm::vec3 position_radius = glm::vec3(matrix * glm::vec4(m_position + glm::vec3(m_radius,m_radius,m_radius),1));
+    m_position = glm::vec3(matrix * glm::vec4(m_position,1));
+    glm::vec3 diff = m_position-position_radius;
+    m_radius = std::max(abs(diff.x),std::max(abs(diff.y),abs(diff.z)));
 }
 

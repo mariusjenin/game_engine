@@ -15,6 +15,7 @@ GLFWwindow *window;
 #include <src/scene/BounceScene.hpp>
 
 using namespace scene;
+
 int main() {
     // Initialise GLFW
     if (!glfwInit()) {
@@ -29,10 +30,21 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+
+    //Get the primary monitor size and pos
+    int pos_monitor_x,pos_monitor_y;
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    glfwGetMonitorPos(monitor, &pos_monitor_x, &pos_monitor_y);
+
     // Open a window and create its OpenGL context
-    const unsigned int SCR_WIDTH = 1024;
-    const unsigned int SCR_HEIGHT = 768;
-    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "GAME ENGINE", nullptr, nullptr);
+    const unsigned int WINDOW_WIDTH = 1024;
+    const unsigned int WINDOW_HEIGHT = 768;
+    window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "GAME ENGINE", nullptr, nullptr);
+
+    //Get the primary monitor size and pos
+    glfwSetWindowPos(window, pos_monitor_x, pos_monitor_y);
+
+
     if (window == nullptr) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -58,7 +70,7 @@ int main() {
 
     // Set the mouse at the center of the screen
     glfwPollEvents();
-    glfwSetCursorPos(window, SCR_WIDTH / 2., SCR_HEIGHT / 2.);
+    glfwSetCursorPos(window, WINDOW_WIDTH / 2., WINDOW_HEIGHT / 2.);
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
@@ -70,35 +82,48 @@ int main() {
 
     //CREATE THE SCENE
 //    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
-    BounceScene scene = BounceScene("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
+    BounceScene scene = BounceScene("../shader/scene_land/vertex_shader.glsl","../shader/scene_land/fragment_shader.glsl");
 //    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl");
     scene.setup();
-    Shaders *shaders = scene.get_shaders();
-    GLuint program_id = shaders->get_program_id();
 
     // For speed computation
-    double lastTime = glfwGetTime();
-    int nbFrames = 0;
-    float delta_time = 0.0f; // time between current frame and last frame
-    float last_frame = 0.0f;
+    float last_time = (float)glfwGetTime();
+    float current_time;
+
+    //Frame updates
+    int frames_by_second = 60;
+    float delta_time_frame_acc = 0.0f;
+    float delta_time_frame_fixed = 1.0f / (float)frames_by_second;
+    //Physics updates
+    int update_physics_by_second = 40;
+    float delta_time_physics_acc = 0.0f;
+    float delta_time_physics_fixed = 1.0f / (float)update_physics_by_second;
     do {
-        // Measure speed
-        // per-frame time logic
-        // --------------------
-        auto currentFrame = (float) glfwGetTime();
-        delta_time = currentFrame - last_frame;
-        last_frame = currentFrame;
+        current_time = (float)glfwGetTime();
+        delta_time_frame_acc += current_time - last_time;
+        delta_time_physics_acc += current_time - last_time;
+        if (delta_time_frame_acc > delta_time_frame_fixed) {
+            delta_time_frame_acc -= delta_time_frame_fixed;
 
-        // Clear the screen
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            // Clear the screen
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //UPDATE SCENE (MODIFICATION WITH ANIMATION + WITH INPUTS)
-        scene.update(window, delta_time);
-        scene.draw();
+            //RENDER SCENE
+            scene.render();
+            scene.update(window, delta_time_frame_fixed);
 
-        // Swap buffers
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+            // Swap buffers
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+
+
+        }
+        if (delta_time_physics_acc > delta_time_physics_fixed) {
+            delta_time_physics_acc -= delta_time_physics_fixed;
+            scene.update_physics(window,delta_time_physics_fixed);
+        }
+
+        last_time = current_time;
 
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&

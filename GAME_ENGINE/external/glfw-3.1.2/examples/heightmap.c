@@ -480,7 +480,7 @@ int main(int argc, char** argv)
     while (!glfwWindowShouldClose(window))
     {
         ++frame;
-        /* render the next frame */
+        /* update the next frame */
         glClear(GL_COLOR_BUFFER_BIT);
         glDrawElements(GL_LINES, 2* MAP_NUM_LINES , GL_UNSIGNED_INT, 0);
 

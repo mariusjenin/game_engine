@@ -15,7 +15,6 @@ PhysicsSystem::PhysicsSystem(float lpp, float ps, int ii) {
 
 void PhysicsSystem::add_rigid_body(physics::RigidBodyVolume *rbv) {
     m_rigid_bodies.push_back(rbv);
-
 }
 
 void PhysicsSystem::remove_rigid_body(physics::RigidBodyVolume *rbv) {

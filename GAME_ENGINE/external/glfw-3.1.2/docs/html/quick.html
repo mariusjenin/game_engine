@@ -97,7 +97,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li class="level1"><a href="#quick_build">Compiling and linking the program</a></li>
 </ul>
 </div>
-<div class="textblock"><p>This guide takes you through writing a simple application using GLFW 3. The application will create a window and OpenGL context, render a rotating triangle and exit when the user closes the window or presses Escape. This guide will introduce a few of the most commonly used functions, but there are many more.</p>
+<div class="textblock"><p>This guide takes you through writing a simple application using GLFW 3. The application will create a window and OpenGL context, update a rotating triangle and exit when the user closes the window or presses Escape. This guide will introduce a few of the most commonly used functions, but there are many more.</p>
 <p>This guide assumes no experience with earlier versions of GLFW. If you have used GLFW 2 in the past, read the <a class="el" href="moving.html">Moving from GLFW 2 to 3</a> guide, as some functions behave differently in GLFW 3.</p>
 <h1><a class="anchor" id="quick_steps"></a>
 Step by step</h1>
@@ -188,7 +188,7 @@ Reading the timer</h2>
 <div class="fragment"><div class="line"><span class="keywordtype">double</span> time = <a class="code" href="group__input.html#gaa6cf4e7a77158a3b8fd00328b1720a4a">glfwGetTime</a>();</div>
 </div><!-- fragment --><h2><a class="anchor" id="quick_swap_buffers"></a>
 Swapping buffers</h2>
-<p>GLFW windows by default use double buffering. That means that each window has two rendering buffers; a front buffer and a back buffer. The front buffer is the one being displayed and the back buffer the one you render to.</p>
+<p>GLFW windows by default use double buffering. That means that each window has two rendering buffers; a front buffer and a back buffer. The front buffer is the one being displayed and the back buffer the one you update to.</p>
 <p>When the entire frame has been rendered, the buffers need to be swapped with one another, so the back buffer becomes the front buffer and vice versa.</p>
 <div class="fragment"><div class="line"><a class="code" href="group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14">glfwSwapBuffers</a>(window);</div>
 </div><!-- fragment --><p>The swap interval indicates how many frames to wait until swapping the buffers, commonly known as <em>vsync</em>. By default, the swap interval is zero, meaning buffer swapping will occur immediately. On fast machines, many of those frames will never be seen, as the screen is still only updated typically 60-75 times per second, so this wastes a lot of CPU and GPU cycles.</p>

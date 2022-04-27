@@ -16,7 +16,7 @@
 #include <src/light/SpotLight.hpp>
 
 namespace scene {
-    /// Simple scene
+    /// Scene with Collisions
     class BounceScene : public Scene {
     private:
         NodeGameSG *m_ball;

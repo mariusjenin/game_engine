@@ -22,14 +22,14 @@ void ElementSG::add_child(NodeSG *node) {
 }
 
 void ElementSG::draw(glm::vec3 pos_camera) {
-    for (auto &m_child: m_children) {
-        m_child->draw(pos_camera);
+    for (auto &child: m_children) {
+        child->draw(pos_camera);
     }
 }
 
 ElementSG::~ElementSG() {
-    for (auto m_child: m_children) {
-        delete m_child;
+    for (auto child: m_children) {
+        delete child;
     }
     m_children.clear();
     delete m_trsf;
@@ -60,4 +60,8 @@ void ElementSG::load_uniforms_1i() {
 
 void ElementSG::load_uniforms() {
     load_uniforms_1i();
+}
+
+bool ElementSG::is_node_game() {
+    return false;
 }

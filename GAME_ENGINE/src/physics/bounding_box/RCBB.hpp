@@ -8,29 +8,31 @@
 #include "BoundingBox.hpp"
 #include <cfloat>
 namespace physics {
-    class AABB;
 
-    /// Rectangle Cuboid BoundingBox
-    class RCBB : public BoundingBox {
-    protected:
-        glm::vec3 m_size;
-    public:
-        void compute(std::vector<glm::vec3> vertices) override;
+    namespace bounding_box {
+        class AABB;
 
-        /**
-         * Getter of the minimal value of the RCBB
-         * @return min
-         */
-        glm::vec3 get_min();
+        /// Rectangle Cuboid BoundingBox (Abstract)
+        class RCBB : public BoundingBox {
+        protected:
+            glm::vec3 m_size;
+        public:
+            void compute(std::vector<glm::vec3> vertices) override;
 
-        /**
-         * Getter of the maximal value of the RCBB
-         * @return max
-         */
-        glm::vec3 get_max();
+            /**
+             * Getter of the minimal value of the RCBB
+             * @return min
+             */
+            glm::vec3 get_min();
 
-        AABB* to_AABB() override;
-    };
+            /**
+             * Getter of the maximal value of the RCBB
+             * @return max
+             */
+            glm::vec3 get_max();
 
+            AABB *to_AABB() override;
+        };
+    }
 }
 #endif //GAME_ENGINE_RCBB_H

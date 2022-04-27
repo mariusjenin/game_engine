@@ -10,7 +10,7 @@
 #include "../mesh/LODMesh.hpp"
 #include "../material/MaterialTexture.hpp"
 #include "../material/MaterialColor.hpp"
-#include "../light/DirectionLight.hpp"
+#include "src/light/DirectionLight.hpp"
 #include "../utils/objloader.hpp"
 
 namespace scene {

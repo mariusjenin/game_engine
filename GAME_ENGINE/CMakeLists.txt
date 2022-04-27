@@ -74,8 +74,6 @@ add_executable(
 		src/scene_graph/NodeOnTopSG.cpp src/scene_graph/NodeOnTopSG.hpp
 		src/scene_graph/RootSG.cpp src/scene_graph/RootSG.hpp
 		src/scene_graph/ElementSG.cpp src/scene_graph/ElementSG.hpp
-#		src/scene_graph/CameraNodeSG.cpp src/scene_graph/CameraNodeSG.hpp
-#		src/scene_graph/LightNodeSG.cpp src/scene_graph/LightNodeSG.hpp
 		src/scene_graph/NodeGameSG.cpp src/scene_graph/NodeGameSG.hpp
 #		SCENE
 		src/scene/SolarSystem.cpp src/scene/SolarSystem.hpp
@@ -89,15 +87,14 @@ add_executable(
 #		LIGHT
 		src/light/Light.cpp src/light/Light.hpp
 		src/light/LightShader.hpp
-		src/light/LightBehavior.cpp src/light/LightBehavior.hpp
+        src/light/light_behavior/LightBehavior.cpp src/light/light_behavior/LightBehavior.hpp
 		src/light/PositionLight.cpp src/light/PositionLight.hpp
-		src/light/DirectionLight.cpp src/light/DirectionLight.hpp
+        src/light/DirectionLight.cpp src/light/DirectionLight.hpp
 		src/light/SpotLight.cpp src/light/SpotLight.hpp
-		src/light/DirectionLightBehavior.cpp src/light/DirectionLightBehavior.hpp
-		src/light/PositionLightBehavior.cpp src/light/PositionLightBehavior.hpp
-		src/light/SpotLightBehavior.cpp src/light/SpotLightBehavior.hpp
+        src/light/light_behavior/DirectionLightBehavior.cpp src/light/light_behavior/DirectionLightBehavior.hpp
+        src/light/light_behavior/PositionLightBehavior.cpp src/light/light_behavior/PositionLightBehavior.hpp
+		src/light/light_behavior/SpotLightBehavior.cpp src/light/light_behavior/SpotLightBehavior.hpp
 #		PHYSICS
-		src/physics/RigidBody.cpp src/physics/RigidBody.hpp
 		src/physics/bounding_box/BoundingBox.cpp src/physics/bounding_box/BoundingBox.hpp
 		src/physics/bounding_box/AABB.cpp src/physics/bounding_box/AABB.hpp
 		src/physics/bounding_box/OBB.cpp src/physics/bounding_box/OBB.hpp
@@ -107,6 +104,8 @@ add_executable(
 		src/physics/RigidBodyVolume.cpp src/physics/RigidBodyVolume.hpp
 		src/physics/Collision.cpp src/physics/Collision.hpp
 		src/physics/PhysicsSystem.cpp src/physics/PhysicsSystem.hpp
+		src/physics/force/Force.cpp src/physics/force/Force.hpp
+		src/physics/force/GravityForce.cpp src/physics/force/GravityForce.hpp
 		)
 target_link_libraries(main
 	${ALL_LIBS}

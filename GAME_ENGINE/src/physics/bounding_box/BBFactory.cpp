@@ -6,7 +6,7 @@
 #include "AABB.hpp"
 #include "SphereBB.hpp"
 
-using namespace physics;
+using namespace physics::bounding_box;
 
 BoundingBox *BBFactory::generate_bb(BB_TYPE bb_type) {
     switch (bb_type) {

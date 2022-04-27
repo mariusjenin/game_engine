@@ -6,12 +6,11 @@
 #define GAME_ENGINE_DIRECTIONLIGHT_HPP
 
 
-#include "Light.hpp"
-#include "DirectionLightBehavior.hpp"
+#include "src/light/Light.hpp"
+#include "src/light/light_behavior/DirectionLightBehavior.hpp"
 
 
 namespace light {
-
     /// Light with a direction
     class DirectionLight : public virtual Light {
     public:

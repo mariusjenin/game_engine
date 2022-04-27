@@ -16,9 +16,7 @@ namespace scene_graph {
          */
         explicit RootSG(Shaders *shaders);
 
-        glm::mat4 get_matrix_recursive() override;
-
-        void draw(glm::vec3 pos_camera) override;
+        glm::mat4 get_matrix_recursive(bool inverse) override;
     };
 }
 

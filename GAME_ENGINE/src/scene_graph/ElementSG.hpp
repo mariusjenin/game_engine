@@ -33,6 +33,13 @@ namespace scene_graph {
          */
         void load_uniforms_1i();
     public :
+
+        /**
+         * Getter of whether or not the ElementSG is a node of the scene graph that is usable like a node of the game (NodeGameSG)
+         * @return is_node_game
+         */
+        virtual bool is_node_game();
+
         /**
          * Add a child to the ElementSG
          * @param node
@@ -68,7 +75,7 @@ namespace scene_graph {
          * Give the matrix for an extern object (like a child) (recursive function)
          * @return matrix
          */
-        virtual glm::mat4 get_matrix_recursive() = 0;
+        virtual glm::mat4 get_matrix_recursive(bool inverse) = 0;
 
         /// Compute all the Transform list (itself and children)
         virtual void compute_trsf_scene_graph();

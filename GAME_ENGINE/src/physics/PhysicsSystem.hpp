@@ -8,6 +8,7 @@
 
 namespace physics{
 
+    /// Manage a whole physic system with RigidBody
     class PhysicsSystem {
     private:
         std::vector<RigidBodyVolume *> m_rigid_bodies;

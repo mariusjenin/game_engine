@@ -23,13 +23,32 @@ namespace scene_graph {
     #define CAMERA_INIT_FORWARD glm::vec3(0, 0, -1)
     #define CAMERA_INIT_UP glm::vec3(0, 1, 0)
     private:
+        //Meshes
         std::vector<Mesh *> m_meshes;
+        //Material
         Material *m_material{};
         bool m_has_material;
-        bool m_see_both_face;
+        //Light
         Light *m_light;
+        //BoundingBox
         BoundingBox* m_bb{};
         BB_TYPE m_bb_type;
+        //Render
+        bool m_see_both_face;
+        //RigidBody
+        RigidBodyVolume* m_rigid_body;
+
+        /**
+         * Refresh the BoundingBox of the NodeGameSG without applying any Transform
+         * @param pos_camera
+         */
+        void refresh_bb_aux(glm::vec3 pos_camera);
+
+        /**
+         * Refresh the BoundingBox of the NodeGameSG applying only the NodeGameSG Transform
+         * @param pos_camera
+         */
+        void refresh_bb_recursive(glm::vec3 pos_camera);
     public:
         /**
          * Constructor of the NodeGameSG
@@ -38,6 +57,20 @@ namespace scene_graph {
          * @param name
          */
         NodeGameSG(Shaders *shaders, ElementSG *parent, BB_TYPE bb_type = AABB_TYPE);
+
+        bool is_node_game() override;
+
+        /**
+         * Getter of the RigidBodyVolume
+         * @return rigid_body
+         */
+        RigidBodyVolume *get_rigid_body() const;
+
+        /**
+         * Setter of the RigidBodyVolume
+         * @param rigid_body
+         */
+        void set_rigid_body(RigidBodyVolume *rigid_body);
 
         /**
          * Refresh the BoundingBox of the NodeGameSG
@@ -101,7 +134,7 @@ namespace scene_graph {
         glm::vec3 get_center(glm::vec3 pos_camera);
 
         /**
-         * Setter of the flag see_both_face (render both face of the \link mesh::Mesh Meshes\endlink))
+         * Setter of the flag see_both_face (update both face of the \link mesh::Mesh Meshes\endlink))
          * @param see_both_face
          */
         void set_see_both_face(bool see_both_face);

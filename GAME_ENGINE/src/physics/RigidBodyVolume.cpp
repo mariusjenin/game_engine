@@ -1,16 +1,19 @@
 #include "RigidBodyVolume.hpp"
-#include "Collision.hpp"
+#include "src/physics/Collision.hpp"
 #include "src/utils/printer.hpp"
 #include <glm/gtx/matrix_decompose.hpp>
 
 using namespace physics;
+using namespace physics::force;
 using namespace scene_graph;
 
 RigidBodyVolume::RigidBodyVolume(NodeGameSG *ng,float mass, float friction, float cor) {
     m_node_game = ng;
+    m_node_game->set_rigid_body(this);
     m_mass = mass;
     m_friction = friction;
     m_cor = cor;
+    m_list_forces = {};
 }
 
 RigidBodyVolume::~RigidBodyVolume() = default;
@@ -30,33 +33,29 @@ void RigidBodyVolume::update(float delta_time) {
 //    m_position += m_velocity * delta_time;
 
     glm::vec3 translation_modification_world = m_velocity * delta_time;
-    //TODO
+    //TODO explain to Alexandre why it's not needed
 //    //Get the local to world matrix
-//    glm::mat4 mat_world = ((NodeSG *) m_node_game)->get_matrix_recursive_local();
-//    //inverse it
-//    glm::mat4 inv_mat_world = glm::inverse(mat_world);
-//    print_mat4(mat_world);
-//    print_mat4(inv_mat_world);
+//    glm::mat4 mat_world_inverse = ((NodeSG *) m_node_game)->get_matrix_recursive_local(true);
+//    glm::mat4 mat_world = ((NodeSG *) m_node_game)->get_matrix_recursive_local(false);
 //
 //    //Get the translation modification and get it in the local space of the node
 //    Transform local_trsf = Transform();
-//    local_trsf.set_matrix(inv_mat_world);
-//    glm::vec3 translation_modification = local_trsf.apply_to_point(translation_modification_world);
+//    local_trsf.set_matrix(mat_world_inverse);
+//    glm::vec3 translation_modification = local_trsf.apply_to_vector(translation_modification_world);
 //    //Apply this modification
 //    glm::vec3 translation_base = ((NodeSG *) m_node_game)->get_trsf()->get_translation();
-//
-//
-//    print_mat4(mat_world);
-//    print_mat4(inv_mat_world);
-//
-//        std::cout<< m_node_game->get_bb()->get_position()[1]<< std::endl;
+
     ((NodeSG *) m_node_game)->get_trsf()->set_translation(
             ((NodeSG *) m_node_game)->get_trsf()->get_translation() + translation_modification_world);
     ((NodeSG *) m_node_game)->get_trsf()->compute();
 }
 
 void RigidBodyVolume::apply_forces() {
-    m_forces = glm::vec3(0., -9.81f, 0.) * m_mass;
+    m_forces = {0,0,0};
+    for(auto* force: m_list_forces){
+        force->apply(this);
+    }
+//    m_forces = glm::vec3(0., -9.81f, 0.) * m_mass;
 }
 
 Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
@@ -150,3 +149,20 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &colli
 NodeGameSG *RigidBodyVolume::get_node() {
     return m_node_game;
 }
+
+float RigidBodyVolume::get_mass() const {
+    return m_mass;
+}
+
+void RigidBodyVolume::set_forces(const glm::vec3 &forces) {
+    m_forces = forces;
+}
+
+glm::vec3 RigidBodyVolume::get_forces() const {
+    return m_forces;
+}
+
+void RigidBodyVolume::add_force(Force *f) {
+    m_list_forces.push_back(f);
+}
+

@@ -12,10 +12,9 @@
 #include "src/shader/Shaders.hpp"
 
 namespace scene_graph {
-    /// Base Node of the scene graph
+    /// Base Node of the scene graph (Abstract)
     class NodeSG : public ElementSG {
     private:
-        Transform *m_local_trsf;
         ElementSG *m_parent;
     protected:
         /**
@@ -25,6 +24,8 @@ namespace scene_graph {
          * @param name
          */
         NodeSG(Shaders *shaders, ElementSG *parent);
+
+        Transform *m_local_trsf;
     public:
 
         /**
@@ -39,13 +40,13 @@ namespace scene_graph {
         Transform *get_local_trsf();
 
 
-        glm::mat4 get_matrix_recursive() override;
+        glm::mat4 get_matrix_recursive(bool inverse) override;
 
         /**
          * Give the matrix for the NodeSG (recursive function)
          * @return matrix
          */
-        glm::mat4 get_matrix_recursive_local();
+        glm::mat4 get_matrix_recursive_local(bool inverse = false);
 
 
         void compute_trsf_scene_graph() override;

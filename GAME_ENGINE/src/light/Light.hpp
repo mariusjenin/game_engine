@@ -16,7 +16,9 @@
 #include <glm/glm.hpp>
 
 #include "LightShader.hpp"
-#include "LightBehavior.hpp"
+#include "src/light/light_behavior/LightBehavior.hpp"
+
+using namespace light::behavior;
 
 namespace light {
 

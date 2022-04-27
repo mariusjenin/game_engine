@@ -7,7 +7,7 @@
 
 
 #include "Light.hpp"
-#include "PositionLightBehavior.hpp"
+#include "src/light/light_behavior/PositionLightBehavior.hpp"
 
 namespace light {
     /// Light with a position and whose intensity can be attenuated

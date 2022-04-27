@@ -19,22 +19,20 @@ NodeSG::NodeSG(Shaders *shaders, ElementSG *parent)
     m_local_trsf = new Transform();
 }
 
-glm::mat4 NodeSG::get_matrix_recursive() {
-    glm::mat4 mat = m_parent->get_matrix_recursive();
-
-    mat *= m_trsf->get_matrix();
-
-    return mat;
+glm::mat4 NodeSG::get_matrix_recursive(bool inverse) {
+    if(inverse) {
+        return m_trsf->get_inverse() * m_parent->get_matrix_recursive(inverse);
+    }else{
+        return m_parent->get_matrix_recursive(inverse) * m_trsf->get_matrix();
+    }
 }
 
-glm::mat4 NodeSG::get_matrix_recursive_local() {
-    glm::mat4 mat = m_parent->get_matrix_recursive();
-
-    mat *= m_trsf->get_matrix();
-
-    mat *= m_local_trsf->get_matrix();
-
-    return mat;
+glm::mat4 NodeSG::get_matrix_recursive_local(bool inverse) {
+    if(inverse){
+        return m_local_trsf->get_inverse() * m_trsf->get_inverse() * m_parent->get_matrix_recursive(inverse);
+    } else {
+        return m_parent->get_matrix_recursive(inverse) * m_trsf->get_matrix() * m_local_trsf->get_matrix();
+    }
 }
 
 NodeSG::~NodeSG() {

@@ -9,44 +9,80 @@ Transform::Transform(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scale,
 }
 
 glm::mat4
-Transform::local_get_matrix_with_values(const glm::vec3 translate, const glm::vec3 rot, const glm::vec3 scale,
-                                        int order_rotation) {
+Transform::local_get_matrix_with_values(const glm::vec3 tr, const glm::vec3 rot, const glm::vec3 sc,
+                                        int order_rotation, bool inverse) {
+
+    glm::mat4 res_mat;
+    glm::vec3 translate;
+    glm::vec3 rotation;
+    glm::vec3 scale;
+    if(inverse){
+        translate = {tr.x * -1,tr.y * -1,tr.z * -1};
+        rotation = {rot.x * -1,rot.y * -1,rot.z * -1};
+        scale = {1.0f/sc.x,1.0f/sc.y,1.0f/sc.z};
+    } else {
+        translate = tr;
+        rotation = rot;
+        scale = sc;
+    }
     const glm::mat4 transformX = glm::rotate(glm::mat4(1.0f),
-                                             glm::radians(rot.x),
+                                             glm::radians(rotation.x),
                                              glm::vec3(1.0f, 0.0f, 0.0f));
     const glm::mat4 transformY = glm::rotate(glm::mat4(1.0f),
-                                             glm::radians(rot.y),
+                                             glm::radians(rotation.y),
                                              glm::vec3(0.0f, 1.0f, 0.0f));
     const glm::mat4 transformZ = glm::rotate(glm::mat4(1.0f),
-                                             glm::radians(rot.z),
+                                             glm::radians(rotation.z),
                                              glm::vec3(0.0f, 0.0f, 1.0f));
     glm::mat4 rotationMatrix;
+    glm::mat4 rot1,rot2,rot3;
     switch (order_rotation) {
         case ORDER_ZYX:
-            rotationMatrix = transformZ * transformY * transformX;
+            rot1 = transformZ;
+            rot2 = transformY;
+            rot3 = transformX;
             break;
         case ORDER_ZXY:
-            rotationMatrix = transformZ * transformX * transformY;
+            rot1 = transformZ;
+            rot2 = transformX;
+            rot3 = transformY;
             break;
         case ORDER_YXZ:
-            rotationMatrix = transformY * transformX * transformZ;
+            rot1 = transformY;
+            rot2 = transformX;
+            rot3 = transformZ;
             break;
         case ORDER_YZX:
-            rotationMatrix = transformY * transformZ * transformX;
+            rot1 = transformY;
+            rot2 = transformZ;
+            rot3 = transformX;
             break;
         case ORDER_XYZ:
-            rotationMatrix = transformX * transformY * transformZ;
+            rot1 = transformX;
+            rot2 = transformY;
+            rot3 = transformZ;
             break;
         case ORDER_XZY:
-            rotationMatrix = transformX * transformZ * transformY;
+            rot1 = transformX;
+            rot2 = transformZ;
+            rot3 = transformY;
             break;
         default:
             throw std::runtime_error("Bad order of rotation");
     }
-    // translation * rotation * scale (also know as TRS matrix)
-    return glm::translate(glm::mat4(1.0f), translate) *
-           rotationMatrix *
-           glm::scale(glm::mat4(1.0f), scale);
+    if(inverse){
+        rotationMatrix = rot3 * rot2 * rot1;
+        res_mat = glm::scale(glm::mat4(1.0f),scale) *
+                  rotationMatrix *
+                  glm::translate(glm::mat4(1.0f), translate);
+    }else{
+        rotationMatrix = rot1 * rot2 * rot3;
+        res_mat = glm::translate(glm::mat4(1.0f), translate) *
+                  rotationMatrix *
+                  glm::scale(glm::mat4(1.0f), scale);
+    }
+
+    return res_mat;
 }
 
 glm::mat4 Transform::local_get_matrix() {
@@ -102,6 +138,12 @@ void Transform::set_rotation(const glm::vec3 &new_rotation) {
 }
 
 void Transform::set_scale(const glm::vec3 &new_scale) {
+    m_up_to_date = m_up_to_date && new_scale == m_scale;
+    m_scale = new_scale;
+}
+
+void Transform::set_uniform_scale(float scale) {
+    glm::vec3 new_scale = {scale,scale,scale};
     m_up_to_date = m_up_to_date && new_scale == m_scale;
     m_scale = new_scale;
 }
@@ -174,4 +216,8 @@ void Transform::set_matrix(const glm::mat4 &new_matrix) {
 void Transform::set_order_rotation(int order_rotation) {
     m_up_to_date = m_up_to_date && order_rotation == m_order_rotation;
     m_order_rotation = order_rotation;
+}
+
+glm::mat4 Transform::get_inverse() {
+    return local_get_matrix_with_values(m_translate, m_rot, m_scale, m_order_rotation,true);
 }

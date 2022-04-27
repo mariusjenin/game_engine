@@ -182,22 +182,48 @@ LightShader NodeGameSG::generate_light_struct() {
     return light_struct;
 }
 
-void NodeGameSG::refresh_bb(glm::vec3 pos_camera) {
+void NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera) {
     m_bb = BBFactory::generate_bb(m_bb_type);
     std::vector<BoundingBox*> bbs = {};
-    //Compute bounding box of childs TODO
+    //Compute only if changes in childs //TODO
     for(auto mesh : m_meshes){
         mesh->update_mesh(glm::distance(get_position_in_world(mesh->get_center()), pos_camera));
         bbs.push_back(mesh->get_bb());
     }
-    m_bb->compute(bbs);
 
-    Transform trsf = Transform();
-    trsf.set_matrix(get_matrix_recursive_local());
-    glm::vec3 pos = m_bb->get_position();
-    m_bb->set_position(trsf.apply_to_point(pos));
+    for (auto child: m_children) {
+        if(child->is_node_game()){
+            auto* node = (NodeGameSG*) child;
+            node->refresh_bb_recursive(pos_camera);
+            bbs.push_back(node->get_bb());
+        }
+    }
+
+    m_bb->compute(bbs);
+}
+
+void NodeGameSG::refresh_bb(glm::vec3 pos_camera) {
+    refresh_bb_aux(pos_camera);
+    m_bb->apply_transform(get_matrix_recursive_local());
+}
+
+void NodeGameSG::refresh_bb_recursive(glm::vec3 pos_camera) {
+    refresh_bb_aux(pos_camera);
+    m_bb->apply_transform(m_trsf->get_matrix() * m_local_trsf->get_matrix());
 }
 
 BoundingBox* NodeGameSG::get_bb(){
     return m_bb;
+}
+
+bool NodeGameSG::is_node_game() {
+    return true;
+}
+
+RigidBodyVolume *NodeGameSG::get_rigid_body() const {
+    return m_rigid_body;
+}
+
+void NodeGameSG::set_rigid_body(RigidBodyVolume *rigid_body) {
+    m_rigid_body = rigid_body;
 }

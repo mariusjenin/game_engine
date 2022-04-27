@@ -53,18 +53,24 @@ namespace scene {
         Shaders *get_shaders() const;
 
         /**
-         * Update function that is called at each frame
+         * Render the Scene
          * @param window
          * @param delta_time
          */
         virtual void update(GLFWwindow *window, float delta_time);
 
-        /// Draw the Scene
-        virtual void draw();
+        /**
+         * Update the PhysicsSystem
+         * @param window
+         * @param delta_time
+         */
+        virtual void update_physics(GLFWwindow *window, float delta_time);
 
         /// Destructor of the Scene
         virtual ~Scene();
 
+        ///Render the Scene
+        void render();
     };
 }
 

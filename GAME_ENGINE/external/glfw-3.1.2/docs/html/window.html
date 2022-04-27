@@ -309,7 +309,7 @@ Window closing and close flag</h2>
 <p>The current state of the close flag is returned by <a class="el" href="group__window.html#ga24e02fbfefbb81fc45320989f8140ab5">glfwWindowShouldClose</a> and can be set or cleared directly with <a class="el" href="group__window.html#ga49c449dde2a6f87d996f4daaa09d6708">glfwSetWindowShouldClose</a>. A common pattern is to use the close flag as a main loop condition.</p>
 <div class="fragment"><div class="line"><span class="keywordflow">while</span> (!<a class="code" href="group__window.html#ga24e02fbfefbb81fc45320989f8140ab5">glfwWindowShouldClose</a>(window))</div>
 <div class="line">{</div>
-<div class="line">    render(window);</div>
+<div class="line">    update(window);</div>
 <div class="line"></div>
 <div class="line">    <a class="code" href="group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14">glfwSwapBuffers</a>(window);</div>
 <div class="line">    <a class="code" href="group__window.html#ga37bd57223967b4211d60ca1a0bf3c832">glfwPollEvents</a>();</div>
@@ -494,7 +494,7 @@ Framebuffer related attributes</h3>
 <p>When calling <code>glGetFramebufferAttachmentParameteriv</code>, the red, green, blue and alpha sizes can be queried from the <code>GL_BACK_LEFT</code>, while the depth and stencil sizes can be queried from the <code>GL_DEPTH</code> and <code>GL_STENCIL</code> attachments, respectively.</p>
 <h1><a class="anchor" id="buffer_swap"></a>
 Buffer swapping</h1>
-<p>GLFW windows are by default double buffered. That means that you have two rendering buffers; a front buffer and a back buffer. The front buffer is the one being displayed and the back buffer the one you render to.</p>
+<p>GLFW windows are by default double buffered. That means that you have two rendering buffers; a front buffer and a back buffer. The front buffer is the one being displayed and the back buffer the one you update to.</p>
 <p>When the entire frame has been rendered, it is time to swap the back and the front buffers in order to display what has been rendered and begin rendering a new frame. This is done with <a class="el" href="group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14">glfwSwapBuffers</a>.</p>
 <div class="fragment"><div class="line"><a class="code" href="group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14">glfwSwapBuffers</a>(window);</div>
 </div><!-- fragment --><p>Sometimes it can be useful to select when the buffer swap will occur. With the function <a class="el" href="group__context.html#ga6d4e0cdf151b5e579bd67f13202994ed">glfwSwapInterval</a> it is possible to select the minimum number of monitor refreshes the driver wait should from the time <a class="el" href="group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14">glfwSwapBuffers</a> was called before swapping the buffers:</p>

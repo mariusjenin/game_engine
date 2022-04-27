@@ -134,7 +134,7 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
 
 void SolarSystem::update(GLFWwindow *window, float delta_time) {
 
-    float speed_rotation_sky = 0.2 * delta_time * m_speed_anime;
+    float speed_rotation_sky = 0.2f * delta_time * m_speed_anime;
     float speed_rotation_sun = 10 * delta_time * m_speed_anime;
     float speed_rotation_earth = 100 * delta_time * m_speed_anime;
     float speed_rotation_moon = 50 * delta_time * m_speed_anime;
@@ -195,8 +195,6 @@ void SolarSystem::update(GLFWwindow *window, float delta_time) {
         camera_trsf_self_before->set_rotation(camera_trsf_self_before->get_rotation() + rotation_camera);
         camera_trsf_self_before->compute();
     }
-
-    Scene::update(window, delta_time);
 }
 
 

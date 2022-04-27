@@ -7,9 +7,9 @@
 
 
 #include "Light.hpp"
-#include "SpotLightBehavior.hpp"
-#include "PositionLightBehavior.hpp"
-#include "DirectionLightBehavior.hpp"
+#include "src/light/light_behavior/SpotLightBehavior.hpp"
+#include "src/light/light_behavior/PositionLightBehavior.hpp"
+#include "src/light/light_behavior/DirectionLightBehavior.hpp"
 
 namespace light {
     /// Light with a direction, a position and angles of diffusion
