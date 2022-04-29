@@ -128,3 +128,117 @@ MeshData create_sphere(
     }
     return {vertices, indices, uv, normals};
 }
+
+MeshData create_rectangle_cuboid(glm::vec3 size){
+    size/=2.0f;
+    std::vector<glm::vec3> verticies  = {
+            {size.x, size.y,size.z},
+            {size.x, size.y,size.z},
+            {size.x, size.y,size.z},
+            {size.x,size.y,-size.z},
+            {size.x,size.y,-size.z},
+            {size.x,size.y,-size.z},
+            {size.x,-size.y,size.z},
+            {size.x,-size.y,size.z},
+            {size.x,-size.y,size.z},
+            {size.x,-size.y,-size.z},
+            {size.x,-size.y,-size.z},
+            {size.x,-size.y,-size.z},
+            {-size.x,size.y,size.z},
+            {-size.x,size.y,size.z},
+            {-size.x,size.y,size.z},
+            {-size.x,size.y,-size.z},
+            {-size.x,size.y,-size.z},
+            {-size.x,size.y,-size.z},
+            {-size.x,-size.y,size.z},
+            {-size.x,-size.y,size.z},
+            {-size.x,-size.y,size.z},
+            {-size.x,-size.y,-size.z},
+            {-size.x,-size.y,-size.z},
+            {-size.x,-size.y,-size.z},
+    };
+    std::vector<vec3> normals = {
+            {0,1,0},
+            {0,0,1},
+            {1,0,0},
+
+            {0,1,0},
+            {1,0,0},
+            {0,0,-1},
+
+            {0,0,1},
+            {1,0,0},
+            {0,-1,0},
+
+            {1,0,0},
+            {0,-1,0},
+            {0,0,-1},
+
+            {0,1,0},
+            {0,0,1},
+            {-1,0,0},
+
+            {0,1,0},
+            {-1,0,0},
+            {0,0,-1},
+
+            {0,0,1},
+            {-1,0,0},
+            {0,-1,0},
+
+            {-1,0,0},
+            {0,-1,0},
+            {0,0,-1},
+    };
+    for(int i = 0 ; i < 8;i++){
+        verticies.emplace_back(normals[i][0] * size.x,normals[i][1] * size.y,normals[i][2] * size.z);
+    }
+    std::vector<vec2> uv = {
+            {1/2,1/3},
+            {1/2,1/3},
+            {1/2,1/3},
+
+            {1/2,2/3},
+            {1/2,2/3},
+            {1/2,2/3},
+
+            {1/2,0},
+            {3/4,1/3},
+            {3/4,1/3},
+
+            {3/4,2/3},
+            {1/2,1},
+            {3/4,2/3},
+
+            {1/4,1/3},
+            {1/4,1/3},
+            {1/4,1/3},
+
+            {1/4,2/3},
+            {1/4,2/3},
+            {1/4,2/3},
+
+            {1/4,0},
+            {0,1/3},
+            {1,1/3},
+
+            {0,2/3},
+            {1,2/3},
+            {1/4,1},
+    };
+    std::vector<unsigned short int> indices = {
+            0,3,12,
+            12,3,15,
+            6,1,18,
+            18,1,13,
+            9,4,7,
+            7,4,2,
+            19,14,21,
+            21,14,16,
+            10,8,22,
+            22,8,20,
+            5,11,17,
+            17,11,23,
+    };
+    return {verticies, indices, uv, normals};
+}

@@ -25,25 +25,7 @@ void RigidBodyVolume::update(float delta_time) {
     m_velocity += acceleration * delta_time;
     m_velocity *= damping;
 
-    // recup la matrice monde du noeud
-    // Appliquer le mouvement
-    // calculer l'inverse de la matrice resultante
-    // retrouver la translation et la rotation
-
-//    m_position += m_velocity * delta_time;
-
     glm::vec3 translation_modification_world = m_velocity * delta_time;
-    //TODO explain to Alexandre why it's not needed
-//    //Get the local to world matrix
-//    glm::mat4 mat_world_inverse = ((NodeSG *) m_node_game)->get_matrix_recursive_local(true);
-//    glm::mat4 mat_world = ((NodeSG *) m_node_game)->get_matrix_recursive_local(false);
-//
-//    //Get the translation modification and get it in the local space of the node
-//    Transform local_trsf = Transform();
-//    local_trsf.set_matrix(mat_world_inverse);
-//    glm::vec3 translation_modification = local_trsf.apply_to_vector(translation_modification_world);
-//    //Apply this modification
-//    glm::vec3 translation_base = ((NodeSG *) m_node_game)->get_trsf()->get_translation();
 
     ((NodeSG *) m_node_game)->get_trsf()->set_translation(
             ((NodeSG *) m_node_game)->get_trsf()->get_translation() + translation_modification_world);
@@ -55,7 +37,6 @@ void RigidBodyVolume::apply_forces() {
     for(auto* force: m_list_forces){
         force->apply(this);
     }
-//    m_forces = glm::vec3(0., -9.81f, 0.) * m_mass;
 }
 
 Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
@@ -68,7 +49,15 @@ Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
             switch (bb2->get_type()) {
                 case SphereBB_TYPE:
                     collision = ((SphereBB &) *bb1).get_data_collision((SphereBB &) *bb2);
-//                    collision = PhysicsGeometry::get_data_collision((SphereBB &) *bb1, (SphereBB &) *bb2);
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case OBB_TYPE:
+            switch (bb2->get_type()) {
+                case OBB_TYPE:
+                    collision = ((OBB &) *bb1).get_data_collision((OBB &) *bb2);
                     break;
                 default:
                     break;
@@ -98,41 +87,47 @@ void RigidBodyVolume::add_linear_impulse(glm::vec3 &impulse) {
 void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &collision) {
     float inv_ma = inverse_mass();
     float inv_mb = rbv.inverse_mass();
+    float inv_mass_sum = inv_ma + inv_mb;
 
-    if (inv_ma + inv_mb == 0.f)
+    if (inv_mass_sum == 0.f)
         return;
 
     glm::vec3 rel_velocity = rbv.m_velocity - m_velocity;
     glm::vec3 rel_normal = glm::normalize(collision.normal);
 
-    //Les objets s'éloignent
-    if (glm::dot(rel_normal, rel_velocity) > 0.f)
+    float dot_normal_velocity = glm::dot(rel_normal, rel_velocity);
+
+    //objects move away from each other
+    if (dot_normal_velocity > 0.f)
         return;
 
     float bounce = fminf(m_cor, rbv.m_cor);
-    float numerator = (-(1.f + bounce) * glm::dot(rel_normal, rel_velocity));
-    float j = numerator / (inv_ma + inv_mb);
+    float numerator = (-(1.f + bounce) * dot_normal_velocity);
+    float j = numerator / inv_mass_sum;
     if (collision.contacts.size() >= 0 && j != 0.f) {
         j /= (float) collision.contacts.size();
     }
 
-    //impulsion linéaire
+    //linear impulse
     glm::vec3 impulse = rel_normal * j;
-    m_velocity -= impulse * inv_ma;
-    rbv.m_velocity += impulse * inv_mb;
+    m_velocity -= impulse *  inv_ma;
+    rbv.m_velocity += impulse *  inv_mb;
+//    std::cout << "impulse " <<impulse[0]<< " "<<impulse[1]<< " "<<impulse[2]<< " | "<< inv_ma << " | " << inv_mb<<std::endl;
 
 
     //friction
-    glm::vec3 t = rel_velocity - (rel_normal * glm::dot(rel_velocity, rel_normal));
+    glm::vec3 t = rel_velocity - (rel_normal * dot_normal_velocity);
     if (cmp_float(glm::dot(t, t), 0.f))
         return;
-
     t = glm::normalize(t);
+
     numerator = -glm::dot(rel_velocity, t);
-    float jt = numerator / (inv_ma + inv_mb);
+    float jt = numerator / inv_mass_sum;
     if (collision.contacts.size() >= 0 && jt != 0.f) {
         jt /= (float) collision.contacts.size();
     }
+    if (cmp_float(jt, 0.f))
+        return;
 
     float friction = sqrtf(m_friction * rbv.m_friction);
     if (jt > j * friction) {

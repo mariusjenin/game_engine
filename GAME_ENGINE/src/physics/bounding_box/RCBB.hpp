@@ -7,9 +7,16 @@
 
 #include "BoundingBox.hpp"
 #include <cfloat>
+#include <src/utils/Geometry3D.hpp>
+
+namespace utils {
+    struct Line;
+    struct Plane;
+}
 namespace physics {
 
     namespace bounding_box {
+        class BoundingBox;
         class AABB;
 
         /// Rectangle Cuboid BoundingBox (Abstract)
@@ -20,18 +27,37 @@ namespace physics {
             void compute(std::vector<glm::vec3> vertices) override;
 
             /**
-             * Getter of the minimal value of the RCBB
-             * @return min
+             * Give the edges that compose the RCBB
+             * @return
              */
-            glm::vec3 get_min();
+            std::vector<Line> to_edges() const;
 
             /**
-             * Getter of the maximal value of the RCBB
-             * @return max
+             * Give the planes that compose the RCBB
+             * @return
              */
-            glm::vec3 get_max();
+            std::vector<Plane> to_planes() const;
 
-            AABB *to_AABB() override;
+            /**
+             * Get all the intersections with a list of Line
+             * @param edges
+             * @return intersections
+             */
+            std::vector<glm::vec3> get_intersections_lines(std::vector<Line> lines) const;
+
+            /**
+             * Check if a point is in the RCBB
+             * @param point
+             * @return is_point_in
+             */
+            virtual bool is_point_in(glm::vec3 point) const = 0;
+
+            //TODO comment
+            float penetrate_depth(RCBB* bb,glm::vec3 axis, bool* out_should_flip);
+
+            AABB *to_AABB() const override;
+
+            Interval get_interval(glm::vec3 axis) override;
         };
     }
 }

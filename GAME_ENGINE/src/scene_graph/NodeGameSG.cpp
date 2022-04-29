@@ -4,6 +4,7 @@
 
 #include "NodeGameSG.hpp"
 
+#include <src/utils/printer.hpp>
 #include <utility>
 
 using namespace scene_graph;
@@ -29,6 +30,13 @@ void NodeGameSG::draw(glm::vec3 pos_camera) {
         VAODataManager::bind_vao(mesh->get_vao_id());
         VAODataManager::draw(mesh->get_ebo_triangle_indices_id(), (long) mesh->get_triangle_indices().size());
     }
+    if(m_debug_rendering && m_bb!= nullptr){
+        glUniform1i(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME), true);
+        glUniform3fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_COLOR_LOC_NAME), 1, &m_color_rendering[0]);
+        VAODataManager::draw_verticies_debug(m_bb->to_vertices());
+        glUniform1i(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME), false);
+    }
+
     ElementSG::draw(pos_camera);
 
     ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
@@ -198,18 +206,34 @@ void NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera) {
             bbs.push_back(node->get_bb());
         }
     }
-
     m_bb->compute(bbs);
+//    std::vector<glm::vec3> verticies = ((OBB*)m_bb)->to_vertices();
+//    for(auto & vertex : verticies){
+//        std::cout << (float)vertex[0] << " "<< (float)vertex[1] << " "<< (float)vertex[2] << std::endl;
+//    }std::cout << std::endl;
+
+
 }
 
 void NodeGameSG::refresh_bb(glm::vec3 pos_camera) {
+//    std::cout<< "first" << std::endl;
     refresh_bb_aux(pos_camera);
+//    print_mat4(get_matrix_recursive_local());
     m_bb->apply_transform(get_matrix_recursive_local());
+//    std::vector<glm::vec3> verticies = ((OBB*)m_bb)->to_vertices();
+//    for(auto & vertex : verticies){
+//        std::cout << (float)vertex[0] << " "<< (float)vertex[1] << " "<< (float)vertex[2] << std::endl;
+//    }std::cout << std::endl;
 }
 
 void NodeGameSG::refresh_bb_recursive(glm::vec3 pos_camera) {
+//    std::cout<< "second" << std::endl;
     refresh_bb_aux(pos_camera);
-    m_bb->apply_transform(m_trsf->get_matrix() * m_local_trsf->get_matrix());
+    m_bb->apply_transform(m_trsf->get_matrix());
+//    std::vector<glm::vec3> verticies = ((OBB*)m_bb)->to_vertices();
+//    for(auto & vertex : verticies){
+//        std::cout << (float)vertex[0] << " "<< (float)vertex[1] << " "<< (float)vertex[2] << std::endl;
+//    }std::cout << std::endl;
 }
 
 BoundingBox* NodeGameSG::get_bb(){
@@ -226,4 +250,9 @@ RigidBodyVolume *NodeGameSG::get_rigid_body() const {
 
 void NodeGameSG::set_rigid_body(RigidBodyVolume *rigid_body) {
     m_rigid_body = rigid_body;
+}
+
+void NodeGameSG::set_debug_rendering(bool dr, glm::vec3 color_rendering) {
+    m_debug_rendering = dr;
+    m_color_rendering = color_rendering;
 }

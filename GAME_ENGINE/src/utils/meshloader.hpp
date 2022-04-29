@@ -50,4 +50,11 @@ MeshData create_plane(
 MeshData create_sphere(
         float radius = 0.5, int slices = 32, int stacks = 16);
 
+/**
+ * Create a rectangle cuboid Mesh
+ * @param size
+ * @return cube mesh datas
+ */
+MeshData create_rectangle_cuboid(glm::vec3 size);
+
 #endif //GAME_ENGINE_MESHLOADER_HPP

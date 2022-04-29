@@ -79,6 +79,15 @@ public:
                        glm::vec3 scale = {1.0f, 1.0f, 1.0f}, int order_rotation = ORDER_YXZ);
 
     /**
+     * Decompose a matrix to 3 matrices(TRS)
+     * @param matrix_to_decompose
+     * @param t
+     * @param r
+     * @param s
+     */
+    static void matrix_to_trs(glm::mat4 matrix_to_decompose,glm::mat4 &t,glm::mat4 &r,glm::mat4 &s);
+
+    /**
      * Init method also used to reset te Transform
      * @param translation
      * @param rotation

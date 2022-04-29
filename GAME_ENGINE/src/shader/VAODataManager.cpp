@@ -56,5 +56,27 @@ void VAODataManager::draw(GLuint ebo_id, long nb_indices) {
     glDrawElements(GL_TRIANGLES, (GLsizei) nb_indices, GL_UNSIGNED_SHORT, nullptr);
 }
 
+void VAODataManager::draw_verticies_debug(std::vector<glm::vec3> verticies) {
+    glPointSize(20);
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    GLuint vertex_buffer;
+    glGenBuffers(1, &vertex_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+    glBufferData(GL_ARRAY_BUFFER, (long)verticies.size() * (long)sizeof(glm::vec3), &verticies[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,0, nullptr);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+    glDrawArrays(GL_POINTS, 0, 8);
+
+    glDeleteBuffers(1, &vertex_buffer);
+    glDeleteVertexArrays(1, &vao);
+
+    glPointSize(1);
+}
+
 VAODataManager::VAODataManager() = default;
 

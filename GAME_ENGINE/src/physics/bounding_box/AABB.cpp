@@ -18,8 +18,17 @@ AABB::AABB(glm::vec3 position, glm::vec3 size) {
     m_size = size;
 }
 
-AABB* AABB::to_AABB() {
-    return this;
+glm::vec3 AABB::get_min() {
+    return m_position - m_size;
+}
+
+glm::vec3 AABB::get_max() {
+    return m_position + m_size;
+}
+
+
+AABB* AABB::to_AABB() const {
+    return new AABB(*this);
 }
 
 Collision AABB::get_data_collision(const SphereBB &bb) {
@@ -48,4 +57,36 @@ void AABB::apply_transform(glm::mat4 matrix) {
     m_position = glm::vec3(matrix * glm::vec4(m_position,1));
 }
 
+bool AABB::is_point_in(glm::vec3 point) const {
+    glm::vec3 distance = point - m_position;
+    for (int i = 0; i < 3; ++i) {
+        if (distance[i] > m_size[i]) {
+            return false;
+        }
+        if (distance[i] < -m_size[i]) {
+            return false;
+        }
+    }
+    return true;
+}
 
+std::vector<glm::vec3> AABB::to_vertices() const {
+    glm::vec3 vec_add = {m_position.x+m_size.x,m_position.y+m_size.y,m_position.z+m_size.z};
+    glm::vec3 vec_substract = {m_position.x-m_size.x,m_position.y-m_size.y,m_position.z-m_size.z};
+    return {
+            {vec_add[0],vec_add[1],vec_add[2]},
+            {vec_add[0],vec_add[1],vec_substract[2]},
+            {vec_add[0],vec_substract[1],vec_add[2]},
+            {vec_add[0],vec_substract[1],vec_substract[2]},
+            {vec_substract[0],vec_add[1],vec_add[2]},
+            {vec_substract[0],vec_add[1],vec_substract[2]},
+            {vec_substract[0],vec_substract[1],vec_add[2]},
+            {vec_substract[0],vec_substract[1],vec_substract[2]},
+    };
+}
+
+AABB::AABB(const AABB &aabb)  : RCBB(aabb) {
+    m_size = aabb.m_size;
+    m_position = aabb.m_position;
+    m_type = AABB_TYPE;
+}

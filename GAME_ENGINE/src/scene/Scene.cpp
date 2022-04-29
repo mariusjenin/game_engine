@@ -45,6 +45,7 @@ Scene::Scene(const std::string &vertex_shader_path, const std::string &fragment_
     ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
     shader_data_manager->load_material_const(program_id);
     shader_data_manager->load_lights_const(program_id);
+    shader_data_manager->load_debug_const(program_id);
 
 }
 

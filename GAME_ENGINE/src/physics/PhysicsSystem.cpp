@@ -41,6 +41,9 @@ void PhysicsSystem::update(glm::vec3 pos_camera,float delta_time) {
             }
         }
     }
+//    for(int i = 0 ; i < m_collisions.size();i++){
+//        std::cout << i<< "-\n"<< m_collisions[i].to_string() << std::endl;
+//    }
     //Apply Forces
     for(int i = 0 ; i < (int) size_rigid_bodies;i++){
         m_rigid_bodies.at(i)->apply_forces();
@@ -57,5 +60,21 @@ void PhysicsSystem::update(glm::vec3 pos_camera,float delta_time) {
     //Update Bodies
     for(auto & rigid_body : m_rigid_bodies){
         rigid_body->update(delta_time);
+    }
+
+    for(const auto& collision : m_collisions){
+        RigidBodyVolume* rbv1 = collision.rigid_body_1;
+        RigidBodyVolume* rbv2 = collision.rigid_body_2;
+        float total_mass = rbv1->inverse_mass() + rbv2->inverse_mass();
+        if (total_mass == 0.0f) {
+            continue;
+        }
+        float depth = fmaxf(collision.depth - m_penetration_slack, 0.0f);
+        float scalar = depth / total_mass;
+        glm::vec3 correction = collision.normal * scalar * m_linear_projection_percent;
+        Transform * trsf_rbv1 = rbv1->get_node()->get_trsf();
+        Transform * trsf_rbv2 = rbv2->get_node()->get_trsf();
+        trsf_rbv1->set_translation(trsf_rbv1->get_translation() - correction * rbv1->inverse_mass());
+        trsf_rbv2->set_translation(trsf_rbv2->get_translation() + correction * rbv2->inverse_mass());
     }
 }

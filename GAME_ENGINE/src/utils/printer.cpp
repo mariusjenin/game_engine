@@ -19,3 +19,9 @@ void print_mat4(glm::mat4 m) {
     std::cout << m[2][0] << "\t" << m[2][1] << "\t" << m[2][2] << "\t" << m[2][3] << "\t" << std::endl;
     std::cout << m[3][0] << "\t" << m[3][1] << "\t" << m[3][2] << "\t" << m[3][3] << "\n" << std::endl;
 }
+
+void print_mat3(glm::mat3 m) {
+    std::cout << m[0][0] << "\t" << m[0][1] << "\t" << m[0][2] << "\t" << std::endl;
+    std::cout << m[1][0] << "\t" << m[1][1] << "\t" << m[1][2] << "\t" << std::endl;
+    std::cout << m[2][0] << "\t" << m[2][1] << "\t" << m[2][2] << "\n" << std::endl;
+}

@@ -36,7 +36,10 @@ namespace scene_graph {
         //Render
         bool m_see_both_face;
         //RigidBody
-        RigidBodyVolume* m_rigid_body;
+        RigidBodyVolume* m_rigid_body{};
+        //Debug Rendering
+        bool m_debug_rendering{};
+        glm::vec3 m_color_rendering;
 
         /**
          * Refresh the BoundingBox of the NodeGameSG without applying any Transform
@@ -57,6 +60,13 @@ namespace scene_graph {
          * @param name
          */
         NodeGameSG(Shaders *shaders, ElementSG *parent, BB_TYPE bb_type = AABB_TYPE);
+
+        /**
+         * Setter of the Debug rendering
+         * @param dr
+         * @param color_rendering
+         */
+        void set_debug_rendering(bool dr, glm::vec3 color_rendering = {1,0,0});
 
         bool is_node_game() override;
 

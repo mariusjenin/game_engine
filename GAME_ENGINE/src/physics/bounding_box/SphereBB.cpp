@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <src/utils/Transform.hpp>
 #include "SphereBB.hpp"
 #include "AABB.hpp"
 
@@ -35,7 +36,7 @@ float SphereBB::get_radius() const {
     return m_radius;
 }
 
-AABB *SphereBB::to_AABB() {
+AABB * SphereBB::to_AABB() const {
     return new AABB(m_position,{m_radius,m_radius,m_radius});
 }
 
@@ -71,9 +72,26 @@ Collision SphereBB::get_data_collision(const OBB &bb) {
 }
 
 void SphereBB::apply_transform(glm::mat4 matrix) {
-    glm::vec3 position_radius = glm::vec3(matrix * glm::vec4(m_position + glm::vec3(m_radius,m_radius,m_radius),1));
-    m_position = glm::vec3(matrix * glm::vec4(m_position,1));
-    glm::vec3 diff = m_position-position_radius;
-    m_radius = std::max(abs(diff.x),std::max(abs(diff.y),abs(diff.z)));
+//    //Decompose the matrix
+//    Transform trsf = Transform(matrix);
+//    glm::vec3 translation = trsf.get_translation();
+//    glm::vec3 scale = trsf.get_scale();
+//
+//    //Translate the position
+//    m_position = m_position + trsf.get_translation();
+//    //Scale the size
+//    m_radius *= std::max(scale[0],std::max(scale[1],scale[2]));
+}
+
+Interval SphereBB::get_interval(glm::vec3 axis) {
+    float dot_pos = glm::dot(axis,m_position);
+    float dot_radius = glm::dot(axis,{m_radius,m_radius,m_radius});
+    float min =  dot_pos - dot_radius;
+    float max =  dot_pos + dot_radius;
+    return {min,max};
+}
+
+std::vector<glm::vec3> SphereBB::to_vertices() const {
+    return to_AABB()->to_vertices();
 }
 

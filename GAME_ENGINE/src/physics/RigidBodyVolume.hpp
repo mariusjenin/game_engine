@@ -3,6 +3,7 @@
 
 #include "src/physics/bounding_box/BoundingBox.hpp"
 #include "src/physics/bounding_box/SphereBB.hpp"
+#include "src/physics/bounding_box/OBB.hpp"
 #include "src/scene_graph/NodeGameSG.hpp"
 #include "src/physics/force/Force.hpp"
 
@@ -96,10 +97,22 @@ namespace physics {
          */
         NodeGameSG *get_node();
 
+        /**
+         * Getter of the mass
+         * @return mass
+         */
         float get_mass() const;
 
+        /**
+         * Setter of the forces
+         * @param forces
+         */
         void set_forces(const glm::vec3 &forces);
 
+        /**
+         * Getter of the forces
+         * @return
+         */
         glm::vec3 get_forces() const;
     };
 }

@@ -30,7 +30,7 @@ uniform vec3 on_top_normal;
 uniform mat4 on_top_model;
 
 void main(){
-    mat4 mv = projection_mat * view_mat ;
+    mat4 vp = projection_mat * view_mat ;
     uv = vertex_uv;
     normal = normalize(vec3(normal_model_mat*vec4(vertex_normal,0)));
 
@@ -53,7 +53,7 @@ void main(){
         }
 
         fragment_pos = vec3(vertex_position_locally);
-        gl_Position = mv* vertex_position_locally;
+        gl_Position = vp* vertex_position_locally;
     }
 
 }

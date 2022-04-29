@@ -61,6 +61,9 @@ namespace shader {
         static constexpr const char *ON_TOP_UV_LOC_NAME = "on_top_uv";
         static constexpr const char *ON_TOP_MODEL_LOC_NAME = "on_top_model";
         static constexpr const char *ON_TOP_HEIGHT_ADJUSTMENT_LOC_NAME = "on_top_height_adjustement";
+        //DEBUG RENDERING
+        static constexpr const char *DEBUG_RENDERING_LOC_NAME = "debug_rendering";
+        static constexpr const char *DEBUG_RENDERING_COLOR_LOC_NAME = "debug_rendering_color";
 
         /**
          * Load the location of the matrices
@@ -91,6 +94,13 @@ namespace shader {
          * @param program_id
          */
         void load_lights_locations(GLuint program_id);
+
+
+        /**
+         * Load the locations of the debug rendering constant
+         * @param program_id
+         */
+        void load_debug_const(GLuint program_id);
 
         /**
          * Load the location and the datas of the \link material::Material Material\endlink Type Constants

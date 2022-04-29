@@ -92,3 +92,8 @@ void ShadersDataManager::load_lights(GLuint program_id, LightShader lights_shade
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, ssbo_binding_point_index, ssbo);
 }
 
+void ShadersDataManager::load_debug_const(GLuint program_id) {
+    m_locations[DEBUG_RENDERING_LOC_NAME] = glGetUniformLocation(program_id, DEBUG_RENDERING_LOC_NAME);
+    m_locations[DEBUG_RENDERING_COLOR_LOC_NAME] = glGetUniformLocation(program_id, DEBUG_RENDERING_COLOR_LOC_NAME);
+}
+

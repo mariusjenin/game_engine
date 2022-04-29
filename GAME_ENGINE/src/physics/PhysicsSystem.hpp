@@ -23,7 +23,7 @@ namespace physics{
          * @param ps
          * @param ii
          */
-        explicit PhysicsSystem(float lpp = 0.45f, float ps=0.01f, int ii=5);
+        explicit PhysicsSystem(float lpp = 0.2f, float ps=0.01f, int ii=5);
 
         /**
          * Add a RigidBodyVolume to the PhysicsSystem

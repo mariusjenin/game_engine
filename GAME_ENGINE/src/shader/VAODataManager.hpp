@@ -97,6 +97,12 @@ namespace shader {
          */
         static void draw(GLuint ebo_id, long nb_indices);
 
+        /**
+         * Draw a list of verticies as a debug rendering
+         * @param verticies
+         */
+        static void draw_verticies_debug(std::vector<glm::vec3> verticies);
+
     };
 }
 

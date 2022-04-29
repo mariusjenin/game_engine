@@ -41,6 +41,7 @@ uniform int LIGHT_TYPE_SPOT;
 uniform int MATERIAL_TYPE_COLOR;
 uniform int MATERIAL_TYPE_TEXTURE;
 
+
 //IN
 in vec2 uv;
 in vec3 normal;
@@ -61,6 +62,8 @@ uniform mat4 model_mat;
 
 //DATA Object
 uniform Material material;
+uniform bool debug_rendering;
+uniform vec3 debug_rendering_color;
 
 out vec3 color;
 
@@ -129,10 +132,13 @@ vec3 compute_phong(Light light,Material material,vec3 view_pos){
 }
 void main() {
 
-    color = vec3(0,0,0);
-    for(int i = 0 ; i < nb_lights ; i ++) {
-        color += compute_phong(lights_from_buffer[i], material, view_pos);
+    if(debug_rendering){
+        color = debug_rendering_color;
+    } else {
+        color = vec3(0,0,0);
+        for(int i = 0 ; i < nb_lights ; i ++) {
+            color += compute_phong(lights_from_buffer[i], material, view_pos);
+        }
     }
-
 }
 

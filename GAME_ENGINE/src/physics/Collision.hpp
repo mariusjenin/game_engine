@@ -4,15 +4,8 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-
-/**
- * Compare 2 floats
- */
-#define cmp_float(x,y)               \
-    (fabsf((x)-(y)) <= FLT_EPSILON * \
-        fmaxf(1.0f,                  \
-        fmaxf(fabsf(x), fabsf(y)))   \
-)
+#include <string>
+#include "src/utils/Geometry3D.hpp"
 
 namespace physics {
     class RigidBodyVolume;
@@ -47,6 +40,13 @@ namespace physics {
             depth = FLT_MAX;
             contacts.clear();
         }
+
+        /**
+         * Give the string that corresponds to the Collision
+         * @return collision as string
+         */
+        std::string  to_string();
+
     };
 }
 

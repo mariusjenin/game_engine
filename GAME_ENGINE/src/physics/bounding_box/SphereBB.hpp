@@ -13,6 +13,7 @@
 namespace physics {
 
     namespace bounding_box {
+
         /// Sphere BoundingBox
         class SphereBB : public BoundingBox {
         private:
@@ -39,7 +40,11 @@ namespace physics {
 
             Collision get_data_collision(const OBB &bb) override;
 
-            AABB *to_AABB() override;
+            AABB * to_AABB() const override;
+
+            Interval get_interval(glm::vec3 axis) override;
+
+            std::vector<glm::vec3> to_vertices() const override;
         };
     }
 }

@@ -2,14 +2,38 @@
 // Created by mariusjenin on 24/04/2022.
 //
 
+#include <iostream>
 #include "OBB.hpp"
 #include "src/physics/Collision.hpp"
+#include <src/utils/printer.hpp>
+#include <src/utils/Transform.hpp>
 
 using namespace physics;
 using namespace physics::bounding_box;
 
 OBB::OBB() {
     m_type = OBB_TYPE;
+    m_orientation = glm::mat3(1);
+}
+
+void OBB::compute(std::vector<glm::vec3> vertices) {
+    RCBB::compute(vertices);
+    m_orientation = glm::mat3(1);
+}
+
+std::vector<glm::vec3> OBB::to_vertices() const{
+    std::vector<glm::vec3> vecs_add = {m_size.x * m_orientation[0],m_size.y* m_orientation[1],m_size.z* m_orientation[2]};
+    std::vector<glm::vec3> vecs_substract = {-m_size.x* m_orientation[0],-m_size.y* m_orientation[1],-m_size.z* m_orientation[2]};
+    return {
+            m_position+vecs_add[0]+vecs_add[1]+vecs_add[2],
+            m_position+vecs_add[0]+vecs_add[1]+vecs_substract[2],
+            m_position+vecs_add[0]+vecs_substract[1]+vecs_add[2],
+            m_position+vecs_add[0]+vecs_substract[1]+vecs_substract[2],
+            m_position+vecs_substract[0]+vecs_add[1]+vecs_add[2],
+            m_position+vecs_substract[0]+vecs_add[1]+vecs_substract[2],
+            m_position+vecs_substract[0]+vecs_substract[1]+vecs_add[2],
+            m_position+vecs_substract[0]+vecs_substract[1]+vecs_substract[2]
+    };
 }
 
 Collision OBB::get_data_collision(const SphereBB &bb) {
@@ -21,11 +45,103 @@ Collision OBB::get_data_collision(const AABB &bb) {
 }
 
 Collision OBB::get_data_collision(const OBB &bb) {
-    return {}; //TODO
+    Collision collision;
+    glm::mat3 bb_orientation = bb.get_orientation();
+    std::vector<glm::vec3> test;
+    test.reserve(15);
+    test = {
+            m_orientation[0], m_orientation[1], m_orientation[2],
+            bb_orientation[0], bb_orientation[1], bb_orientation[2]
+    };
+    for (int i = 0; i< 3; ++i) { // Fill out rest of axis
+        test[6 + i * 3 + 0] = glm::cross(test[i], test[0]);
+        test[6 + i * 3 + 1] = glm::cross(test[i], test[1]);
+        test[6 + i * 3 + 2] = glm::cross(test[i], test[2]);
+    }
+    glm::vec3* hit_normal;
+    bool should_flip;
+    for (int i = 0; i< 15; ++i) {
+        if (glm::dot(test[i],test[i])< 0.001f) {
+            continue;
+        }
+        float depth = penetrate_depth((RCBB *) &bb, test[i], &should_flip);
+        if (depth <= 0.0f) {
+            return collision;
+        }else if (depth < collision.depth) {
+            if (should_flip) {
+                test[i] = test[i] * -1.0f;
+            }
+            collision.depth = depth;
+            hit_normal = &test[i];
+        }
+    }
+    if (hit_normal == nullptr) {
+        return collision;
+    }
+    glm::vec3 axis = glm::normalize(*hit_normal);
+    std::vector<glm::vec3> c1 = get_intersections_lines(bb.to_edges());
+    std::vector<glm::vec3> c2 = bb.get_intersections_lines(to_edges());
+    collision.contacts.reserve(c1.size() + c2.size());
+    collision.contacts.insert(collision.contacts.end(), c1.begin(), c1.end());
+    collision.contacts.insert(collision.contacts.end(), c2.begin(), c2.end());
+
+    Interval interval = get_interval(axis);
+    float distance = (interval.max - interval.min)* 0.5f - collision.depth * 0.5f;
+    glm::vec3 point_on_plane = m_position + axis * distance;
+    size_t size_contacts_minus_one = collision.contacts.size() - 1;
+    for (int i = (int)size_contacts_minus_one; i>= 0; --i) {
+        glm::vec3 contact = collision.contacts[i];
+        collision.contacts[i] = contact + (axis * glm::dot(axis, point_on_plane - contact));
+    }
+
+    collision.colliding = true;
+    collision.normal = axis;
+    return collision;
 }
 
 void OBB::apply_transform(glm::mat4 matrix) {
-    glm::vec3 position_with_size = glm::vec3(matrix * glm::vec4(m_position + m_size,1));
-    m_position = glm::vec3(matrix * glm::vec4(m_position,1));
-    m_size = m_size - m_position;
+    //Decompose the matrix
+//    Transform trsf = Transform(matrix);
+//    glm::vec3 translation = trsf.get_translation();
+//    glm::vec3 rotation = trsf.get_rotation();
+//    glm::vec3 scale = trsf.get_scale();
+
+    glm::mat4 t,r,s;
+    Transform::matrix_to_trs(matrix,t,r,s);
+
+    std::cout << t[3][0] << " "<< t[3][1] << " "<< t[3][2] << std::endl;
+//    std::cout << r[0][0] << " "<< r[1][1] << " "<< r[2][2] << std::endl;
+//    std::cout << s[0][0] << " "<< s[1][1] << " "<< s[2][2] << " \n"<< std::endl;
+
+    //Translate the position
+    m_position = {t[3][0] , t[3][1] , t[3][2]};
+    //Scale the size
+    m_size = glm::vec3(glm::vec4(m_size,0) * s);
+//    m_size[0] *= scale[0];
+//    m_size[1] *= scale[1];
+//    m_size[2] *= scale[2];
+
+    //Rotate the orientation matrix
+//    Transform trsf_orientation = Transform({},rotation);
+//    trsf_orientation.compute();
+    m_orientation = m_orientation * glm::mat3(r);
 }
+
+bool OBB::is_point_in(glm::vec3 point) const{
+    glm::vec3 direction = point - m_position;
+    for (int i = 0; i < 3; ++i) {
+        float distance = glm::dot(direction, m_orientation[i]);
+        if (distance > m_size[i]) {
+            return false;
+        }
+        if (distance < -m_size[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+const glm::mat3 &OBB::get_orientation() const {
+    return m_orientation;
+}
+

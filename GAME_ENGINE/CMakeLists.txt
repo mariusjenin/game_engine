@@ -62,6 +62,7 @@ add_executable(
 		src/utils/objloader.cpp src/utils/objloader.hpp
 		src/utils/printer.cpp src/utils/printer.hpp
 		src/utils/Transform.cpp src/utils/Transform.hpp
+		src/utils/Geometry3D.cpp src/utils/Geometry3D.hpp
 #		SHADERS
         src/shader/ShadersDataManager.cpp src/shader/ShadersDataManager.hpp
         src/shader/VAODataManager.cpp src/shader/VAODataManager.hpp
@@ -79,7 +80,8 @@ add_executable(
 		src/scene/SolarSystem.cpp src/scene/SolarSystem.hpp
 		src/scene/SceneLand.cpp src/scene/SceneLand.hpp
 		src/scene/Scene.cpp src/scene/Scene.hpp
-		src/scene/BounceScene.cpp src/scene/BounceScene.hpp
+		src/scene/BounceOBBScene.cpp src/scene/BounceOBBScene.hpp
+		src/scene/BounceSphereBBScene.cpp src/scene/BounceSphereBBScene.hpp
 #		MATERIAL
 		src/material/Material.cpp src/material/Material.hpp
 		src/material/MaterialColor.cpp src/material/MaterialColor.hpp

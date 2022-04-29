@@ -2,6 +2,7 @@
 // Created by mariusjenin on 07/04/2022.
 //
 
+#include <iostream>
 #include "BoundingBox.hpp"
 #include "AABB.hpp"
 
@@ -25,6 +26,8 @@ void BoundingBox::compute(std::vector<BoundingBox *> bbs) {
     size_t size_bbs = bbs.size();
     for(int i = 0; i < size_bbs; i++){
         AABB* aabb = bbs[i]->to_AABB();
+//        std::cout << aabb->get_min()[0] << " "<< aabb->get_min()[1] << " "<< aabb->get_min()[2] << " " <<aabb->get_max()[0]
+//                << " " <<aabb->get_max()[1]<< " " <<aabb->get_max()[2]<< std::endl;
         vertices.push_back(aabb->get_min());
         vertices.push_back(aabb->get_max());
     }

@@ -8,6 +8,12 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <src/utils/Geometry3D.hpp>
+
+namespace utils {
+    struct Interval;
+}
+using namespace utils;
 
 namespace physics {
     struct Collision;
@@ -65,7 +71,7 @@ namespace physics {
              * Convert the BoundingBox to an AABB
              * @return aabb
              */
-            virtual AABB *to_AABB() = 0;
+            virtual AABB *to_AABB() const = 0;
 
             /**
              * Compute the Collision with a SphereBB
@@ -90,6 +96,19 @@ namespace physics {
              * @param matrix
              */
             virtual void apply_transform(glm::mat4 matrix) = 0;
+
+            /**
+             * Get the Interval clip on an axis
+             * @param axis
+             * @return interval
+             */
+            virtual Interval get_interval(glm::vec3 axis) = 0;
+
+            /**
+             * Give the vertices that compose the BoundingBox
+             * @return
+             */
+            virtual std::vector<glm::vec3> to_vertices() const = 0;
         };
     }
 }
