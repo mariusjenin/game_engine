@@ -34,7 +34,7 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     auto* big_cube_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
     auto* big_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
     big_cube->get_trsf()->set_translation({0,0,0});
-    big_cube->get_trsf()->set_rotation({0,10, 45});
+    big_cube->get_trsf()->set_rotation({0, 0, 33});
     big_cube->set_meshes({cube_mesh});
     big_cube->set_material(big_cube_mat_color);
     big_cube->set_debug_rendering(true, {0.25, 0.65, 0.8});
@@ -44,7 +44,7 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     //cube
     m_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
     m_cube->get_trsf()->set_translation({1,20,0});
-    m_cube->get_trsf()->set_rotation({0,10,45});
+    m_cube->get_trsf()->set_rotation({0,0,33});
 //    m_cube->get_trsf()->set_uniform_scale(1/5.f);
     m_cube->set_meshes({cube_mesh2});
     m_cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));

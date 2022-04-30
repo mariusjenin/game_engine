@@ -58,7 +58,7 @@ Collision OBB::get_data_collision(const OBB &bb) {
         test[6 + i * 3 + 1] = glm::cross(test[i], test[1]);
         test[6 + i * 3 + 2] = glm::cross(test[i], test[2]);
     }
-    glm::vec3* hit_normal;
+    glm::vec3* hit_normal = 0;
     bool should_flip;
     for (int i = 0; i< 15; ++i) {
         if (glm::dot(test[i],test[i])< 0.001f) {
@@ -75,12 +75,14 @@ Collision OBB::get_data_collision(const OBB &bb) {
             hit_normal = &test[i];
         }
     }
-    if (hit_normal == nullptr) {
+    if (hit_normal == 0) {
         return collision;
     }
+
     glm::vec3 axis = glm::normalize(*hit_normal);
     std::vector<glm::vec3> c1 = get_intersections_lines(bb.to_edges());
     std::vector<glm::vec3> c2 = bb.get_intersections_lines(to_edges());
+
     collision.contacts.reserve(c1.size() + c2.size());
     collision.contacts.insert(collision.contacts.end(), c1.begin(), c1.end());
     collision.contacts.insert(collision.contacts.end(), c2.begin(), c2.end());
@@ -93,7 +95,6 @@ Collision OBB::get_data_collision(const OBB &bb) {
         glm::vec3 contact = collision.contacts[i];
         collision.contacts[i] = contact + (axis * glm::dot(axis, point_on_plane - contact));
     }
-
     collision.colliding = true;
     collision.normal = axis;
     return collision;
@@ -109,7 +110,7 @@ void OBB::apply_transform(glm::mat4 matrix) {
     glm::mat4 t,r,s;
     Transform::matrix_to_trs(matrix,t,r,s);
 
-    std::cout << t[3][0] << " "<< t[3][1] << " "<< t[3][2] << std::endl;
+    // std::cout << t[3][0] << " "<< t[3][1] << " "<< t[3][2] << std::endl;
 //    std::cout << r[0][0] << " "<< r[1][1] << " "<< r[2][2] << std::endl;
 //    std::cout << s[0][0] << " "<< s[1][1] << " "<< s[2][2] << " \n"<< std::endl;
 
@@ -138,6 +139,7 @@ bool OBB::is_point_in(glm::vec3 point) const{
             return false;
         }
     }
+
     return true;
 }
 
