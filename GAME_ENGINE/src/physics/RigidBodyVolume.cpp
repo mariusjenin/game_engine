@@ -104,9 +104,10 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &colli
     float bounce = fminf(m_cor, rbv.m_cor);
     float numerator = (-(1.f + bounce) * dot_normal_velocity);
     float j = numerator / inv_mass_sum;
-    if (collision.contacts.size() >= 0 && j != 0.f) {
-        j /= (float) collision.contacts.size();
-    }
+    
+    // if (collision.contacts.size() >= 0 && j != 0.f) {
+    //     j /= (float) collision.contacts.size();
+    // }
 
     //linear impulse
     glm::vec3 impulse = rel_normal * j;
