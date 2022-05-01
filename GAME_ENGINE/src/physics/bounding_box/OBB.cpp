@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "OBB.hpp"
+#include "SphereBB.hpp"
 #include "src/physics/Collision.hpp"
 #include <src/utils/printer.hpp>
 #include <src/utils/Transform.hpp>
@@ -36,8 +37,9 @@ std::vector<glm::vec3> OBB::to_vertices() const{
     };
 }
 
+// jamais utilisé: implémenté dans sphereBB
 Collision OBB::get_data_collision(const SphereBB &bb) {
-    return {}; //TODO
+    return {};
 }
 
 Collision OBB::get_data_collision(const AABB &bb) {
@@ -146,4 +148,25 @@ bool OBB::is_point_in(glm::vec3 point) const{
 const glm::mat3 &OBB::get_orientation() const {
     return m_orientation;
 }
+
+glm::vec3 OBB::closest_point(glm::vec3 pt) const{
+    glm::vec3 result = m_position;
+    glm::vec3 dir = pt - m_position;
+
+    for(int i = 0; i < 3; i ++){
+        float distance = glm::dot(dir, m_orientation[i]);
+        if (distance > m_size[i]) {
+            distance = m_size[i];
+        }
+        if (distance < -m_size[i]) {
+            distance = -m_size[i];
+        }
+
+        result += (m_orientation[i] * distance);
+
+    }
+
+    return result;
+}
+
 

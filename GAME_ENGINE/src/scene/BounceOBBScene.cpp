@@ -20,6 +20,7 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
 
     //MESHES
     auto *cube_mesh = new Mesh(create_rectangle_cuboid({5,5,5}), true,OBB_TYPE);
+    auto *ball_mesh1 = new Mesh(create_sphere(1, 60, 60),true,SphereBB_TYPE);
     auto *cube_mesh2 = new Mesh(create_rectangle_cuboid({1,1,1}), true,OBB_TYPE);
 //    auto *plane_mesh1 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
 //    auto *plane_mesh2 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
@@ -34,7 +35,7 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     auto* big_cube_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
     auto* big_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
     big_cube->get_trsf()->set_translation({0,0,0});
-    big_cube->get_trsf()->set_rotation({0, 0, 33});
+    big_cube->get_trsf()->set_rotation({0, 0, 20});
     big_cube->set_meshes({cube_mesh});
     big_cube->set_material(big_cube_mat_color);
     big_cube->set_debug_rendering(true, {0.25, 0.65, 0.8});
@@ -44,11 +45,18 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     //cube
     m_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
     m_cube->get_trsf()->set_translation({1,20,0});
-    m_cube->get_trsf()->set_rotation({0,0,33});
+    // m_cube->get_trsf()->set_rotation({0,0,33});
 //    m_cube->get_trsf()->set_uniform_scale(1/5.f);
     m_cube->set_meshes({cube_mesh2});
     m_cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
     m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
+
+    //ball
+    auto* m_ball = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
+    m_ball->get_trsf()->set_translation({0.,20,0});
+    m_ball->set_meshes({ball_mesh1});
+    m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
+    m_ball->set_debug_rendering(true);
 
 ////   Cube 2
 //    auto* m_cube2 = new NodeGameSG(m_shaders, m_cube,OBB_TYPE);
@@ -59,8 +67,11 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
 
     auto* gravity_force = new GravityForce();
     auto* rbv_cube = new RigidBodyVolume(m_cube,1,0.01,1);
+    auto* rbv_sphere = new RigidBodyVolume(m_ball,1,0.01,1);
     rbv_cube->add_force(gravity_force);
+    rbv_sphere->add_force(gravity_force);
     m_physics_system.add_rigid_body(rbv_cube);
+    m_physics_system.add_rigid_body(rbv_sphere);
 //    auto* rbv_cube2 = new RigidBodyVolume(m_cube2,1000,0.01,1);
 //    rbv_cube2->add_force(gravity_force);
 //    m_physics_system.add_rigid_body(rbv_cube2);
