@@ -47,7 +47,7 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     m_cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
 //    m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
     auto* gravity_force = new GravityForce();
-    auto* rbv_cube = new RigidBodyVolume(m_cube,1,0.01,0.6);
+    auto* rbv_cube = new RigidBodyVolume(m_cube,1,0.01,0.4);
     rbv_cube->add_force(gravity_force);
     m_physics_system->add_rigid_body(rbv_cube);
 
@@ -58,7 +58,7 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     m_ball->set_meshes({ball_mesh1});
     m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
 //    m_ball->set_debug_rendering(true);
-    auto* rbv_sphere = new RigidBodyVolume(m_ball,1,0.01,1);
+    auto* rbv_sphere = new RigidBodyVolume(m_ball,1,0.01,0.4);
     rbv_sphere->add_force(gravity_force);
     m_physics_system->add_rigid_body(rbv_sphere);
 

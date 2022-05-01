@@ -11,7 +11,7 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
         vertex_shader_path, fragment_shader_path) {
 
     //Physics System
-    m_physics_system = new PhysicsSystem(0.005f,0.005f, 5);
+    m_physics_system = new PhysicsSystem(0.0005f,0.005f, 5);
 
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
@@ -62,14 +62,14 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
 
     //Ball
     m_ball = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
-    m_ball->get_trsf()->set_translation({2.,30,2.2});
+    m_ball->get_trsf()->set_translation({2.5,30,2.9});
     m_ball->get_trsf()->set_rotation({25,74,42});
     m_ball->get_trsf()->set_uniform_scale(1/2.f);
     m_ball->set_meshes({ball_mesh1});
     m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
     m_ball->set_debug_rendering(true,{1,0,1});
     auto* gravity_force = new GravityForce();
-    auto* rbv_ball = new RigidBodyVolume(m_ball,1000,0.01,1);
+    auto* rbv_ball = new RigidBodyVolume(m_ball,1000,0.01,0.25);
     rbv_ball->add_force(gravity_force);
     m_physics_system->add_rigid_body(rbv_ball);
 
