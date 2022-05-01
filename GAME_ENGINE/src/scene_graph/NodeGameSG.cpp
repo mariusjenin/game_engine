@@ -147,12 +147,12 @@ bool NodeGameSG::has_light(){
 }
 
 
-void NodeGameSG::update_view_mat() {
+void NodeGameSG::update_view_mat(glm::vec3 forward) {
     glm::mat4 mat = get_matrix_recursive_local();
     Transform trsf_tmp = Transform();
     trsf_tmp.set_matrix(mat);
     glm::vec3 camera_init_position = CAMERA_INIT_POSITION;
-    glm::vec3 camera_init_forward = CAMERA_INIT_FORWARD;
+    glm::vec3 camera_init_forward = forward;
     glm::vec3 camera_init_up = CAMERA_INIT_UP;
     glm::vec3 eye_camera = trsf_tmp.apply_to_point(camera_init_position);
     glm::vec3 dir_camera = trsf_tmp.apply_to_versor(camera_init_forward);

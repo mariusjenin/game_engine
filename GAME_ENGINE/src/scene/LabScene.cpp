@@ -2,6 +2,7 @@
 #include <src/physics/force/GravityForce.hpp>
 #include "LabScene.hpp"
 
+
 using namespace scene;
 
 LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path) : Scene(
@@ -14,7 +15,6 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     int id_texture = 0;
 //    int id_land_texture = id_texture++;
 //    load_bmp_custom("../assets/texture/rock.bmp", id_land_texture);
-
     //MESHES
     auto *slab_mesh = new Mesh("../assets/mesh/slab.obj", true, OBB_TYPE);
     auto *cube_mesh = new Mesh(create_rectangle_cuboid({5,5,5}), true,OBB_TYPE);
@@ -84,17 +84,29 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 //    rbv_cube2->add_force(gravity_force);
 //    m_physics_system.add_rigid_body(rbv_cube2);
 
-    //CAMERA
-    auto *camera_node = new NodeGameSG(m_shaders, m_root);
-    camera_node->get_trsf()->set_translation({0, 9, 17});
-    camera_node->get_trsf()->set_rotation({-20, 0, 0});
-    m_cameras.push_back(camera_node);
+    //CHARACTER
+    m_character = new Character(m_shaders, m_root);
+    m_cameras.push_back(m_character->get_camera());
+
 
     //PROJECTION
     mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 10000.0f);
     glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
                        GL_FALSE, &projection_mat[0][0]);
 }
+
+void LabScene::update(GLFWwindow *window, float delta_time, glm::vec3 forward){
+    NodeGameSG *camera_node = m_character->get_camera();
+    camera_node->update_view_mat(forward);
+    camera_node->update_view_pos();
+    
+    //update character sight (computed with mouse listener)
+    m_character->set_sight(forward);
+    process_input(window, delta_time);
+}
+
+
+
 
 
 void LabScene::process_input(GLFWwindow *window, float delta_time) {
@@ -103,52 +115,34 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     float camera_speed = 15.f * delta_time;
     float camera_speed_rot = 150 * delta_time;
     float cube_translate_speed = 15 * delta_time;
+    
+    Transform *character_trsf = m_character->get_character_node()->get_trsf();
 
-    Transform *camera_trsf = m_cameras.at(m_camera_index)->get_trsf();
+    glm::vec3 forward_vec = m_character->get_sight();
+    glm::vec3 right_vec = glm::cross(forward_vec, glm::vec3(0., 1., 0.));
+    forward_vec[1] = 0.;    //disable flight
+
     //Camera Translation
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
         glm::vec3 dir;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            dir += glm::vec3(camera_speed, 0.f, 0.f);
+            dir += camera_speed * right_vec;
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            dir += glm::vec3(-camera_speed, 0.f, 0.f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-            dir += glm::vec3(0.f, camera_speed, 0.f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-            dir += glm::vec3(0.f, -camera_speed, 0.f);
+            dir += -camera_speed * right_vec;
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            dir += glm::vec3(0.f, 0.f, +camera_speed);
+            dir += -camera_speed * forward_vec;
         }
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            dir += glm::vec3(0.f, 0.f, -camera_speed);
+            dir += camera_speed * forward_vec;
         }
-        camera_trsf->set_translation(camera_trsf->get_translation() + camera_trsf->apply_to_vector(dir));
+
+        character_trsf->set_translation(character_trsf->get_translation() + character_trsf->apply_to_vector(dir));
     }
 
-    //Camera rotation
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        glm::vec3 rot;
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            rot += glm::vec3(camera_speed_rot, 0.f, 0.f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            rot -= glm::vec3(camera_speed_rot, 0.f, 0.f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            rot += glm::vec3(0.f, camera_speed_rot, 0.f);
-        }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            rot -= glm::vec3(0.f, camera_speed_rot, 0.f);
-        }
-        camera_trsf->set_rotation(camera_trsf->get_rotation() + rot);
-    }
-    if (!camera_trsf->is_up_to_date()) camera_trsf->compute();
-
-//    Transform *cube_trsf = m_cube->get_trsf();
+    if (!character_trsf->is_up_to_date()) character_trsf->compute();
+    
     glm::vec3 translate_cube;
     bool impulse_cube = false;
     //Scene rotation
@@ -171,4 +165,14 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     if(impulse_cube)m_cube->get_rigid_body()->add_linear_impulse(translate_cube);
 //    cube_trsf->set_translation(cube_trsf->get_translation() + translate_cube);
 //    if (!cube_trsf->is_up_to_date()) cube_trsf->compute();
+
+    //DEBUG
+    // glm::vec3 chara_pos = character_trsf->get_translation();
+    // std::cout<<"CHARACTER POS: "<<chara_pos[0]<<","<<chara_pos[1]<<","<<chara_pos[2]<<std::endl;
 }
+
+Character* LabScene::get_character(){
+    return m_character;
+}
+
+

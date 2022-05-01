@@ -10,17 +10,32 @@
 GLFWwindow *window;
 
 
-#include <src/scene/SceneLand.hpp>
-#include <src/scene/SolarSystem.hpp>
-#include <src/scene/BounceOBBScene.hpp>
-#include <src/scene/BounceSphereBBScene.hpp>
+// #include <src/scene/SceneLand.hpp>
+// #include <src/scene/SolarSystem.hpp>
+// #include <src/scene/BounceOBBScene.hpp>
+// #include <src/scene/BounceSphereBBScene.hpp>
 #include <src/scene/LabScene.hpp>
 
 #include <src/utils/printer.hpp>
 
 using namespace scene;
 
+bool first_mouse = true;
+float cam_yaw   = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float cam_pitch =  0.0f;
+float last_x =  1024.f / 2.0;
+float last_y =  748.f / 2.0;
+glm::vec3 front = {0,0,-1};
+float camera_speed_rot;
+
+
+void process_mouse(GLFWwindow *window, double x, double y);
+LabScene* lab_scene;
 int main() {
+
+    
+
+
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");
@@ -48,7 +63,6 @@ int main() {
     //Get the primary monitor size and pos
     glfwSetWindowPos(window, pos_monitor_x, pos_monitor_y);
 
-
     if (window == nullptr) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -70,7 +84,7 @@ int main() {
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     // Hide the mouse and enable unlimited mouvement
-    //  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // Set the mouse at the center of the screen
     glfwPollEvents();
@@ -86,11 +100,14 @@ int main() {
 
     //CREATE THE SCENE
 //    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
-    LabScene scene = LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
+    lab_scene = new LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
+    lab_scene->setup();
     // BounceOBBScene scene = BounceOBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
 //    BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
 //    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl");
-    scene.setup();
+
+    //MOUSE PROCESSING
+    glfwSetCursorPosCallback(window, process_mouse);
 
     // For speed computation
     float last_time = glfwGetTime();
@@ -106,47 +123,19 @@ int main() {
     float delta_time_physics_fixed = 1.0f / (float)update_physics_by_second;
 
 
-//        m_ball = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
-//    m_ball->get_trsf()->set_translation({1,20,0});
-////    m_ball->get_trsf()->set_translation({2.,30,2.2});
-////    m_ball->get_trsf()->set_rotation({0,10,45});
-//    m_ball->get_trsf()->set_uniform_scale(1/5.f);
-//    m_ball->set_meshes({cube_mesh});
-//    m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
-//
-//    OBB obb = OBB();
-//    obb.compute({{-1,-1,-1},{1,1,1}});
-//    OBB obb2 = OBB();
-//    obb2.compute({{0,0,0},{1.5,1.5,1.5}});
-//    Collision c = obb.get_data_collision(obb2);
-//    for(int i = 0 ; i < c.contacts.size();i++){
-//        print_vec3(c.contacts[i]);
-//    }
-////    std::vector<Line> edges = obb.to_AABB()->to_edges();
-////    for(auto & edge : edges){
-////        std::cout << edge.start[0] << " "<< edge.start[1] << " "<< edge.start[2] << " "<< edge.end[0] << " "<< edge.end[1] << " "<< edge.end[2];
-////        std::cout << std::endl;
-////    }
-//    std::vector<glm::vec3> verticies = obb.to_AABB()->to_vertices();
-//    for(auto & vertex : verticies){
-//        std::cout << (float)vertex[0] << " "<< (float)vertex[1] << " "<< (float)vertex[2] << std::endl;
-//    }std::cout << std::endl;
-
-
-
     do {
         current_time = (float)glfwGetTime();
         delta_time_frame_acc += current_time - last_time;
         delta_time_physics_acc += current_time - last_time;
         if (delta_time_frame_acc > delta_time_frame_fixed) {
             delta_time_frame_acc -= delta_time_frame_fixed;
-
+            camera_speed_rot = 150. * delta_time_frame_fixed; 
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             //RENDER SCENE
-            scene.render();
-            scene.update(window, delta_time_frame_fixed);
+            lab_scene->render();
+            lab_scene->update(window, delta_time_frame_fixed, front);
 
             // Swap buffers
             glfwSwapBuffers(window);
@@ -156,7 +145,7 @@ int main() {
         }
         if (delta_time_physics_acc > delta_time_physics_fixed) {
             delta_time_physics_acc -= delta_time_physics_fixed;
-            scene.update_physics(window,delta_time_physics_fixed);
+            lab_scene->update_physics(window,delta_time_physics_fixed);
         }
 
         last_time = current_time;
@@ -177,4 +166,42 @@ void framebuffer_size_callback(GLFWwindow *wdow, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+void process_mouse(GLFWwindow *window, double x, double y) {
+    
+    if(first_mouse){
+        first_mouse = false;
+        last_x = x;
+        last_y = y;
+    }
+    
+    float x_offset = x - last_x;
+    float y_offset = last_y - y;
+
+    last_x = x;
+    last_y = y;
+
+    float sensivity = 0.1f;
+
+    x_offset *= sensivity;
+    y_offset *= sensivity;
+
+    cam_yaw += x_offset;
+    cam_pitch += y_offset;
+
+    if (cam_pitch > 89.0f)
+        cam_pitch = 89.0f;
+    if (cam_pitch < -89.0f)
+        cam_pitch = -89.0f;
+
+    front.x = cos(glm::radians(cam_yaw)) * cos(glm::radians(cam_pitch));
+    front.y = sin(glm::radians(cam_pitch));
+    front.z = sin(glm::radians(cam_yaw)) * cos(glm::radians(cam_pitch));
+    // std::cout<<"mouse Xpos: "<<x_offset<<", mouse Ypos: "<<y_offset<<std::endl;
+
+    glm::vec3 y_rot(0, cam_yaw, 0);    
+    glm::vec3 sight = lab_scene->get_character()->get_sight();
+
+    // std::cout<<"CHARACTER SIGHT: "<<sight[0]<<", "<<sight[1]<<", "<<sight[2]<<std::endl;
 }

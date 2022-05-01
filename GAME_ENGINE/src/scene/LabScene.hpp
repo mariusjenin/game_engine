@@ -11,15 +11,16 @@
 #include <src/light/PositionLight.hpp>
 #include <src/scene_graph/NodeOnTopSG.hpp>
 #include <src/light/SpotLight.hpp>
+#include "src/Character.hpp"
 
 namespace scene {
     /// Scene with Collisions
     class LabScene : public Scene {
     private:
         NodeGameSG *m_cube;
+        Character* m_character;
     protected:
         void process_input(GLFWwindow *window, float delta_time) override;
-
     public:
 
         /**
@@ -28,6 +29,12 @@ namespace scene {
          * @param fragment_shader_path
          */
         LabScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
+        
+        void update(GLFWwindow *window, float delta_time, glm::vec3 = CAMERA_INIT_FORWARD);
+        
+        Character* get_character();
+
+    
     };
 
 }

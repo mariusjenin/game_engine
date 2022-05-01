@@ -109,6 +109,8 @@ add_executable(
 		src/physics/PhysicsSystem.cpp src/physics/PhysicsSystem.hpp
 		src/physics/force/Force.cpp src/physics/force/Force.hpp
 		src/physics/force/GravityForce.cpp src/physics/force/GravityForce.hpp
+#		CHARACTER
+		src/Character.cpp src/Character.hpp
 		)
 target_link_libraries(main
 	${ALL_LIBS}
