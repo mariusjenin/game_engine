@@ -57,25 +57,28 @@ void VAODataManager::draw(GLuint ebo_id, long nb_indices) {
 }
 
 void VAODataManager::draw_verticies_debug(std::vector<glm::vec3> verticies) {
-    glPointSize(20);
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    size_t verticies_size = verticies.size();
+    if((int)verticies_size>0){
+        glPointSize(20);
+        GLuint vao;
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
 
-    GLuint vertex_buffer;
-    glGenBuffers(1, &vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, (long)verticies.size() * (long)sizeof(glm::vec3), &verticies[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,0, nullptr);
-    glEnableVertexAttribArray(0);
+        GLuint vertex_buffer;
+        glGenBuffers(1, &vertex_buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+        glBufferData(GL_ARRAY_BUFFER, (long)verticies_size * (long)sizeof(glm::vec3), &verticies[0], GL_STATIC_DRAW);
+        glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,0, nullptr);
+        glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glDrawArrays(GL_POINTS, 0, 8);
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+        glDrawArrays(GL_POINTS, 0, (int)verticies_size);
 
-    glDeleteBuffers(1, &vertex_buffer);
-    glDeleteVertexArrays(1, &vao);
+        glDeleteBuffers(1, &vertex_buffer);
+        glDeleteVertexArrays(1, &vao);
 
-    glPointSize(1);
+        glPointSize(1);
+    }
 }
 
 VAODataManager::VAODataManager() = default;

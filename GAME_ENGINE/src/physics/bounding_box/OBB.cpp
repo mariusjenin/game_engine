@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "OBB.hpp"
+#include "SphereBB.hpp"
 #include "src/physics/Collision.hpp"
 #include <src/utils/printer.hpp>
 #include <src/utils/Transform.hpp>
@@ -36,8 +37,9 @@ std::vector<glm::vec3> OBB::to_vertices() const{
     };
 }
 
+// jamais utilisé: implémenté dans sphereBB
 Collision OBB::get_data_collision(const SphereBB &bb) {
-    return {}; //TODO
+    return {};
 }
 
 Collision OBB::get_data_collision(const AABB &bb) {
@@ -111,13 +113,13 @@ void OBB::apply_transform(glm::mat4 matrix) {
 
     //Translate the position
     glm::vec3 translate = {t[3][0] , t[3][1] , t[3][2]};
-    m_position = translate + glm::vec3(glm::vec4(m_position,0) * r * s);
+    m_position = translate + glm::vec3( s * r *glm::vec4(m_position,0) );
 
     //Scale the size
-    m_size = glm::vec3(glm::vec4(m_size,0) * s);
+    m_size = glm::vec3(s * glm::vec4(m_size,0));
 
     //Rotate the orientation matrix
-    m_orientation = m_orientation * glm::mat3(r);
+    m_orientation = glm::mat3(r) * m_orientation;
 }
 
 bool OBB::is_point_in(glm::vec3 point) const{
@@ -138,4 +140,25 @@ bool OBB::is_point_in(glm::vec3 point) const{
 const glm::mat3 &OBB::get_orientation() const {
     return m_orientation;
 }
+
+glm::vec3 OBB::closest_point(glm::vec3 pt) const{
+    glm::vec3 result = m_position;
+    glm::vec3 dir = pt - m_position;
+
+    for(int i = 0; i < 3; i ++){
+        float distance = glm::dot(dir, m_orientation[i]);
+        if (distance > m_size[i]) {
+            distance = m_size[i];
+        }
+        if (distance < -m_size[i]) {
+            distance = -m_size[i];
+        }
+
+        result += (m_orientation[i] * distance);
+
+    }
+
+    return result;
+}
+
 

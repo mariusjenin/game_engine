@@ -6,6 +6,8 @@
 #include <src/utils/Transform.hpp>
 #include "SphereBB.hpp"
 #include "AABB.hpp"
+#include "OBB.hpp"
+#include <src/utils/printer.hpp>
 
 using namespace physics;
 using namespace physics::bounding_box;
@@ -18,7 +20,9 @@ void SphereBB::compute(std::vector<glm::vec3> vertices) {
     std::pair<glm::vec3, glm::vec3> bb;
     bb.first = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
     bb.second = glm::vec3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+    glm::vec3 moy_vec = {0,0,0};
     for (auto &vertex_position: vertices) {
+        moy_vec += vertex_position;
         if (vertex_position[0] < bb.first[0]) bb.first[0] = vertex_position[0];
         if (vertex_position[1] < bb.first[1]) bb.first[1] = vertex_position[1];
         if (vertex_position[2] < bb.first[2]) bb.first[2] = vertex_position[2];
@@ -26,10 +30,19 @@ void SphereBB::compute(std::vector<glm::vec3> vertices) {
         if (vertex_position[1] > bb.second[1]) bb.second[1] = vertex_position[1];
         if (vertex_position[2] > bb.second[2]) bb.second[2] = vertex_position[2];
     }
+    moy_vec/=vertices.size();
 
-    m_position = (bb.first + bb.second) / 2.f;
-    glm::vec3 radius = bb.second - m_position;
-    m_radius = std::max(radius.x, std::max(radius.y, radius.z));
+    m_position = moy_vec;
+
+    float dist = 0;
+    float dist_curr;
+    for (auto &vertex_position: vertices) {
+        dist_curr = glm::distance(m_position,vertex_position);
+        if(dist_curr > dist){
+            dist = dist_curr;
+        }
+    }
+    m_radius = dist;
 }
 
 float SphereBB::get_radius() const {
@@ -38,6 +51,10 @@ float SphereBB::get_radius() const {
 
 AABB * SphereBB::to_AABB() const {
     return new AABB(m_position,{m_radius,m_radius,m_radius});
+//    AABB* aabb = new AABB();
+//    glm::vec3 radius_vec ={m_radius,m_radius,m_radius};
+//    aabb->compute({m_position - radius_vec,m_position + radius_vec});
+//    return aabb;
 }
 
 Collision SphereBB::get_data_collision(const SphereBB &bb) {
@@ -68,39 +85,49 @@ Collision SphereBB::get_data_collision(const AABB &bb) {
 }
 
 Collision SphereBB::get_data_collision(const OBB &bb) {
-    return {}; //TODO
+    Collision collision;
+
+    glm::vec3 closest_pt = bb.closest_point(m_position);
+    float dist_sq = glm::dot((closest_pt-m_position), (closest_pt-m_position));
+    
+    if(dist_sq > m_radius*m_radius)
+        return collision;
+    
+    glm::vec3 normal;
+    if(cmp_float(dist_sq, 0.f)){
+        float len2 = glm::dot(closest_pt-bb.get_position(), closest_pt-bb.get_position());
+        
+        if(cmp_float(len2, 0.f))
+            return collision;
+
+        normal = glm::normalize(closest_pt - bb.get_position());
+    }else{
+
+        normal = glm::normalize(m_position - closest_pt);
+    }
+
+    glm::vec3 outside_pt = m_position - normal * m_radius;
+    float dist = glm::length(closest_pt - outside_pt);
+    collision.colliding = true;
+    collision.contacts.push_back(closest_pt + (outside_pt - closest_pt) * 0.5f);
+    collision.normal = normal;
+    collision.depth = dist * 0.5f;
+
+    return collision;
 }
 
 void SphereBB::apply_transform(glm::mat4 matrix) {
 
+    //Decompose the matrix
     glm::mat4 t,r,s;
     Transform::matrix_to_trs(matrix,t,r,s);
 
-//    std::cout << t[3][0] << " "<< t[3][1] << " "<< t[3][2] << std::endl;
-//    std::cout << r[0][0] << " "<< r[1][1] << " "<< r[2][2] << std::endl;
-//    std::cout << s[0][0] << " "<< s[1][1] << " "<< s[2][2] << " \n"<< std::endl;
-
     //Translate the position
-    m_position = {t[3][0] , t[3][1] , t[3][2]};
-    //Scale the size
-     m_radius = m_radius * std::max(s[0][0],std::max(s[1][1],s[2][2]));
-//    m_size[0] *= scale[0];
-//    m_size[1] *= scale[1];
-//    m_size[2] *= scale[2];
+    glm::vec3 translate = {t[3][0] , t[3][1] , t[3][2]};
+    m_position = translate + glm::vec3( s * r * glm::vec4(m_position,1) );
 
-    //Rotate the orientation matrix
-//    Transform trsf_orientation = Transform({},rotation);
-//    trsf_orientation.compute();
-    // m_orientation = m_orientation * glm::mat3(r);
-//    //Decompose the matrix
-//    Transform trsf = Transform(matrix);
-//    glm::vec3 translation = trsf.get_translation();
-//    glm::vec3 scale = trsf.get_scale();
-//
-//    //Translate the position
-//    m_position = m_position + trsf.get_translation();
-//    //Scale the size
-//    m_radius *= std::max(scale[0],std::max(scale[1],scale[2]));
+    //Scale the size
+    m_radius = m_radius * std::max(s[0][0],std::max(s[1][1],s[2][2]));
 }
 
 Interval SphereBB::get_interval(glm::vec3 axis) {
@@ -112,6 +139,36 @@ Interval SphereBB::get_interval(glm::vec3 axis) {
 }
 
 std::vector<glm::vec3> SphereBB::to_vertices() const {
-    return to_AABB()->to_vertices();
+    auto cos_radius = (float)sin(M_PI/4);
+    glm::vec3 vec_radius = {m_radius,m_radius,m_radius};
+    glm::vec3 pos_cos_add = m_position + cos_radius * vec_radius;
+    glm::vec3 pos_cos_substract = m_position - cos_radius * vec_radius;
+    std::vector<glm::vec3> verticies = {
+            {m_position[0]+m_radius,m_position[1],m_position[2]},
+            {m_position[0]-m_radius,m_position[1],m_position[2]},
+            {m_position[0],m_position[1]+m_radius,m_position[2]},
+            {m_position[0],m_position[1]-m_radius,m_position[2]},
+            {m_position[0],m_position[1],m_position[2]+m_radius},
+            {m_position[0],m_position[1],m_position[2]-m_radius},
+            {pos_cos_add[0],m_position[1],m_position[2]},
+            {pos_cos_substract[0],m_position[1],m_position[2]},
+            {m_position[0],pos_cos_add[1],m_position[2]},
+            {m_position[0],pos_cos_substract[1],m_position[2]},
+            {m_position[0],m_position[1],pos_cos_add[2]},
+            {m_position[0],m_position[1],pos_cos_substract[2]},
+            {pos_cos_add[0],pos_cos_add[1],m_position[2]},
+            {pos_cos_add[0],pos_cos_substract[1],m_position[2]},
+            {pos_cos_substract[0],pos_cos_add[1],m_position[2]},
+            {pos_cos_substract[0],pos_cos_substract[1],m_position[2]},
+            {m_position[0],pos_cos_add[1],pos_cos_add[2]},
+            {m_position[0],pos_cos_substract[1],pos_cos_add[2]},
+            {m_position[0],pos_cos_add[1],pos_cos_substract[2]},
+            {m_position[0],pos_cos_substract[1],pos_cos_substract[2]},
+            {pos_cos_add[0],m_position[1],pos_cos_add[2]},
+            {pos_cos_substract[0],m_position[1],pos_cos_add[2]},
+            {pos_cos_add[0],m_position[1],pos_cos_substract[2]},
+            {pos_cos_substract[0],m_position[1],pos_cos_substract[2]}
+    };
+    return verticies;
 }
 
