@@ -6,6 +6,7 @@
 #include <src/utils/Transform.hpp>
 #include "SphereBB.hpp"
 #include "AABB.hpp"
+#include "OBB.hpp"
 
 using namespace physics;
 using namespace physics::bounding_box;
@@ -68,7 +69,35 @@ Collision SphereBB::get_data_collision(const AABB &bb) {
 }
 
 Collision SphereBB::get_data_collision(const OBB &bb) {
-    return {}; //TODO
+    Collision collision;
+
+    glm::vec3 closest_pt = bb.closest_point(m_position);
+    float dist_sq = glm::dot((closest_pt-m_position), (closest_pt-m_position));
+    
+    if(dist_sq > m_radius*m_radius)
+        return collision;
+    
+    glm::vec3 normal;
+    if(cmp_float(dist_sq, 0.f)){
+        float len2 = glm::dot(closest_pt-bb.get_position(), closest_pt-bb.get_position());
+        
+        if(cmp_float(len2, 0.f))
+            return collision;
+
+        normal = glm::normalize(closest_pt - bb.get_position());
+    }else{
+
+        normal = glm::normalize(m_position - closest_pt);
+    }
+
+    glm::vec3 outside_pt = m_position - normal * m_radius;
+    float dist = glm::length(closest_pt - outside_pt);
+    collision.colliding = true;
+    collision.contacts.push_back(closest_pt + (outside_pt - closest_pt) * 0.5f);
+    collision.normal = normal;
+    collision.depth = dist * 0.5f;
+
+    return collision;
 }
 
 void SphereBB::apply_transform(glm::mat4 matrix) {
@@ -76,7 +105,7 @@ void SphereBB::apply_transform(glm::mat4 matrix) {
     glm::mat4 t,r,s;
     Transform::matrix_to_trs(matrix,t,r,s);
 
-    std::cout << t[3][0] << " "<< t[3][1] << " "<< t[3][2] << std::endl;
+    // std::cout << t[3][0] << " "<< t[3][1] << " "<< t[3][2] << std::endl;
 //    std::cout << r[0][0] << " "<< r[1][1] << " "<< r[2][2] << std::endl;
 //    std::cout << s[0][0] << " "<< s[1][1] << " "<< s[2][2] << " \n"<< std::endl;
 
