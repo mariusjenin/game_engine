@@ -82,6 +82,7 @@ add_executable(
 		src/scene/Scene.cpp src/scene/Scene.hpp
 		src/scene/BounceOBBScene.cpp src/scene/BounceOBBScene.hpp
 		src/scene/BounceSphereBBScene.cpp src/scene/BounceSphereBBScene.hpp
+		src/scene/LabScene.cpp src/scene/LabScene.hpp
 #		MATERIAL
 		src/material/Material.cpp src/material/Material.hpp
 		src/material/MaterialColor.cpp src/material/MaterialColor.hpp

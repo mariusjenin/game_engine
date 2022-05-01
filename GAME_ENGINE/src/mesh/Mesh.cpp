@@ -35,6 +35,24 @@ Mesh::Mesh(const MeshData& md, bool load_data_now, BB_TYPE bb_type) {
     m_loaded_vao = load_data_now;
 }
 
+Mesh::Mesh(const char* path, bool load_data_now, BB_TYPE bb_type) {
+    std::vector<glm::vec3> vp;
+    std::vector<unsigned short> ti;
+    std::vector<glm::vec2> vtc;
+    std::vector<glm::vec3> vn;
+
+    loadOBJ(path, vp, ti, vtc, vn);
+    std::cout<<vp.size()<<" vertices in mesh."<<std::endl;
+    m_vertex_positions = vp;
+    m_triangle_indices = ti;
+    m_vertex_tex_coords = vtc;
+    m_vertex_normals = vn;
+    m_center = center();
+    load_bb(bb_type);
+    if (load_data_now) load_mesh_in_vao();
+    m_loaded_vao = load_data_now;
+}
+
 
 void Mesh::load_bb(BB_TYPE bb_type){
     m_bb = BBFactory::generate_bb(bb_type);
