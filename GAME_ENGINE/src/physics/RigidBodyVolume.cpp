@@ -113,7 +113,6 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &colli
     glm::vec3 impulse = rel_normal * j;
     m_velocity -= impulse *  inv_ma;
     rbv.m_velocity += impulse *  inv_mb;
-//    std::cout << "impulse " <<impulse[0]<< " "<<impulse[1]<< " "<<impulse[2]<< " | "<< inv_ma << " | " << inv_mb<<std::endl;
 
 
     //friction

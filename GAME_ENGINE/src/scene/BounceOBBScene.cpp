@@ -13,16 +13,12 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
 
-    //TEXTURES
-    int id_texture = 0;
-//    int id_land_texture = id_texture++;
-//    load_bmp_custom("../assets/texture/rock.bmp", id_land_texture);
+    //Physics System
+    m_physics_system = new PhysicsSystem(0.2f, 0.01f, 5);
 
     //MESHES
     auto *cube_mesh = new Mesh(create_rectangle_cuboid({5,5,5}), true,OBB_TYPE);
     auto *cube_mesh2 = new Mesh(create_rectangle_cuboid({1,1,1}), true,OBB_TYPE);
-//    auto *plane_mesh1 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
-//    auto *plane_mesh2 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
 
     //Light
     auto *light_source = new DirectionLight({0.1, 0.1, 0.1}, {1., 1., 1.}, {0.8, 0.8, 0.8}, {-0.2, -1., -0.5});
@@ -34,17 +30,17 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     auto* big_cube_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
     auto* big_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
     big_cube->get_trsf()->set_translation({0,0,0});
-    big_cube->get_trsf()->set_rotation({0, 0, 33});
+//    big_cube->get_trsf()->set_rotation({0, 0, 20});
     big_cube->set_meshes({cube_mesh});
     big_cube->set_material(big_cube_mat_color);
     big_cube->set_debug_rendering(true, {0.25, 0.65, 0.8});
-    m_physics_system.add_rigid_body(new RigidBodyVolume(big_cube,0,0.01,2));
+    m_physics_system->add_rigid_body(new RigidBodyVolume(big_cube,0,0.01,2));
 
 
     //cube
     m_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
-    m_cube->get_trsf()->set_translation({1,20,0});
-    m_cube->get_trsf()->set_rotation({0,0,33});
+    m_cube->get_trsf()->set_translation({0,20,0});
+//    m_cube->get_trsf()->set_rotation({0,0,20});
 //    m_cube->get_trsf()->set_uniform_scale(1/5.f);
     m_cube->set_meshes({cube_mesh2});
     m_cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
@@ -60,10 +56,10 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     auto* gravity_force = new GravityForce();
     auto* rbv_cube = new RigidBodyVolume(m_cube,1,0.01,1);
     rbv_cube->add_force(gravity_force);
-    m_physics_system.add_rigid_body(rbv_cube);
+    m_physics_system->add_rigid_body(rbv_cube);
 //    auto* rbv_cube2 = new RigidBodyVolume(m_cube2,1000,0.01,1);
 //    rbv_cube2->add_force(gravity_force);
-//    m_physics_system.add_rigid_body(rbv_cube2);
+//    m_physics_system->add_rigid_body(rbv_cube2);
 
     //CAMERA
     auto *camera_node = new NodeGameSG(m_shaders, m_root);

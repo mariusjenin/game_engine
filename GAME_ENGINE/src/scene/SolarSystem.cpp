@@ -87,7 +87,7 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     m_earth1->get_trsf()->set_rotation({0, 0, -inclination_sun_earth});
     m_earth3->get_trsf()->set_translation({10, 0, 0});
     m_earth3->set_meshes({earth_mesh});
-//    m_earth->set_material(new MaterialColor(m_shaders,{0.8,0.2,0.4},15));
+//    m_earth3->set_material(new MaterialColor(m_shaders,{0.8,0.2,0.4},15));
     m_earth3->set_material(new MaterialTexture(m_shaders, id_earth_texture));
     m_earth3->add_uniform_1i(star_id_location, EARTH_ID);
     m_earth3->add_uniform_1i(always_enlightened_location, false);
@@ -124,7 +124,7 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     m_camera_index = 0;
 
     //PROJECTION
-    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 100000000.0f);
+    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 1.0f, 200.0f);
     glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
                        GL_FALSE, &projection_mat[0][0]);
 
@@ -133,6 +133,8 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
 }
 
 void SolarSystem::update(GLFWwindow *window, float delta_time) {
+
+    Scene::update(window,delta_time);
 
     float speed_rotation_sky = 0.2f * delta_time * m_speed_anime;
     float speed_rotation_sun = 10 * delta_time * m_speed_anime;
@@ -195,6 +197,7 @@ void SolarSystem::update(GLFWwindow *window, float delta_time) {
         camera_trsf_self_before->set_rotation(camera_trsf_self_before->get_rotation() + rotation_camera);
         camera_trsf_self_before->compute();
     }
+
 }
 
 

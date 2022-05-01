@@ -10,45 +10,6 @@ Transform::Transform(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scale,
     init(translation, rotation, scale, order_rotation);
 }
 
-//Transform::Transform(glm::mat4 matrix_to_decompose) {
-//    m_translate = {matrix_to_decompose[3][0],matrix_to_decompose[3][1],matrix_to_decompose[3][2]};
-//    matrix_to_decompose[3][0] = 0;
-//    matrix_to_decompose[3][1] = 0;
-//    matrix_to_decompose[3][2] = 0;
-//    m_scale = {};
-//    for(int i = 0; i < 3;i++){
-//        m_scale[i] = matrix_to_decompose[3][3] * std::sqrt(
-//                matrix_to_decompose[i][0]*matrix_to_decompose[i][0] +
-//                matrix_to_decompose[i][1]*matrix_to_decompose[i][1] +
-//                matrix_to_decompose[i][2]*matrix_to_decompose[i][2]);
-//        if(m_scale[i] !=0){
-//            matrix_to_decompose[i][0]/=m_scale[i];
-//            matrix_to_decompose[i][1]/=m_scale[i];
-//            matrix_to_decompose[i][2]/=m_scale[i];
-//        }
-//    }
-//    matrix_to_decompose[3][3] = 1.0f;
-//    glm::vec3 tmp_z_axis = glm::cross(glm::vec3(matrix_to_decompose[0]),glm::vec3(matrix_to_decompose[1]));
-//    if(glm::dot(tmp_z_axis,glm::vec3(matrix_to_decompose[2])) < 0){
-//        m_scale[0] *= -1;
-//        matrix_to_decompose[0][0] = -matrix_to_decompose[0][0];
-//        matrix_to_decompose[0][1] = -matrix_to_decompose[0][1];
-//        matrix_to_decompose[0][2] = -matrix_to_decompose[0][2];
-//    }
-//    auto theta1 = atan2(matrix_to_decompose[1][2],matrix_to_decompose[2][2]);
-//    auto c2 = std::sqrt(matrix_to_decompose[0][0]*matrix_to_decompose[0][0] + matrix_to_decompose[0][1]*matrix_to_decompose[0][1]);
-//    auto theta2 = atan2(-matrix_to_decompose[0][2],c2);
-//    auto s1 = sin(theta1);
-//    auto c1 = cos(theta1);
-//    auto theta3 = atan2(s1 * matrix_to_decompose[2][0] - c1 * matrix_to_decompose[1][0],c1 * matrix_to_decompose[1][1] - s1 * matrix_to_decompose[2][1]);
-//
-//    m_rot = {theta1 * 180 / M_PI, theta2 * 180 / M_PI, theta3 * 180 / M_PI};
-//
-//    m_matrix = glm::mat4(1.0f);
-//    m_up_to_date = false;
-//    m_order_rotation = ORDER_YXZ;
-//}
-
 void Transform::matrix_to_trs(glm::mat4 matrix_to_decompose, glm::mat4 &t, glm::mat4 &r, glm::mat4 &s) {
     t = glm::mat4(1.f);
     t[3][0] = matrix_to_decompose[3][0];

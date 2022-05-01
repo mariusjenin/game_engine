@@ -76,14 +76,14 @@ void SphereBB::apply_transform(glm::mat4 matrix) {
     glm::mat4 t,r,s;
     Transform::matrix_to_trs(matrix,t,r,s);
 
-    std::cout << t[3][0] << " "<< t[3][1] << " "<< t[3][2] << std::endl;
+//    std::cout << t[3][0] << " "<< t[3][1] << " "<< t[3][2] << std::endl;
 //    std::cout << r[0][0] << " "<< r[1][1] << " "<< r[2][2] << std::endl;
 //    std::cout << s[0][0] << " "<< s[1][1] << " "<< s[2][2] << " \n"<< std::endl;
 
     //Translate the position
     m_position = {t[3][0] , t[3][1] , t[3][2]};
     //Scale the size
-    // m_size = glm::vec3(glm::vec4(m_size,0) * s);
+     m_radius = m_radius * std::max(s[0][0],std::max(s[1][1],s[2][2]));
 //    m_size[0] *= scale[0];
 //    m_size[1] *= scale[1];
 //    m_size[2] *= scale[2];

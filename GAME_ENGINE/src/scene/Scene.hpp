@@ -26,7 +26,7 @@ namespace scene {
         std::vector<NodeGameSG *> m_lights;
         int m_camera_index{};
         Shaders *m_shaders{};
-        PhysicsSystem m_physics_system;
+        PhysicsSystem* m_physics_system{};
 
         /**
          * Process the input of the user to have actions on the Scene

@@ -32,4 +32,5 @@ void BoundingBox::compute(std::vector<BoundingBox *> bbs) {
         vertices.push_back(aabb->get_max());
     }
     compute(vertices);
+//    std::cout << "position: "<< m_position[0] << " "<< m_position[1] << " "<< m_position[2] << std::endl;
 }
