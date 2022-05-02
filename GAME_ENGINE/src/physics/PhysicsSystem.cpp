@@ -2,15 +2,17 @@
 #include <algorithm>
 #include "PhysicsSystem.hpp"
 #include "RigidBodyVolume.hpp"
+#include "src/physics/ode/ODEFactory.hpp"
 
 using namespace physics;
 
-PhysicsSystem::PhysicsSystem(float lpp, float ps, int ii) {
+PhysicsSystem::PhysicsSystem(float lpp, float ps, int ii, ODE_TYPE ode_type) {
     m_linear_projection_percent = lpp;
     m_penetration_slack = ps;
     m_impulse_iteration = ii;
     m_rigid_bodies = {};
     m_collisions = {};
+    m_ode = ODEFactory::generate_ode(ode_type);
 }
 
 void PhysicsSystem::add_rigid_body(physics::RigidBodyVolume *rbv) {
@@ -20,6 +22,24 @@ void PhysicsSystem::add_rigid_body(physics::RigidBodyVolume *rbv) {
 void PhysicsSystem::remove_rigid_body(physics::RigidBodyVolume *rbv) {
     auto position = std::find(m_rigid_bodies.begin(), m_rigid_bodies.end(), rbv);
     if (position != m_rigid_bodies.end()) m_rigid_bodies.erase(position);
+}
+
+void PhysicsSystem::remove_rigid_body_with_node(NodeGameSG* node) {
+    size_t size_rbv = m_rigid_bodies.size();
+    for(int i = 0; i < size_rbv;i++){
+        if(m_rigid_bodies[i]->get_node() == node){
+            m_rigid_bodies.erase(m_rigid_bodies.begin()+i);
+            break;
+        }
+    }
+}
+
+void PhysicsSystem::clear_rigid_bodies() {
+    size_t rbv_size = m_rigid_bodies.size();
+    for(int i = 0; i < rbv_size;i++){
+        delete m_rigid_bodies[i];
+    }
+    m_rigid_bodies.clear();
 }
 
 void PhysicsSystem::update(glm::vec3 pos_camera,float delta_time) {
@@ -41,9 +61,7 @@ void PhysicsSystem::update(glm::vec3 pos_camera,float delta_time) {
             }
         }
     }
-//    for(int i = 0 ; i < m_collisions.size();i++){
-//        std::cout << i<< "-\n"<< m_collisions[i].to_string() << std::endl;
-//    }
+
     //Apply Forces
     for(int i = 0 ; i < (int) size_rigid_bodies;i++){
         m_rigid_bodies.at(i)->apply_forces();
@@ -59,7 +77,7 @@ void PhysicsSystem::update(glm::vec3 pos_camera,float delta_time) {
     }
     //Update Bodies
     for(auto & rigid_body : m_rigid_bodies){
-        rigid_body->update(delta_time);
+        rigid_body->update(delta_time,m_ode);
     }
 
     for(const auto& collision : m_collisions){

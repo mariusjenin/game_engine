@@ -71,6 +71,24 @@ namespace scene_graph {
          */
         Transform* get_trsf();
 
+
+        /**
+         * Getter of all the children ElementSG
+         * @return children
+         */
+        std::vector<ElementSG *> get_children();
+
+        /**
+         * Remove a child from the list of ElementSG at a given position
+         * @param i
+         */
+        void remove_child_at(int i);
+
+        /**
+         * Clear the list of ElementSG
+         */
+        void clear_children();
+
         /**
          * Give the matrix for an extern object (like a child) (recursive function)
          * @return matrix

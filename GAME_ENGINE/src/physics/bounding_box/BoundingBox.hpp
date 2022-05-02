@@ -28,7 +28,7 @@ namespace physics {
         enum BB_TYPE {
             AABB_TYPE,
             OBB_TYPE,
-            SphereBB_TYPE,
+            SPHEREBB_TYPE,
         };
         ///Represent a bounding box (Abstract)
         class BoundingBox {

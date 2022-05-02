@@ -1,5 +1,6 @@
 #include "RigidBodyVolume.hpp"
 #include "src/physics/Collision.hpp"
+#include "src/physics/ode/ODEFactory.hpp"
 #include "src/utils/printer.hpp"
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -18,20 +19,21 @@ RigidBodyVolume::RigidBodyVolume(NodeGameSG *ng,float mass, float friction, floa
 
 RigidBodyVolume::~RigidBodyVolume() = default;
 
-void RigidBodyVolume::update(float delta_time) {
+void RigidBodyVolume::update(float delta_time, ODE* ode) {
 
-    // Velocity Verlet Integration
-    glm::vec3 avg_velocity = m_velocity + m_acceleration * delta_time / 2.0f;
-
-    // Position is integrated with the average velocity
-    glm::vec3 translation_modification_world = avg_velocity * delta_time;
-    ((NodeSG *) m_node_game)->get_trsf()->set_translation(
-            ((NodeSG *) m_node_game)->get_trsf()->get_translation() + m_velocity*delta_time);
-    ((NodeSG *) m_node_game)->get_trsf()->compute();
-
-    // Calculate new acceleration and velocity
-    m_acceleration = m_forces * inverse_mass();
-    m_velocity = avg_velocity + m_acceleration * delta_time / 2.0f;
+    ode->update(this,delta_time);
+//    // Velocity Verlet Integration
+//    glm::vec3 avg_velocity = m_velocity + m_acceleration * delta_time / 2.0f;
+//
+//    // Position is integrated with the average velocity
+//    glm::vec3 translation_modification_world = avg_velocity * delta_time;
+//    ((NodeSG *) m_node_game)->get_trsf()->set_translation(
+//            ((NodeSG *) m_node_game)->get_trsf()->get_translation() + m_velocity*delta_time);
+//    ((NodeSG *) m_node_game)->get_trsf()->compute();
+//
+//    // Calculate new acceleration and velocity
+//    m_acceleration = m_forces * inverse_mass();
+//    m_velocity = avg_velocity + m_acceleration * delta_time / 2.0f;
 }
 
 void RigidBodyVolume::apply_forces() {
@@ -47,9 +49,9 @@ Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
     BoundingBox *bb1 = m_node_game->get_bb();
     BoundingBox *bb2 = rbv.m_node_game->get_bb();
     switch (bb1->get_type()) {
-        case SphereBB_TYPE:
+        case SPHEREBB_TYPE:
             switch (bb2->get_type()) {
-                case SphereBB_TYPE:
+                case SPHEREBB_TYPE:
                     collision = ((SphereBB &) *bb1).get_data_collision((SphereBB &) *bb2);
                     break;
                 case OBB_TYPE:
@@ -64,7 +66,7 @@ Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
                 case OBB_TYPE:
                     collision = ((OBB &) *bb1).get_data_collision((OBB &) *bb2);
                     break;
-                case SphereBB_TYPE:
+                case SPHEREBB_TYPE:
 
                     collision = ((SphereBB &) *bb2).get_data_collision((OBB &) *bb1);
                     break;
@@ -122,10 +124,6 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &colli
     glm::vec3 impulse = rel_normal * j;
     m_velocity -= impulse *  inv_ma;
     rbv.m_velocity += impulse *  inv_mb;
-//    print_vec3(impulse);
-//    print_vec3(impulse *  inv_mb);
-//    print_vec3(impulse *  inv_mb);
-//    std::cout << inv_ma << " " << inv_mb << std::endl;
 
 
     //friction
@@ -172,5 +170,21 @@ glm::vec3 RigidBodyVolume::get_forces() const {
 
 void RigidBodyVolume::add_force(Force *f) {
     m_list_forces.push_back(f);
+}
+
+glm::vec3 RigidBodyVolume::get_velocity() const {
+    return m_velocity;
+}
+
+glm::vec3 RigidBodyVolume::get_acceleration() const {
+    return m_acceleration;
+}
+
+void RigidBodyVolume::set_velocity(const glm::vec3 &velocity) {
+    m_velocity = velocity;
+}
+
+void RigidBodyVolume::set_acceleration(const glm::vec3 &acceleration) {
+    m_acceleration = acceleration;
 }
 

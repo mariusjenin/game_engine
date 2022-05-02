@@ -108,6 +108,11 @@ add_executable(
 		src/physics/PhysicsSystem.cpp src/physics/PhysicsSystem.hpp
 		src/physics/force/Force.cpp src/physics/force/Force.hpp
 		src/physics/force/GravityForce.cpp src/physics/force/GravityForce.hpp
+		src/physics/ode/ODE.cpp src/physics/ode/ODE.hpp
+		src/physics/ode/ODEFactory.cpp src/physics/ode/ODEFactory.hpp
+		src/physics/ode/EulerODE.cpp src/physics/ode/EulerODE.hpp
+		src/physics/ode/VerletODE.cpp src/physics/ode/VerletODE.hpp
+		src/physics/ode/RungeKutta4ODE.cpp src/physics/ode/RungeKutta4ODE.hpp
 		)
 target_link_libraries(main
 	${ALL_LIBS}

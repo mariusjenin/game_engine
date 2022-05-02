@@ -13,7 +13,7 @@ using namespace physics;
 using namespace physics::bounding_box;
 
 SphereBB::SphereBB() {
-    m_type = SphereBB_TYPE;
+    m_type = SPHEREBB_TYPE;
 }
 
 void SphereBB::compute(std::vector<glm::vec3> vertices) {

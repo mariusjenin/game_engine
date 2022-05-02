@@ -6,6 +6,8 @@
 #include "src/physics/bounding_box/OBB.hpp"
 #include "src/scene_graph/NodeGameSG.hpp"
 #include "src/physics/force/Force.hpp"
+#include "src/physics/ode/ODE.hpp"
+
 
 namespace scene_graph {
     class NodeGameSG;
@@ -21,6 +23,7 @@ namespace physics {
     }
     using namespace force;
     struct Collision;
+    using namespace ode;
 
     /// Represents a rigid body with a volume (\link bounding_box::BoundingBox BoundingBox\endlink)
     class RigidBodyVolume {
@@ -58,8 +61,9 @@ namespace physics {
         /**
          * Update the RigidBodyVolume according to the delta time
          * @param delta_time
+         * @param ode
          */
-        void update(float delta_time);
+        void update(float delta_time,ODE* ode);
 
         /**
          * Apply the force on the RigidBodyVolume
@@ -112,9 +116,36 @@ namespace physics {
 
         /**
          * Getter of the forces
-         * @return
+         * @return forces
          */
         glm::vec3 get_forces() const;
+
+        /**
+         * Getter of the velocity
+         * @return velocity
+         */
+        glm::vec3 get_velocity() const;
+
+
+        /**
+         * Getter of the velocity
+         * @return velocity
+         */
+        glm::vec3 get_acceleration() const;
+
+
+        /**
+         * Setter of the velocity
+         * @param velocity
+         */
+        void set_velocity(const glm::vec3 &velocity);
+
+
+        /**
+         * Setter of the acceleration
+         * @param acceleration
+         */
+        void set_acceleration(const glm::vec3 &acceleration);
     };
 }
 #endif //GAME_ENGINE_RIGIDBODYVOLUME_H

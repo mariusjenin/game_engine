@@ -65,3 +65,16 @@ void ElementSG::load_uniforms() {
 bool ElementSG::is_node_game() {
     return false;
 }
+
+std::vector<ElementSG *> ElementSG::get_children() {
+    return m_children;
+}
+
+
+void ElementSG::remove_child_at(int i) {
+    m_children.erase(m_children.begin()+i);
+}
+
+void ElementSG::clear_children() {
+    m_children.clear();
+}

@@ -4,10 +4,12 @@
 
 #include <vector>
 #include "Collision.hpp"
-
+#include "src/physics/ode/ODE.hpp"
+#include "src/scene_graph/NodeGameSG.hpp"
 
 namespace physics{
 
+    using namespace ode;
     /// Manage a whole physic system with RigidBody
     class PhysicsSystem {
     private:
@@ -16,6 +18,7 @@ namespace physics{
         float m_linear_projection_percent;
         float m_penetration_slack;
         int m_impulse_iteration;
+        ODE* m_ode;
     public:
         /**
          * Constructor of PhysicsSystem
@@ -23,7 +26,7 @@ namespace physics{
          * @param ps
          * @param ii
          */
-        explicit PhysicsSystem(float lpp = 0.2f, float ps=0.01f, int ii=5);
+        explicit PhysicsSystem(float lpp = 0.2f, float ps=0.01f, int ii=5, ODE_TYPE ode_type = EULER_TYPE);
 
         /**
          * Add a RigidBodyVolume to the PhysicsSystem
@@ -36,6 +39,17 @@ namespace physics{
          * @param rbv
          */
         void remove_rigid_body(RigidBodyVolume* rbv);
+
+        /**
+         * Clear all the RigidBodyVolume
+         */
+        void clear_rigid_bodies();
+
+        /**
+         * Clear the RigidBodyVolume with the NodeGameSG given
+         * @param node
+         */
+        void remove_rigid_body_with_node(NodeGameSG* node);
 
         /**
          * Update the PhysicsSystem

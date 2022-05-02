@@ -14,11 +14,11 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
 
     //Physics System
-    m_physics_system = new PhysicsSystem(0.2f, 0.01f, 5);
+    m_physics_system = new PhysicsSystem(0.2f, 0.01f, 5,RK4_TYPE);
 
     //MESHES
     auto *cube_mesh = new Mesh(create_rectangle_cuboid({5,5,5}), true,OBB_TYPE);
-    auto *ball_mesh1 = new Mesh(create_sphere(1, 60, 60),true,SphereBB_TYPE);
+    auto *ball_mesh1 = new Mesh(create_sphere(1, 60, 60), true, SPHEREBB_TYPE);
     auto *cube_mesh2 = new Mesh(create_rectangle_cuboid({1,1,1}), true,OBB_TYPE);
 
     //Light
@@ -53,7 +53,7 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
 
 
     //ball
-    auto* m_ball = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
+    auto* m_ball = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
     m_ball->get_trsf()->set_translation({0.,20,0});
     m_ball->set_meshes({ball_mesh1});
     m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
@@ -77,7 +77,7 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     m_cameras.push_back(camera_node);
 
     //PROJECTION
-    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 10000.0f);
+    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 100.0f);
     glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
                        GL_FALSE, &projection_mat[0][0]);
 }
