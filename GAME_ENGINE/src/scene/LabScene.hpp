@@ -17,7 +17,8 @@ namespace scene {
     /// Scene with Collisions
     class LabScene : public Scene {
     private:
-        NodeGameSG *m_cube;
+        NodeGameSG* m_cube;
+        std::vector<RigidBodyVolume*> m_items;
         Character* m_character;
     protected:
         void process_input(GLFWwindow *window, float delta_time) override;
@@ -33,7 +34,8 @@ namespace scene {
         void update(GLFWwindow *window, float delta_time, glm::vec3 = CAMERA_INIT_FORWARD);
         
         Character* get_character();
-
+        std::vector<RigidBodyVolume*> get_items();
+        RigidBodyVolume* in_sight();
     
     };
 

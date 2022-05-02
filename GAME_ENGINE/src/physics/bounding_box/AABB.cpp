@@ -90,3 +90,8 @@ AABB::AABB(const AABB &aabb)  : RCBB(aabb) {
     m_position = aabb.m_position;
     m_type = AABB_TYPE;
 }
+
+float AABB::is_intersected(Ray){
+    return -1.f;
+}
+

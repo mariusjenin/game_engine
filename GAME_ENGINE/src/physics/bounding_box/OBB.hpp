@@ -39,6 +39,9 @@ namespace physics {
 
             Collision get_data_collision(const OBB &bb) override;
 
+            float is_intersected(Ray) override;
+
+
         };
     }
 }

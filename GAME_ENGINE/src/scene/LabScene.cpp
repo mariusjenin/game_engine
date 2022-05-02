@@ -8,6 +8,8 @@ using namespace scene;
 LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path) : Scene(
         vertex_shader_path, fragment_shader_path) {
 
+    //PHYSICS SYSTEM
+    m_physics_system = new PhysicsSystem(0.0005f, 0.005f, 5);        
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
 
@@ -29,8 +31,9 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     light_node->set_light(light_source);
     m_lights.push_back(light_node);
 
-    //floor
     auto* lab_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
+    
+    //floor
     auto* floor = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
     floor->get_trsf()->set_translation({0,0,0});
     // floor->get_trsf()->set_rotation({0, 0, -20});
@@ -38,16 +41,17 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     floor->set_meshes({slab_mesh});
     floor->set_material(lab_mat_color);
     floor->set_debug_rendering(true, {0.25, 0.65, 0.8});
-    m_physics_system.add_rigid_body(new RigidBodyVolume(floor,0,0.01,2));
+    m_physics_system->add_rigid_body(new RigidBodyVolume(floor,0));
 
     //walls
     auto* wall = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
-    wall->get_trsf()->set_translation({3,0,0});
-    wall->get_trsf()->set_rotation({0, 0, 90});
+    wall->get_trsf()->set_translation({0.2,0,0});
+    wall->get_trsf()->set_scale({1, 2, 1});
+    wall->get_trsf()->set_rotation({0, 0, -90});
     wall->set_meshes({slab_mesh});
     wall->set_material(lab_mat_color);
     wall->set_debug_rendering(true, {0.25, 0.65, 0.8});
-    m_physics_system.add_rigid_body(new RigidBodyVolume(wall,0,0.01,2));
+    m_physics_system->add_rigid_body(new RigidBodyVolume(wall,0));
 
 
     //cube
@@ -74,12 +78,12 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 //    m_cube2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
 
     auto* gravity_force = new GravityForce();
-    auto* rbv_cube = new RigidBodyVolume(m_cube,1,0.01,1);
-    auto* rbv_sphere = new RigidBodyVolume(m_ball,1,0.01,1);
+    auto* rbv_cube = new RigidBodyVolume(m_cube,1);
+    auto* rbv_sphere = new RigidBodyVolume(m_ball,1);
     rbv_cube->add_force(gravity_force);
     rbv_sphere->add_force(gravity_force);
-    m_physics_system.add_rigid_body(rbv_cube);
-    m_physics_system.add_rigid_body(rbv_sphere);
+    m_physics_system->add_rigid_body(rbv_cube);
+    m_physics_system->add_rigid_body(rbv_sphere);
 //    auto* rbv_cube2 = new RigidBodyVolume(m_cube2,1000,0.01,1);
 //    rbv_cube2->add_force(gravity_force);
 //    m_physics_system.add_rigid_body(rbv_cube2);
@@ -88,6 +92,9 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_character = new Character(m_shaders, m_root);
     m_cameras.push_back(m_character->get_camera());
 
+    //SCENE ITEMS (grabbable items)
+    m_items.push_back(rbv_cube);
+    m_items.push_back(rbv_sphere);
 
     //PROJECTION
     mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 10000.0f);
@@ -95,19 +102,63 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
                        GL_FALSE, &projection_mat[0][0]);
 }
 
+std::vector<RigidBodyVolume*> LabScene::get_items(){
+    return m_items;
+}
+
+
+RigidBodyVolume* LabScene::in_sight(){
+    //RAYCAST character's sight grabbable items in scene
+    glm::vec3 sight = m_character->get_sight();
+    glm::vec3 char_pos =  m_character->get_camera()->get_position_in_world();
+
+    //DEBUG 
+    // std::cout<<"sight: "<<sight[0]<<", "<<sight[1]<<", "<<sight[2]<<std::endl;
+    // std::cout<<"char_pos: "<<char_pos[0]<<", "<<char_pos[1]<<", "<<char_pos[2]<<std::endl;
+
+    RigidBodyVolume* rbv_result = nullptr;
+    
+    Ray ray(
+        char_pos, 
+        glm::normalize(sight)
+    );
+
+    float t = FLT_MAX;
+    for(RigidBodyVolume* rbv : m_items){
+        glm::vec3 translation = rbv->get_node()->get_trsf()->get_translation();
+        float inter = rbv->get_node()->get_bb()->is_intersected(ray);
+
+        //Get closest items
+        if(inter > 0.f){
+            if(inter < t){
+                t = inter;
+                rbv_result = rbv;
+            }
+        }
+    }
+        
+    return rbv_result;
+}
+
+
 void LabScene::update(GLFWwindow *window, float delta_time, glm::vec3 forward){
     NodeGameSG *camera_node = m_character->get_camera();
     camera_node->update_view_mat(forward);
     camera_node->update_view_pos();
-    
+
     //update character sight (computed with mouse listener)
     m_character->set_sight(forward);
+    
+    //update ITEM IN HAND 
+    if(m_character->has_item() ){
+        m_character->update_item();
+    }
+        
+
     process_input(window, delta_time);
+    // glm::vec3 forces = m_items[0]->get_forces();
+    // std::cout<<forces[0]<<", "<<forces[1]<<", "<<forces[2]<<std::endl;
 }
-
-
-
-
 
 void LabScene::process_input(GLFWwindow *window, float delta_time) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -143,6 +194,26 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
 
     if (!character_trsf->is_up_to_date()) character_trsf->compute();
     
+    //Be sure to get only 1 input
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
+            
+            if(m_character->has_item()){
+
+                m_character->throw_item();
+            }else{
+
+                //GRAB ITEM
+                RigidBodyVolume* rbv = in_sight();
+                if(rbv != 0){
+                    m_character->grab_item(rbv);
+                    glm::vec3 forces = rbv->get_forces();
+                }
+            }
+        }
+
+    }
+
     glm::vec3 translate_cube;
     bool impulse_cube = false;
     //Scene rotation

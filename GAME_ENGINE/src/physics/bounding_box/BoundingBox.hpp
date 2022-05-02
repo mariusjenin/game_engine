@@ -109,6 +109,8 @@ namespace physics {
              * @return
              */
             virtual std::vector<glm::vec3> to_vertices() const = 0;
+
+            virtual float is_intersected(Ray) = 0;
         };
     }
 }

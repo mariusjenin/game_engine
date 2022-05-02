@@ -112,3 +112,4 @@ float RCBB::penetrate_depth(RCBB* bb, glm::vec3 axis, bool *out_should_flip) {
     }
     return (len1 + len2) - length;
 }
+

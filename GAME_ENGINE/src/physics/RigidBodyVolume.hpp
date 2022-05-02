@@ -103,6 +103,12 @@ namespace physics {
          * @return mass
          */
         float get_mass() const;
+        
+        /**
+         * Setter of the mass
+         * @return mass
+         */
+        void set_mass(float);
 
         /**
          * Setter of the forces
@@ -110,11 +116,14 @@ namespace physics {
          */
         void set_forces(const glm::vec3 &forces);
 
+        void clear_forces();
+
         /**
-         * Getter of the forces
+         * Getter of the force
          * @return
          */
         glm::vec3 get_forces() const;
+
     };
 }
 #endif //GAME_ENGINE_RIGIDBODYVOLUME_H

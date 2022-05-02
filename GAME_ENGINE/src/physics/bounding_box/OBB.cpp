@@ -161,4 +161,63 @@ glm::vec3 OBB::closest_point(glm::vec3 pt) const{
     return result;
 }
 
+float OBB::is_intersected(Ray ray){
+    glm::mat3 bb_orientation = m_orientation;
+    glm::vec3 sz = m_size;
+
+    glm::vec3 p = m_position - ray.origin;
+    glm::vec3 f = {
+        glm::dot(bb_orientation[0], ray.direction),
+        glm::dot(bb_orientation[1], ray.direction),
+        glm::dot(bb_orientation[2], ray.direction),
+    };
+
+    glm::vec3 e = {
+        glm::dot(bb_orientation[0], p),
+        glm::dot(bb_orientation[1], p),
+        glm::dot(bb_orientation[2], p),
+    };
+
+    float t[6] = {0};
+    for(int i = 0; i < 3; i ++){
+        if(cmp_float(f[i], 0)){
+            if(-e[i] - sz[i] > 0 || -e[i] + sz[i] < 0){
+                return -1.f;
+            }
+            f[i] = 0.000001f;
+        }
+
+        t[i * 2] = (e[i] + sz[i]) / f[i];
+        t[i * 2 + 1] = (e[i] - sz[i]) / f[i];
+    }
+
+    float tmin = fmaxf(
+                    fmaxf(
+                        fminf(t[0], t[1]),
+                        fminf(t[2], t[3])
+                        ),
+                    fminf(t[4], t[5])
+                    );
+
+    float tmax = fminf(
+                    fminf(
+                        fmaxf(t[0], t[1]),
+                        fmaxf(t[2], t[3])
+                        ),
+                    fmaxf(t[4], t[5])
+                    );
+                    
+    if(tmax < 0)
+        return -1.f;
+    
+    if(tmin > tmax)
+        return -1.f;
+
+    if(tmin < 0.f)
+        return tmax;
+    
+    return tmin;
+}
+
+
 

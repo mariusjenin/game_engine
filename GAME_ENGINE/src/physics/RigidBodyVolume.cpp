@@ -37,6 +37,7 @@ void RigidBodyVolume::update(float delta_time) {
 void RigidBodyVolume::apply_forces() {
     m_forces = {0,0,0};
     for(auto* force: m_list_forces){
+
         force->apply(this);
     }
 }
@@ -162,6 +163,11 @@ float RigidBodyVolume::get_mass() const {
     return m_mass;
 }
 
+void RigidBodyVolume::set_mass(float mass){
+    m_mass = mass;
+}
+
+
 void RigidBodyVolume::set_forces(const glm::vec3 &forces) {
     m_forces = forces;
 }
@@ -173,4 +179,10 @@ glm::vec3 RigidBodyVolume::get_forces() const {
 void RigidBodyVolume::add_force(Force *f) {
     m_list_forces.push_back(f);
 }
+
+void RigidBodyVolume::clear_forces(){
+    m_list_forces.clear();
+}
+
+
 

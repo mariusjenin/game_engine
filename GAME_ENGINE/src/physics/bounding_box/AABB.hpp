@@ -53,6 +53,9 @@ namespace physics {
             Collision get_data_collision(const OBB &bb) override;
 
             std::vector<glm::vec3> to_vertices() const override;
+
+            float is_intersected(Ray) override;
+
         };
     }
 }

@@ -70,4 +70,9 @@ void NodeSG::load_model_matrices() {
                        &normal_model[0][0]);
 }
 
+void NodeSG::set_parent(ElementSG* parent){
+    m_parent = parent;
+}
+
+
 

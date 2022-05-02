@@ -45,6 +45,9 @@ namespace physics {
             Interval get_interval(glm::vec3 axis) override;
 
             std::vector<glm::vec3> to_vertices() const override;
+
+            float is_intersected(Ray) override;
+
         };
     }
 }

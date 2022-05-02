@@ -59,7 +59,7 @@ namespace scene_graph {
          */
         glm::vec3 get_position_in_world(glm::vec3 v = {0, 0, 0});
 
-
+        void set_parent(ElementSG*);
         ~NodeSG() override;
     };
 }
