@@ -3,7 +3,7 @@
 
 using namespace physics;
 
-std::string Collision::to_string() {
+std::string Collision::to_string() const{
     std::stringstream ss;
     ss << "colliding : " << colliding << "\n" <<
        "normal : " << normal[0] << " " << normal[1] << " " << normal[2] << "\n" <<

@@ -25,11 +25,10 @@ void BoundingBox::compute(std::vector<BoundingBox *> bbs) {
     std::vector<glm::vec3> vertices = {};
     size_t size_bbs = bbs.size();
     for(int i = 0; i < size_bbs; i++){
-        AABB* aabb = bbs[i]->to_AABB();
-//        std::cout << aabb->get_min()[0] << " "<< aabb->get_min()[1] << " "<< aabb->get_min()[2] << " " <<aabb->get_max()[0]
-//                << " " <<aabb->get_max()[1]<< " " <<aabb->get_max()[2]<< std::endl;
-        vertices.push_back(aabb->get_min());
-        vertices.push_back(aabb->get_max());
+        std::vector<glm::vec3> verticies_2 = bbs[i]->to_vertices();
+        for(auto & vert : verticies_2){
+            vertices.push_back(vert);
+        }
     }
     compute(vertices);
 }

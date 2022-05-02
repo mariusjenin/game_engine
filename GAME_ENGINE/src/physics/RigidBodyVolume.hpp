@@ -27,6 +27,7 @@ namespace physics {
     private:
         NodeGameSG *m_node_game;
         glm::vec3 m_velocity;
+        glm::vec3 m_acceleration;
         glm::vec3 m_forces;
         float m_mass{};
         /// Coefficient of restitution

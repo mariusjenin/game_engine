@@ -218,8 +218,8 @@ void NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera) {
 void NodeGameSG::refresh_bb(glm::vec3 pos_camera) {
 //    std::cout<< "first" << std::endl;
     refresh_bb_aux(pos_camera);
-//    print_mat4(get_matrix_recursive_local());
     m_bb->apply_transform(get_matrix_recursive_local());
+//    std::cout<< "first2" << std::endl;
 //    std::vector<glm::vec3> verticies = ((OBB*)m_bb)->to_vertices();
 //    for(auto & vertex : verticies){
 //        std::cout << (float)vertex[0] << " "<< (float)vertex[1] << " "<< (float)vertex[2] << std::endl;
@@ -230,6 +230,7 @@ void NodeGameSG::refresh_bb_recursive(glm::vec3 pos_camera) {
 //    std::cout<< "second" << std::endl;
     refresh_bb_aux(pos_camera);
     m_bb->apply_transform(m_trsf->get_matrix());
+//    std::cout<< "second2" << std::endl;
 //    std::vector<glm::vec3> verticies = ((OBB*)m_bb)->to_vertices();
 //    for(auto & vertex : verticies){
 //        std::cout << (float)vertex[0] << " "<< (float)vertex[1] << " "<< (float)vertex[2] << std::endl;

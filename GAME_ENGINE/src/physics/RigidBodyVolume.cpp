@@ -19,17 +19,19 @@ RigidBodyVolume::RigidBodyVolume(NodeGameSG *ng,float mass, float friction, floa
 RigidBodyVolume::~RigidBodyVolume() = default;
 
 void RigidBodyVolume::update(float delta_time) {
-    float damping = 0.98f;
-    glm::vec3 acceleration = m_forces * inverse_mass();
 
-    m_velocity += acceleration * delta_time;
-    m_velocity *= damping;
+    // Velocity Verlet Integration
+    glm::vec3 avg_velocity = m_velocity + m_acceleration * delta_time / 2.0f;
 
-    glm::vec3 translation_modification_world = m_velocity * delta_time;
-
+    // Position is integrated with the average velocity
+    glm::vec3 translation_modification_world = avg_velocity * delta_time;
     ((NodeSG *) m_node_game)->get_trsf()->set_translation(
-            ((NodeSG *) m_node_game)->get_trsf()->get_translation() + translation_modification_world);
+            ((NodeSG *) m_node_game)->get_trsf()->get_translation() + m_velocity*delta_time);
     ((NodeSG *) m_node_game)->get_trsf()->compute();
+
+    // Calculate new acceleration and velocity
+    m_acceleration = m_forces * inverse_mass();
+    m_velocity = avg_velocity + m_acceleration * delta_time / 2.0f;
 }
 
 void RigidBodyVolume::apply_forces() {
@@ -120,7 +122,10 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &colli
     glm::vec3 impulse = rel_normal * j;
     m_velocity -= impulse *  inv_ma;
     rbv.m_velocity += impulse *  inv_mb;
-//    std::cout << "impulse " <<impulse[0]<< " "<<impulse[1]<< " "<<impulse[2]<< " | "<< inv_ma << " | " << inv_mb<<std::endl;
+//    print_vec3(impulse);
+//    print_vec3(impulse *  inv_mb);
+//    print_vec3(impulse *  inv_mb);
+//    std::cout << inv_ma << " " << inv_mb << std::endl;
 
 
     //friction

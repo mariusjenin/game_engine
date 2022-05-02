@@ -10,6 +10,9 @@ using namespace scene;
 BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path) : Scene(
         vertex_shader_path, fragment_shader_path) {
 
+    //Physics System
+    m_physics_system = new PhysicsSystem(0.0005f,0.005f, 5);
+
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
 
@@ -31,57 +34,56 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     //Big Ball
     auto* big_ball_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
     auto* big_ball = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
-    big_ball->get_trsf()->set_translation({-4,0,-4});
+    float gap = 4;
+    big_ball->get_trsf()->set_translation({-gap,0,-gap});
     big_ball->set_meshes({ball_mesh2});
     big_ball->set_material(big_ball_mat_color);
     auto* big_ball2 = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
-    big_ball2->get_trsf()->set_translation({-4,0,4});
+    big_ball2->get_trsf()->set_translation({-gap,0,gap});
     big_ball2->set_meshes({ball_mesh2});
     big_ball2->set_material(big_ball_mat_color);
     auto* big_ball3 = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
-    big_ball3->get_trsf()->set_translation({4,0,-4});
+    big_ball3->get_trsf()->set_translation({gap,0,-gap});
     big_ball3->set_meshes({ball_mesh2});
     big_ball3->set_material(big_ball_mat_color);
     auto* big_ball4 = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
-    big_ball4->get_trsf()->set_translation({4,0,4});
+    big_ball4->get_trsf()->set_translation({gap,0,gap});
     big_ball4->set_meshes({ball_mesh2});
     big_ball4->set_material(big_ball_mat_color);
-    m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball,0,0.01,2));
-    m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball2,0,0.01,2));
-    m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball3,0,0.01,2));
-    m_physics_system.add_rigid_body(new RigidBodyVolume(big_ball4,0,0.01,2));
-    big_ball->set_debug_rendering(true,{0,1,0});
-    big_ball2->set_debug_rendering(true);
-    big_ball3->set_debug_rendering(true,{0,1,1});
-    big_ball4->set_debug_rendering(true);
+    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball,0,0.01,2));
+    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball2,0,0.01,2));
+    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball3,0,0.01,2));
+    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball4,0,0.01,2));
+    big_ball->set_debug_rendering(true,{1,0,0});
+    big_ball2->set_debug_rendering(true,{0,1,0});
+    big_ball3->set_debug_rendering(true,{0,0,1});
+    big_ball4->set_debug_rendering(true,{0,1,1});
 
 
     //Ball
     m_ball = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
-    m_ball->get_trsf()->set_translation({2.,30,2.2});
+    m_ball->get_trsf()->set_translation({2.5,30,2.9});
+    m_ball->get_trsf()->set_rotation({25,74,42});
+    m_ball->get_trsf()->set_uniform_scale(1/2.f);
     m_ball->set_meshes({ball_mesh1});
     m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
-    m_ball->set_debug_rendering(true);
+    m_ball->set_debug_rendering(true,{1,0,1});
+    auto* gravity_force = new GravityForce();
+    auto* rbv_ball = new RigidBodyVolume(m_ball,1000,0.01,0.25);
+    rbv_ball->add_force(gravity_force);
+    m_physics_system->add_rigid_body(rbv_ball);
 
     //Ball2
     auto* m_ball2 = new NodeGameSG(m_shaders, m_ball,SphereBB_TYPE);
     m_ball2->get_trsf()->set_translation({2,2,2});
-    m_ball2->get_trsf()->set_uniform_scale(1/2.f);
+    m_ball2->get_trsf()->set_uniform_scale(2.f);
     m_ball2->set_meshes({ball_mesh1});
     m_ball2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
 
-    auto* gravity_force = new GravityForce();
-    auto* rbv_ball = new RigidBodyVolume(m_ball,1000,0.01,1);
-    rbv_ball->add_force(gravity_force);
-    m_physics_system.add_rigid_body(rbv_ball);
-//    auto* rbv_ball2 = new RigidBodyVolume(m_ball2,1000,0.01,1);
-//    rbv_ball2->add_force(gravity_force);
-//    m_physics_system.add_rigid_body(rbv_ball2);
-
     //CAMERA
     auto *camera_node = new NodeGameSG(m_shaders, m_root);
-    camera_node->get_trsf()->set_translation({0, 9, 17});
-    camera_node->get_trsf()->set_rotation({-20, 0, 0});
+    camera_node->get_trsf()->set_translation({0, 17, 28});
+    camera_node->get_trsf()->set_rotation({-27, 0, 0});
     m_cameras.push_back(camera_node);
 
     //PROJECTION

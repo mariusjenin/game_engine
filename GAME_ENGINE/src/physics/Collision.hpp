@@ -45,7 +45,7 @@ namespace physics {
          * Give the string that corresponds to the Collision
          * @return collision as string
          */
-        std::string  to_string();
+        std::string  to_string() const;
 
     };
 }

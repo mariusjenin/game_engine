@@ -110,7 +110,7 @@ int main() {
     glfwSetCursorPosCallback(window, process_mouse);
 
     // For speed computation
-    float last_time = glfwGetTime();
+    auto last_time = (float)glfwGetTime();
     float current_time;
 
     //Frame updates

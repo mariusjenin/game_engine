@@ -31,8 +31,6 @@ Scene::Scene(const std::string &vertex_shader_path, const std::string &fragment_
     GLuint program_id = m_shaders->get_program_id();
     glUseProgram(program_id);
 
-    m_physics_system = PhysicsSystem();
-
     m_camera_index = 0;
 
     //ROOT
@@ -69,6 +67,8 @@ Shaders *Scene::get_shaders() const {
 }
 
 void Scene::update_physics(GLFWwindow *window, float delta_time) {
-    NodeGameSG *camera_node = m_cameras[m_camera_index];
-    m_physics_system.update(camera_node->get_position_in_world(),delta_time);
+    if(m_physics_system != nullptr){
+        NodeGameSG *camera_node = m_cameras[m_camera_index];
+        m_physics_system->update(camera_node->get_position_in_world(),delta_time);
+    }
 }
