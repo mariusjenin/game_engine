@@ -10,6 +10,7 @@
 
 namespace physics {
     namespace force {
+        ///Force of the gravity
         class GravityForce : public Force {
             constexpr static const float EARTH_GRAVITY = 9.80665f;
         private:

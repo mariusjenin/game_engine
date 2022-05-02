@@ -10,6 +10,7 @@
 
 namespace physics {
     namespace ode {
+        ///Euler Ordinary Differential Equation
         class EulerODE : public ODE {
         public:
             void update(RigidBodyVolume *rbv,float delta_time) override;

@@ -51,10 +51,6 @@ float SphereBB::get_radius() const {
 
 AABB * SphereBB::to_AABB() const {
     return new AABB(m_position,{m_radius,m_radius,m_radius});
-//    AABB* aabb = new AABB();
-//    glm::vec3 radius_vec ={m_radius,m_radius,m_radius};
-//    aabb->compute({m_position - radius_vec,m_position + radius_vec});
-//    return aabb;
 }
 
 Collision SphereBB::get_data_collision(const SphereBB &bb) {
@@ -170,5 +166,10 @@ std::vector<glm::vec3> SphereBB::to_vertices() const {
             {pos_cos_substract[0],m_position[1],pos_cos_substract[2]}
     };
     return verticies;
+}
+
+glm::vec3 SphereBB::get_tensor() {
+    float fraction = (2.0f / 5.0f);
+    return glm::vec3(m_radius*m_radius * fraction);
 }
 

@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <src/utils/Geometry3D.hpp>
+#include <src/utils/Transform.hpp>
 
 namespace utils {
     struct Interval;
@@ -46,8 +47,9 @@ namespace physics {
             /**
              * Compute the BoundingBox according to a list of BoundingBox
              * @param bbs
+             * @return has computed
              */
-            void compute(std::vector<BoundingBox *> bbs);
+            bool compute(std::vector<BoundingBox *> bbs);
 
             /**
              * Getter of the type of the BoundingBox
@@ -109,6 +111,12 @@ namespace physics {
              * @return
              */
             virtual std::vector<glm::vec3> to_vertices() const = 0;
+
+            /**
+             * Getter of the tensor matrix
+             * @return tensor matrix
+             */
+            virtual glm::vec3 get_tensor() = 0;
         };
     }
 }

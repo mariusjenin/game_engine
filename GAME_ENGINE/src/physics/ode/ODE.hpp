@@ -20,9 +20,14 @@ namespace physics{
             RK4_TYPE,
         };
 
-        ///Ordinary differential equation
+        ///Ordinary Differential Equation (Abstract) 
         class ODE {
         public:
+            /**
+             * Update position and rotation of a RigidBodyVolume with an ODE equation
+             * @param rbv
+             * @param delta_time
+             */
             virtual void update(RigidBodyVolume *rbv,float delta_time) = 0;
         };
     }

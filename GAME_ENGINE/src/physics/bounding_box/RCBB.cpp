@@ -111,3 +111,12 @@ float RCBB::penetrate_depth(RCBB* bb, glm::vec3 axis, bool *out_should_flip) {
     }
     return (len1 + len2) - length;
 }
+
+glm::vec3 RCBB::get_tensor() {
+    glm::vec3 size = m_size * 2.0f;
+    float fraction = (1.0f / 12.0f);
+    float x2 = size.x * size.x;
+    float y2 = size.y * size.y;
+    float z2 = size.z * size.z;
+    return {(y2 + z2) * fraction,(x2 + z2) * fraction,(x2 + y2) * fraction};
+}

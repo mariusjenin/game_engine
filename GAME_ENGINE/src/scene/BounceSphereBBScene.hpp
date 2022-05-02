@@ -22,7 +22,7 @@ namespace scene {
         NodeGameSG *m_ball;
         NodeGameSG *m_node_balls;
         float m_timer;
-        void generate_balls(float height = 0, float radius = 1,  float dispersion = 0, int nb_balls = 10);
+        void generate_balls(float height = 0, float radius = 1,  float dispersion = 0, int nb_balls = 10, bool texture = true);
     protected:
         void process_input(GLFWwindow *window, float delta_time) override;
 

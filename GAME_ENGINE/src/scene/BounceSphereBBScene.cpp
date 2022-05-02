@@ -7,11 +7,11 @@
 
 using namespace scene;
 
-BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path) : Scene(
-        vertex_shader_path, fragment_shader_path) {
+BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path)
+        : Scene(vertex_shader_path, fragment_shader_path) {
 
     //Physics System
-    m_physics_system = new PhysicsSystem(0.0005f,0.005f, 5,RK4_TYPE);
+    m_physics_system = new PhysicsSystem(m_root,0.02f, 0.005f, 10, RK4_TYPE);
 
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
@@ -24,36 +24,36 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
 //    auto *plane_mesh1 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
 //    auto *plane_mesh2 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
 
-
     //Light
     auto *light_source = new DirectionLight({0.1, 0.1, 0.1}, {1., 1., 1.}, {0.8, 0.8, 0.8}, {0., -1., -0.5});
-    auto *light_node = new NodeGameSG(m_shaders, m_root);
+    auto *light_node = new NodeGameSG(m_shaders, m_root,SPHEREBB_TYPE);
     light_node->set_light(light_source);
     m_lights.push_back(light_node);
 
     //Big Ball
-    auto* big_ball_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
-    auto* big_ball = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    auto *big_ball_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
+    auto *big_ball = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
     float gap = 4;
-    big_ball->get_trsf()->set_translation({-gap,0,-gap});
+    big_ball->get_trsf()->set_translation({-gap, 0, -gap});
     big_ball->set_meshes({ball_mesh2});
     big_ball->set_material(big_ball_mat_color);
-    auto* big_ball2 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
-    big_ball2->get_trsf()->set_translation({-gap,0,gap});
+    auto *big_ball2 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    big_ball2->get_trsf()->set_translation({-gap, 0, gap});
     big_ball2->set_meshes({ball_mesh2});
     big_ball2->set_material(big_ball_mat_color);
-    auto* big_ball3 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
-    big_ball3->get_trsf()->set_translation({gap,0,-gap});
+    auto *big_ball3 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    big_ball3->get_trsf()->set_translation({gap, 0, -gap});
     big_ball3->set_meshes({ball_mesh2});
     big_ball3->set_material(big_ball_mat_color);
-    auto* big_ball4 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
-    big_ball4->get_trsf()->set_translation({gap,0,gap});
+    auto *big_ball4 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    big_ball4->get_trsf()->set_translation({gap, 0, gap});
     big_ball4->set_meshes({ball_mesh2});
     big_ball4->set_material(big_ball_mat_color);
-    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball,0,0.01,2));
-    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball2,0,0.01,2));
-    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball3,0,0.01,2));
-    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball4,0,0.01,2));
+    float mass = 0;
+    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball, mass, 0.01, 2));
+    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball2, mass, 0.01, 2));
+    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball3, mass, 0.01, 2));
+    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball4, mass, 0.01, 2));
 //    big_ball->set_debug_rendering(true,{1,0,0});
 //    big_ball2->set_debug_rendering(true,{0,1,0});
 //    big_ball3->set_debug_rendering(true,{0,0,1});
@@ -63,20 +63,20 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
 
     //Ball
     m_ball = new NodeGameSG(m_shaders, m_node_balls, SPHEREBB_TYPE);
-    m_ball->get_trsf()->set_translation({2.5,30,2.9});
-    m_ball->get_trsf()->set_rotation({25,74,42});
-    m_ball->get_trsf()->set_uniform_scale(1/2.f);
+    m_ball->get_trsf()->set_translation({2.5, 30, 2.9});
+    m_ball->get_trsf()->set_rotation({25, 74, 42});
+    m_ball->get_trsf()->set_uniform_scale(1 / 2.f);
     m_ball->set_meshes({ball_mesh1});
     m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
-    m_ball->set_debug_rendering(true,{1,0,1});
-    auto* gravity_force = new GravityForce();
-    auto* rbv_ball = new RigidBodyVolume(m_ball,1000,0.01,0.25);
+    m_ball->set_debug_rendering(true, {1, 0, 1});
+    auto *gravity_force = new GravityForce();
+    auto *rbv_ball = new RigidBodyVolume(m_ball, 1, 0.01, 0.25);
     rbv_ball->add_force(gravity_force);
     m_physics_system->add_rigid_body(rbv_ball);
 
     //Ball2
-    auto* m_ball2 = new NodeGameSG(m_shaders, m_ball, SPHEREBB_TYPE);
-    m_ball2->get_trsf()->set_translation({2,2,2});
+    auto *m_ball2 = new NodeGameSG(m_shaders, m_ball, SPHEREBB_TYPE);
+    m_ball2->get_trsf()->set_translation({2, 2, 2});
     m_ball2->get_trsf()->set_uniform_scale(2.f);
     m_ball2->set_meshes({ball_mesh1});
     m_ball2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
@@ -103,11 +103,11 @@ void BounceSphereBBScene::process_input(GLFWwindow *window, float delta_time) {
     float camera_speed_rot = 150 * delta_time;
     float ball_translate_speed = 15 * delta_time;
 
-    if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && m_timer<=0) {
-        generate_balls(10,1,4,60);
+    if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && m_timer <= 0) {
+        generate_balls(10, 1, 4, 60, false);
         m_timer = 1;
     } else {
-        m_timer-=delta_time;
+        m_timer -= delta_time;
     }
 
     Transform *camera_trsf = m_cameras.at(m_camera_index)->get_trsf();
@@ -160,47 +160,60 @@ void BounceSphereBBScene::process_input(GLFWwindow *window, float delta_time) {
     //Scene rotation
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         translate_ball += glm::vec3(ball_translate_speed, 0.f, 0.f);
-        impulse_ball =  true;
+        impulse_ball = true;
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
         translate_ball -= glm::vec3(ball_translate_speed, 0.f, 0.f);
-        impulse_ball =  true;
+        impulse_ball = true;
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
         translate_ball += glm::vec3(0.f, 0.f, ball_translate_speed);
-        impulse_ball =  true;
+        impulse_ball = true;
     }
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         translate_ball -= glm::vec3(0.f, 0.f, ball_translate_speed);
-        impulse_ball =  true;
+        impulse_ball = true;
     }
-    if(impulse_ball)m_ball->get_rigid_body()->add_linear_impulse(translate_ball);
+    if (impulse_ball)m_ball->get_rigid_body()->add_linear_impulse(translate_ball);
 //    ball_trsf->set_translation(ball_trsf->get_translation() + translate_ball);
 //    if (!ball_trsf->is_up_to_date()) ball_trsf->compute();
 }
 
-void BounceSphereBBScene::generate_balls(float height, float radius, float dispersion, int nb_balls) {
-    std::vector<ElementSG *> children =  m_node_balls->get_children();
+void BounceSphereBBScene::generate_balls(float height, float radius, float dispersion, int nb_balls, bool texture) {
+    std::vector<NodeSG *> children = m_node_balls->get_children();
     size_t balls_size = children.size();
-    for(int i = 0 ; i < balls_size;i++){
-        if(m_physics_system != nullptr) {
+    for (int i = 0; i < balls_size; i++) {
+        if (m_physics_system != nullptr) {
             if (children[i]->is_node_game()) {
                 m_physics_system->remove_rigid_body_with_node(((NodeGameSG *) children[i]));
             }
         }
-//        delete children[i];
+    }
+    for (int i = 0; i < balls_size; i++) {
+        delete children[i];
     }
     m_node_balls->clear_children();
 
-    auto *ball_mesh1 = new Mesh(create_sphere(radius, 60, 60), true, SPHEREBB_TYPE);
-    auto* gravity_force = new GravityForce();
-    for(int i = 0 ; i < nb_balls;i++){
-        auto* ball = new NodeGameSG(m_shaders, m_node_balls, SPHEREBB_TYPE);
-        ball->get_trsf()->set_translation({(((float)rand()/(float)RAND_MAX)-0.5)*2*dispersion,height+radius*4*i,(((float)rand()/(float)RAND_MAX)-0.5)*2*dispersion});
+    auto *ball_mesh1 = new Mesh(create_sphere(radius, 20, 20), true, SPHEREBB_TYPE);
+    auto *gravity_force = new GravityForce();
+    int id_texture = 0;
+    if (texture) {
+        load_bmp_custom("../assets/texture/rock2.bmp", id_texture);
+    }
+    for (int i = 0; i < nb_balls; i++) {
+        auto *ball = new NodeGameSG(m_shaders, m_node_balls, SPHEREBB_TYPE);
+        ball->get_trsf()->set_translation(
+                {(((float) rand() / (float) RAND_MAX) - 0.5) * 2 * dispersion, height + radius * 4 * i,
+                 (((float) rand() / (float) RAND_MAX) - 0.5) * 2 * dispersion});
         ball->set_meshes({ball_mesh1});
-        glm::vec3 color = {(float)rand()/(float)RAND_MAX,(float)rand()/(float)RAND_MAX,(float)rand()/(float)RAND_MAX,};
-        ball->set_material(new MaterialColor(m_shaders, color, 50));
-        auto* rbv = new RigidBodyVolume(ball,10,0.01,0.7);
+        if (texture) {
+            ball->set_material(new MaterialTexture(m_shaders, id_texture));
+        } else {
+            glm::vec3 color = {(float) rand() / (float) RAND_MAX, (float) rand() / (float) RAND_MAX,
+                               (float) rand() / (float) RAND_MAX,};
+            ball->set_material(new MaterialColor(m_shaders, color, 50));
+        }
+        auto *rbv = new RigidBodyVolume(ball, 100, 0.01, 0.2);
         rbv->add_force(gravity_force);
         m_physics_system->add_rigid_body(rbv);
     }

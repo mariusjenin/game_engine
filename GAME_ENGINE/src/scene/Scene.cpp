@@ -23,6 +23,10 @@ void Scene::update(GLFWwindow *window, float delta_time) {
     camera_node->update_view_mat();
     camera_node->update_view_pos();
 
+    if(m_physics_system != nullptr){
+        m_physics_system->update_bodies(camera_node->get_position_in_world(),delta_time);
+    }
+
     process_input(window, delta_time);
 }
 
@@ -69,6 +73,6 @@ Shaders *Scene::get_shaders() const {
 void Scene::update_physics(GLFWwindow *window, float delta_time) {
     if(m_physics_system != nullptr){
         NodeGameSG *camera_node = m_cameras[m_camera_index];
-        m_physics_system->update(camera_node->get_position_in_world(),delta_time);
+        m_physics_system->update_collisions(camera_node->get_position_in_world(),delta_time);
     }
 }

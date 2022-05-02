@@ -30,8 +30,11 @@ namespace physics {
     private:
         NodeGameSG *m_node_game;
         glm::vec3 m_velocity;
+        glm::vec3 m_angular_velocity;
         glm::vec3 m_acceleration;
+        glm::vec3 m_angular_acceleration;
         glm::vec3 m_forces;
+        glm::vec3 m_torques;
         float m_mass{};
         /// Coefficient of restitution
         float m_cor{};
@@ -77,17 +80,30 @@ namespace physics {
         float inverse_mass() const;
 
         /**
+         * Getter of the inverse of the tensor
+         * @return inverse tensor
+         */
+        glm::mat4 inverse_tensor() const;
+
+        /**
          * Add a linear impulse to the RigidBodyVolume
          * @param impulse
          */
         void add_linear_impulse(glm::vec3 &impulse);
 
         /**
+         * Add a rotational impulse to the RigidBodyVolume
+         * @param point
+         * @param impulse
+         */
+        void add_rotational_impulse(glm::vec3 &point, glm::vec3 &impulse);
+
+        /**
          * Apply an impulse to the RigidBodyVolume
          * @param rbv
          * @param collision
          */
-        void apply_impulse(RigidBodyVolume &rbv, const Collision &collision);
+        void apply_impulse(RigidBodyVolume &rbv, const Collision &collision, int index_contact);
 
         /**
          * Compute if there is a Collision between this RigidBodyVolume and another
@@ -121,6 +137,12 @@ namespace physics {
         glm::vec3 get_forces() const;
 
         /**
+         * Getter of the torques
+         * @return torques
+         */
+        glm::vec3 get_torques() const;
+
+        /**
          * Getter of the velocity
          * @return velocity
          */
@@ -140,12 +162,29 @@ namespace physics {
          */
         void set_velocity(const glm::vec3 &velocity);
 
+        /**
+         * Setter of the angular velocity
+         * @param angular_velocity
+         */
+        void set_angular_velocity(const glm::vec3 &angular_velocity);
 
         /**
          * Setter of the acceleration
          * @param acceleration
          */
         void set_acceleration(const glm::vec3 &acceleration);
+
+        /**
+         * Getter of the angular velocity
+         * @return angular velocity
+         */
+        glm::vec3 get_angular_velocity() const;
+
+        /**
+         * Getter of the angular acceleration
+         * @return angular acceleration
+         */
+        glm::vec3 get_angular_acceleration() const;
     };
 }
 #endif //GAME_ENGINE_RIGIDBODYVOLUME_H

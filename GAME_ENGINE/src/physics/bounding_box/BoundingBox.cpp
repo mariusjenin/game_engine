@@ -21,7 +21,7 @@ void BoundingBox::set_position(const glm::vec3 &position) {
     m_position = position;
 }
 
-void BoundingBox::compute(std::vector<BoundingBox *> bbs) {
+bool BoundingBox::compute(std::vector<BoundingBox *> bbs) {
     std::vector<glm::vec3> vertices = {};
     size_t size_bbs = bbs.size();
     for(int i = 0; i < size_bbs; i++){
@@ -31,4 +31,5 @@ void BoundingBox::compute(std::vector<BoundingBox *> bbs) {
         }
     }
     compute(vertices);
+    return true;
 }

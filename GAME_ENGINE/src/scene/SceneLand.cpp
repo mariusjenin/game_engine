@@ -40,7 +40,7 @@ SceneLand::SceneLand(const std::string &vertex_shader_path, const std::string &f
     //Land
     auto *land_node = new NodeGameSG(m_shaders, m_root);
     land_node->set_material(new MaterialTexture(m_shaders, id_land_texture));
-    land_node->get_local_trsf()->set_scale({5, 5, 5});
+    land_node->get_local_trsf()->set_uniform_scale(5);
     land_node->set_meshes({land_mesh});
     land_node->set_see_both_face(true);
     land_node->add_uniform_1i(has_hm_location, true);

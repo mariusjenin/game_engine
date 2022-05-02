@@ -52,12 +52,21 @@ namespace physics {
              */
             virtual bool is_point_in(glm::vec3 point) const = 0;
 
-            //TODO comment
+
+            /**
+             * Compute the depth of the penetration between 2 RCBB colliding
+             * @param bb
+             * @param axis
+             * @param out_should_flip
+             * @return depth
+             */
             float penetrate_depth(RCBB* bb,glm::vec3 axis, bool* out_should_flip);
 
             AABB *to_AABB() const override;
 
             Interval get_interval(glm::vec3 axis) override;
+
+            glm::vec3 get_tensor() override;
         };
     }
 }
