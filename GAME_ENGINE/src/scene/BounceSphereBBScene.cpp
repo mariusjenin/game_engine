@@ -104,7 +104,7 @@ void BounceSphereBBScene::process_input(GLFWwindow *window, float delta_time) {
     float ball_translate_speed = 15 * delta_time;
 
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && m_timer <= 0) {
-        generate_balls(10, 1, 4, 60, false);
+        generate_balls(10, 1, 4, 60, true);
         m_timer = 1;
     } else {
         m_timer -= delta_time;
