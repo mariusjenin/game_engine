@@ -203,6 +203,7 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
 
     for (auto child: m_children) {
         if (child->is_node_game()) {
+
             auto *node = (NodeGameSG *) child;
             if(node->has_children() || node->has_meshes()){
                 has_to_be_computed = node->refresh_bb_recursive(pos_camera) || has_to_be_computed;
@@ -210,11 +211,12 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
             bbs.push_back(node->get_bb());
         }
     }
-
     if (has_to_be_computed) {
         for (auto mesh: m_meshes) {
+            
             mesh->update_mesh(glm::distance(get_position_in_world(mesh->get_center()), pos_camera));
             bbs.push_back(mesh->get_bb());
+
         }
         m_meshes_dirty = false;
         m_bb = BBFactory::generate_bb(m_bb_type);

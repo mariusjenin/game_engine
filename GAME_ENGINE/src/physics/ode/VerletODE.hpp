@@ -12,7 +12,7 @@ namespace physics {
         ///Verlet Ordinary Differential Equation
         class VerletODE : public ODE {
         public:
-            void update(RigidBodyVolume *rbv,float delta_time) override;
+            void update(RigidBodyVolume *rbv,float delta_time, bool use_angular = true) override;
         };
     }
 }

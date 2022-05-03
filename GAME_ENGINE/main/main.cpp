@@ -12,8 +12,8 @@ GLFWwindow *window;
 
 // #include <src/scene/SceneLand.hpp>
 // #include <src/scene/SolarSystem.hpp>
-// #include <src/scene/BounceOBBScene.hpp>
-// #include <src/scene/BounceSphereBBScene.hpp>
+#include <src/scene/BounceOBBScene.hpp>
+#include <src/scene/BounceSphereBBScene.hpp>
 #include <src/scene/LabScene.hpp>
 
 #include <src/utils/printer.hpp>
@@ -30,7 +30,7 @@ float camera_speed_rot;
 
 
 void process_mouse(GLFWwindow *window, double x, double y);
-LabScene* lab_scene;
+// LabScene* lab_scene;
 int main() {
 
     
@@ -100,12 +100,12 @@ int main() {
 
     //CREATE THE SCENE
 //    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
-    lab_scene = new LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
-    lab_scene->setup();
+    LabScene scene = LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
     // BounceOBBScene scene = BounceOBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
-//    BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
+    // BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
 //    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl");
 
+    scene.setup();
     //MOUSE PROCESSING
     glfwSetCursorPosCallback(window, process_mouse);
 
@@ -114,7 +114,7 @@ int main() {
     float current_time;
 
     //Frame updates
-    int frames_by_second = 144;
+    int frames_by_second = 60;
     float delta_time_frame_acc = 0.0f;
     float delta_time_frame_fixed = 1.0f / (float)frames_by_second;
     //Physics updates
@@ -135,8 +135,11 @@ int main() {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             //RENDER SCENE
-            lab_scene->render();
-            lab_scene->update(window, delta_time_frame_fixed, front);
+            scene.render();
+            // scene.update(window, delta_time_frame_fixed);
+
+            //SCENE WITH FPS CAMERA
+            scene.update(window, delta_time_frame_fixed, front);
 
             // Swap buffers
             glfwSwapBuffers(window);
@@ -145,8 +148,9 @@ int main() {
 
         if (delta_time_physics_acc > delta_time_physics_fixed) {
             delta_time_physics_acc -= delta_time_physics_fixed;
-            lab_scene->update_physics(window,delta_time_physics_fixed);
+            scene.update_physics(window,delta_time_physics_fixed);
         }
+
         last_time = current_time;
 
     } // Check if the ESC key was pressed or the window was closed
@@ -197,10 +201,7 @@ void process_mouse(GLFWwindow *window, double x, double y) {
     front.x = cos(glm::radians(cam_yaw)) * cos(glm::radians(cam_pitch));
     front.y = sin(glm::radians(cam_pitch));
     front.z = sin(glm::radians(cam_yaw)) * cos(glm::radians(cam_pitch));
-    // std::cout<<"mouse Xpos: "<<x_offset<<", mouse Ypos: "<<y_offset<<std::endl;
 
     glm::vec3 y_rot(0, cam_yaw, 0);    
-    glm::vec3 sight = lab_scene->get_character()->get_sight();
 
-    // std::cout<<"CHARACTER SIGHT: "<<sight[0]<<", "<<sight[1]<<", "<<sight[2]<<std::endl;
 }

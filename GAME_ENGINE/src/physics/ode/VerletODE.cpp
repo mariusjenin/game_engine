@@ -7,7 +7,7 @@
 
 using namespace physics::ode;
 
-void VerletODE::update(RigidBodyVolume *rbv,float delta_time) {
+void VerletODE::update(RigidBodyVolume *rbv,float delta_time, bool use_angular) {
     // Velocity Verlet Integration
     glm::vec3 avg_velocity = rbv->get_velocity() + rbv->get_acceleration() * delta_time / 2.0f;
     glm::vec3 avg_angular_velocity = rbv->get_angular_velocity() + rbv->get_angular_acceleration() * delta_time / 2.0f;
@@ -18,7 +18,8 @@ void VerletODE::update(RigidBodyVolume *rbv,float delta_time) {
     rotation = {glm::degrees(rotation.x),glm::degrees(rotation.y),glm::degrees(rotation.z)};
     Transform* trsf_node = rbv->get_node()->get_trsf();
     trsf_node->set_translation(trsf_node->get_translation() + translation);
-    trsf_node->set_rotation(trsf_node->get_rotation() + rotation);
+    if(use_angular)
+        trsf_node->set_rotation(trsf_node->get_rotation() + rotation);
     trsf_node->compute();
 
     // Calculate new acceleration and velocity

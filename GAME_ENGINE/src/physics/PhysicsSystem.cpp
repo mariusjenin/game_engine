@@ -57,6 +57,7 @@ void PhysicsSystem::refresh_bodies_bb(glm::vec3 pos_camera){
     for(auto & rigid_body : m_rigid_bodies){
         rigid_body->get_node()->refresh_bb(pos_camera);
     }
+    
     m_root_physics->reset_trsf_dirty(false);
     m_root_physics->reset_children_dirty(false);
 }

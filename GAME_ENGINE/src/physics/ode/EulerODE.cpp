@@ -8,7 +8,7 @@
 
 using namespace physics::ode;
 
-void EulerODE::update(RigidBodyVolume *rbv,float delta_time) {
+void EulerODE::update(RigidBodyVolume *rbv,float delta_time, bool use_angular) {
     glm::vec3 forces = rbv->get_forces();
     glm::vec3 acceleration =  forces * rbv->inverse_mass();
     glm::vec3 velocity = rbv->get_velocity() + acceleration * delta_time;
@@ -23,6 +23,7 @@ void EulerODE::update(RigidBodyVolume *rbv,float delta_time) {
     rotation = {glm::degrees(rotation.x),glm::degrees(rotation.y),glm::degrees(rotation.z)};
     Transform* trsf_node = rbv->get_node()->get_trsf();
     trsf_node->set_translation(trsf_node->get_translation() + translation);
-    trsf_node->set_rotation(trsf_node->get_rotation() + rotation);
+    if(use_angular)
+        trsf_node->set_rotation(trsf_node->get_rotation() + rotation);
     trsf_node->compute();
 }

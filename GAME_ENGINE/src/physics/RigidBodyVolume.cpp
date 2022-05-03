@@ -8,20 +8,21 @@ using namespace physics;
 using namespace physics::force;
 using namespace scene_graph;
 
-RigidBodyVolume::RigidBodyVolume(NodeGameSG *ng,float mass, float friction, float cor) {
+RigidBodyVolume::RigidBodyVolume(NodeGameSG *ng,float mass, float friction, float cor, bool character) {
     m_node_game = ng;
     m_node_game->set_rigid_body(this);
     m_mass = mass;
     m_friction = friction;
     m_cor = cor;
     m_list_forces = {};
+    is_character = character;
 }
 
 RigidBodyVolume::~RigidBodyVolume() = default;
 
 void RigidBodyVolume::update(float delta_time, ODE* ode) {
 
-    ode->update(this,delta_time);
+    ode->update(this,delta_time, !is_character);
 }
 
 void RigidBodyVolume::apply_forces() {
@@ -82,6 +83,10 @@ float RigidBodyVolume::inverse_mass() const {
 
 void RigidBodyVolume::add_linear_impulse(glm::vec3 &impulse) {
     m_velocity += impulse;
+}
+
+void RigidBodyVolume::set_linear_impulse(glm::vec3 &impulse) {
+    m_velocity = impulse;
 }
 
 void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &collision, int index_contact) {

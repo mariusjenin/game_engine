@@ -9,7 +9,8 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
         vertex_shader_path, fragment_shader_path) {
 
     //PHYSICS SYSTEM
-    m_physics_system = new PhysicsSystem(0.0005f, 0.005f, 5);        
+    m_physics_system = new PhysicsSystem(m_root,0.02f, 0.05f, 5, EULER_TYPE);        
+    
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
 
@@ -20,7 +21,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     //MESHES
     auto *slab_mesh = new Mesh("../assets/mesh/slab.obj", true, OBB_TYPE);
     auto *cube_mesh = new Mesh(create_rectangle_cuboid({5,5,5}), true,OBB_TYPE);
-    auto *ball_mesh1 = new Mesh(create_sphere(1, 60, 60),true,SphereBB_TYPE);
+    auto *ball_mesh1 = new Mesh(create_sphere(1, 60, 60),true,SPHEREBB_TYPE);
     auto *cube_mesh2 = new Mesh(create_rectangle_cuboid({1,1,1}), true,OBB_TYPE);
 //    auto *plane_mesh1 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
 //    auto *plane_mesh2 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
@@ -64,7 +65,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
 
     //ball
-    auto* m_ball = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
+    auto* m_ball = new NodeGameSG(m_shaders, m_root,SPHEREBB_TYPE);
     m_ball->get_trsf()->set_translation({0.,20,0});
     m_ball->set_meshes({ball_mesh1});
     m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
@@ -79,7 +80,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 
     auto* gravity_force = new GravityForce();
     auto* rbv_cube = new RigidBodyVolume(m_cube,1);
-    auto* rbv_sphere = new RigidBodyVolume(m_ball,1);
+    auto* rbv_sphere = new RigidBodyVolume(m_ball,1, 0.8, 0.5);
     rbv_cube->add_force(gravity_force);
     rbv_sphere->add_force(gravity_force);
     m_physics_system->add_rigid_body(rbv_cube);
@@ -92,10 +93,14 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_character = new Character(m_shaders, m_root);
     m_cameras.push_back(m_character->get_camera());
 
+    // m_character->get_body()->add_force(gravity_force);
+    m_physics_system->add_rigid_body(m_character->get_body());
+
     //SCENE ITEMS (grabbable items)
     m_items.push_back(rbv_cube);
     m_items.push_back(rbv_sphere);
 
+    
     //PROJECTION
     mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 10000.0f);
     glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
@@ -146,9 +151,13 @@ void LabScene::update(GLFWwindow *window, float delta_time, glm::vec3 forward){
     camera_node->update_view_mat(forward);
     camera_node->update_view_pos();
 
+    if(m_physics_system != nullptr){
+        m_physics_system->update_bodies(camera_node->get_position_in_world(),delta_time);
+    }
+
     //update character sight (computed with mouse listener)
     m_character->set_sight(forward);
-    
+
     //update ITEM IN HAND 
     if(m_character->has_item() ){
         m_character->update_item();
@@ -168,10 +177,13 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     float cube_translate_speed = 15 * delta_time;
     
     Transform *character_trsf = m_character->get_character_node()->get_trsf();
+    Transform *cube_trsf = m_cube->get_trsf();
 
-    glm::vec3 forward_vec = m_character->get_sight();
+    //Compute translation relative to camera direction
+    glm::vec3 sight = m_character->get_sight();
+    sight[1] = 0.;    //disable flight
+    glm::vec3 forward_vec = glm::normalize(sight);
     glm::vec3 right_vec = glm::cross(forward_vec, glm::vec3(0., 1., 0.));
-    forward_vec[1] = 0.;    //disable flight
 
     //Camera Translation
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
@@ -188,19 +200,26 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
             dir += camera_speed * forward_vec;
         }
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+            // if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE) {
+            m_character->jump();
+            // }
+        }
 
         character_trsf->set_translation(character_trsf->get_translation() + character_trsf->apply_to_vector(dir));
     }
 
     if (!character_trsf->is_up_to_date()) character_trsf->compute();
-    
+
+
     //Be sure to get only 1 input
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
         if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
-            
+
             if(m_character->has_item()){
 
                 m_character->throw_item();
+                
             }else{
 
                 //GRAB ITEM
@@ -233,9 +252,11 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
         translate_cube -= glm::vec3(0.f, 0.f, cube_translate_speed);
         impulse_cube =  true;
     }
+    
     if(impulse_cube)m_cube->get_rigid_body()->add_linear_impulse(translate_cube);
-//    cube_trsf->set_translation(cube_trsf->get_translation() + translate_cube);
-//    if (!cube_trsf->is_up_to_date()) cube_trsf->compute();
+
+    // cube_trsf->set_translation(cube_trsf->get_translation() + translate_cube);
+    // if (!cube_trsf->is_up_to_date()) cube_trsf->compute();
 
     //DEBUG
     // glm::vec3 chara_pos = character_trsf->get_translation();

@@ -13,7 +13,7 @@ namespace physics {
         ///Euler Ordinary Differential Equation
         class EulerODE : public ODE {
         public:
-            void update(RigidBodyVolume *rbv,float delta_time) override;
+            void update(RigidBodyVolume *rbv,float delta_time, bool use_angular = true) override;
         };
     }
 }
