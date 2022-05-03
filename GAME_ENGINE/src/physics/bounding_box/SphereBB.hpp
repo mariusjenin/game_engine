@@ -48,6 +48,7 @@ namespace physics {
 
             float is_intersected(Ray) override;
 
+            glm::vec3 get_tensor() override;
         };
     }
 }

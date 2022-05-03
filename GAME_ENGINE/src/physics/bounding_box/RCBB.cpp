@@ -98,7 +98,6 @@ float RCBB::penetrate_depth(RCBB* bb, glm::vec3 axis, bool *out_should_flip) {
     Interval i1 = get_interval(axis);
     Interval i2 = bb->get_interval(axis);
 
-//    std::cout << i1.min << " " << i1.max << " " << i2.min << " " << i2.max << " " << std::endl;
     if (!((i2.min <= i1.max) && (i1.min <= i2.max))) {
         return 0.0f; // No penerattion
     }
@@ -113,3 +112,11 @@ float RCBB::penetrate_depth(RCBB* bb, glm::vec3 axis, bool *out_should_flip) {
     return (len1 + len2) - length;
 }
 
+glm::vec3 RCBB::get_tensor() {
+    glm::vec3 size = m_size * 2.0f;
+    float fraction = (1.0f / 12.0f);
+    float x2 = size.x * size.x;
+    float y2 = size.y * size.y;
+    float z2 = size.z * size.z;
+    return {(y2 + z2) * fraction,(x2 + z2) * fraction,(x2 + y2) * fraction};
+}

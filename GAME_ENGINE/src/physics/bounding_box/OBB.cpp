@@ -107,10 +107,6 @@ void OBB::apply_transform(glm::mat4 matrix) {
     glm::mat4 t,r,s;
     Transform::matrix_to_trs(matrix,t,r,s);
 
-    // std::cout << t[3][0] << " "<< t[3][1] << " "<< t[3][2] << std::endl;
-//    std::cout << r[0][0] << " "<< r[1][1] << " "<< r[2][2] << std::endl;
-//    std::cout << s[0][0] << " "<< s[1][1] << " "<< s[2][2] << " \n"<< std::endl;
-
     //Translate the position
     glm::vec3 translate = {t[3][0] , t[3][1] , t[3][2]};
     m_position = translate + glm::vec3( s * r *glm::vec4(m_position,0) );

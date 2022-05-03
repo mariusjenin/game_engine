@@ -14,11 +14,11 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
 
     //Physics System
-    m_physics_system = new PhysicsSystem(0.2f, 0.01f, 5);
+    m_physics_system = new PhysicsSystem(m_root,0.9f, 0.05f, 15,RK4_TYPE);
 
     //MESHES
     auto *cube_mesh = new Mesh(create_rectangle_cuboid({5,5,5}), true,OBB_TYPE);
-    auto *ball_mesh1 = new Mesh(create_sphere(1, 60, 60),true,SphereBB_TYPE);
+    auto *ball_mesh1 = new Mesh(create_sphere(1, 60, 60), true, SPHEREBB_TYPE);
     auto *cube_mesh2 = new Mesh(create_rectangle_cuboid({1,1,1}), true,OBB_TYPE);
 
     //Light
@@ -31,43 +31,43 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     auto* big_cube_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
     auto* big_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
     big_cube->get_trsf()->set_translation({0,0,0});
-    big_cube->get_trsf()->set_rotation({75, -90, 0});
+//    big_cube->get_trsf()->set_rotation({75, -90, 0});
     big_cube->set_meshes({cube_mesh});
     big_cube->set_material(big_cube_mat_color);
-//    big_cube->set_debug_rendering(true, {0.25, 0.65, 0.8});
+    big_cube->set_debug_rendering(true, {0.25, 0.65, 0.8});
     m_physics_system->add_rigid_body(new RigidBodyVolume(big_cube,0,0.01,2));
 
 
     //cube
     m_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
-    m_cube->get_trsf()->set_translation({0,20,0});
-     m_cube->get_trsf()->set_rotation({88,10,33});
-    m_cube->get_trsf()->set_uniform_scale(1/2.f);
+    m_cube->get_trsf()->set_translation({0,10,0});
+     m_cube->get_trsf()->set_rotation({0,0,35});
+    m_cube->get_trsf()->set_uniform_scale(2.f);
     m_cube->set_meshes({cube_mesh2});
     m_cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
-//    m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
+    m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
     auto* gravity_force = new GravityForce();
-    auto* rbv_cube = new RigidBodyVolume(m_cube,1,0.01,0.4);
+    auto* rbv_cube = new RigidBodyVolume(m_cube,0.1,0.01,0.4);
     rbv_cube->add_force(gravity_force);
     m_physics_system->add_rigid_body(rbv_cube);
 
 
-    //ball
-    auto* m_ball = new NodeGameSG(m_shaders, m_root,SphereBB_TYPE);
-    m_ball->get_trsf()->set_translation({0.,20,0});
-    m_ball->set_meshes({ball_mesh1});
-    m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
-//    m_ball->set_debug_rendering(true);
-    auto* rbv_sphere = new RigidBodyVolume(m_ball,1,0.01,0.4);
-    rbv_sphere->add_force(gravity_force);
-    m_physics_system->add_rigid_body(rbv_sphere);
-
-//   Cube 2
-    auto* m_cube2 = new NodeGameSG(m_shaders, m_cube,OBB_TYPE);
-    m_cube2->get_trsf()->set_translation({2,2,2});
-//    m_cube2->get_trsf()->set_uniform_scale(1/5.f);
-    m_cube2->set_meshes({cube_mesh2});
-    m_cube2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
+//    //ball
+//    auto* m_ball = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+//    m_ball->get_trsf()->set_translation({0.,20,0});
+//    m_ball->set_meshes({ball_mesh1});
+//    m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
+////    m_ball->set_debug_rendering(true);
+//    auto* rbv_sphere = new RigidBodyVolume(m_ball,1000,0.01,0.7);
+//    rbv_sphere->add_force(gravity_force);
+//    m_physics_system->add_rigid_body(rbv_sphere);
+//
+////   Cube 2
+//    auto* m_cube2 = new NodeGameSG(m_shaders, m_cube,OBB_TYPE);
+//    m_cube2->get_trsf()->set_translation({2,2,2});
+////    m_cube2->get_trsf()->set_uniform_scale(1/5.f);
+//    m_cube2->set_meshes({cube_mesh2});
+//    m_cube2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
 
 
     //CAMERA
@@ -77,7 +77,7 @@ BounceOBBScene::BounceOBBScene(const std::string &vertex_shader_path, const std:
     m_cameras.push_back(camera_node);
 
     //PROJECTION
-    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 10000.0f);
+    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 100.0f);
     glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
                        GL_FALSE, &projection_mat[0][0]);
 }

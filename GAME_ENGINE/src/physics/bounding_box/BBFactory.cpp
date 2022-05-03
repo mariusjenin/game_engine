@@ -15,7 +15,7 @@ BoundingBox *BBFactory::generate_bb(BB_TYPE bb_type) {
             return new AABB();
         case OBB_TYPE:
             return new OBB();
-        case SphereBB_TYPE:
+        case SPHEREBB_TYPE:
             return new SphereBB();
         default:
             return nullptr;

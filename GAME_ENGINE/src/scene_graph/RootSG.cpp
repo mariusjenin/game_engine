@@ -8,7 +8,10 @@
 
 using namespace scene_graph;
 
-glm::mat4 RootSG::get_matrix_recursive(bool inverse) {
+glm::mat4 RootSG::get_matrix_recursive(TransformDirty* dirty,bool inverse) {
+    if(dirty != nullptr){
+        dirty->logic_or(*m_trsf->is_dirty());
+    }
     if(inverse) {
         return m_trsf->get_inverse();
     }else{

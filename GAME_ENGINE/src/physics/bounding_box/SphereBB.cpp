@@ -13,7 +13,7 @@ using namespace physics;
 using namespace physics::bounding_box;
 
 SphereBB::SphereBB() {
-    m_type = SphereBB_TYPE;
+    m_type = SPHEREBB_TYPE;
 }
 
 void SphereBB::compute(std::vector<glm::vec3> vertices) {
@@ -51,10 +51,6 @@ float SphereBB::get_radius() const {
 
 AABB * SphereBB::to_AABB() const {
     return new AABB(m_position,{m_radius,m_radius,m_radius});
-//    AABB* aabb = new AABB();
-//    glm::vec3 radius_vec ={m_radius,m_radius,m_radius};
-//    aabb->compute({m_position - radius_vec,m_position + radius_vec});
-//    return aabb;
 }
 
 Collision SphereBB::get_data_collision(const SphereBB &bb) {
@@ -188,7 +184,10 @@ float SphereBB::is_intersected(Ray ray){
     }
 
     return a - f;
+}
 
-
+glm::vec3 SphereBB::get_tensor() {
+    float fraction = (2.0f / 5.0f);
+    return glm::vec3(m_radius*m_radius * fraction);
 }
 

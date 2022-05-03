@@ -30,11 +30,15 @@ void NodeGameSG::draw(glm::vec3 pos_camera) {
         VAODataManager::bind_vao(mesh->get_vao_id());
         VAODataManager::draw(mesh->get_ebo_triangle_indices_id(), (long) mesh->get_triangle_indices().size());
     }
-    if(m_debug_rendering && m_bb!= nullptr){
-        glUniform1i(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME), true);
-        glUniform3fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_COLOR_LOC_NAME), 1, &m_color_rendering[0]);
+    if (m_debug_rendering && m_bb != nullptr) {
+        glUniform1i(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME),
+                    true);
+        glUniform3fv(
+                m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_COLOR_LOC_NAME),
+                1, &m_color_rendering[0]);
         VAODataManager::draw_verticies_debug(m_bb->to_vertices());
-        glUniform1i(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME), false);
+        glUniform1i(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME),
+                    false);
     }
 
     ElementSG::draw(pos_camera);
@@ -46,6 +50,7 @@ void NodeGameSG::draw(glm::vec3 pos_camera) {
 
 void NodeGameSG::set_meshes(std::vector<Mesh *> meshes) {
     m_meshes = std::move(meshes);
+    m_meshes_dirty = true;
 }
 
 const std::vector<Mesh *> &NodeGameSG::get_meshes() const {
@@ -132,6 +137,7 @@ NodeGameSG::NodeGameSG(Shaders *shaders, ElementSG *parent, BB_TYPE bb_type) : N
     m_has_material = false;
     m_light = nullptr;
     m_bb_type = bb_type;
+    m_meshes_dirty = true;
 }
 
 void NodeGameSG::set_light(Light *light) {
@@ -142,7 +148,7 @@ void NodeGameSG::remove_light() {
     m_light = nullptr;
 }
 
-bool NodeGameSG::has_light(){
+bool NodeGameSG::has_light() {
     return m_light != nullptr;
 }
 
@@ -190,54 +196,51 @@ LightShader NodeGameSG::generate_light_struct() {
     return light_struct;
 }
 
-void NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera) {
-    m_bb = BBFactory::generate_bb(m_bb_type);
-    std::vector<BoundingBox*> bbs = {};
-    //Compute only if changes in childs //TODO
-    for(auto mesh : m_meshes){
-        mesh->update_mesh(glm::distance(get_position_in_world(mesh->get_center()), pos_camera));
-        bbs.push_back(mesh->get_bb());
-    }
+bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
+    std::vector<BoundingBox *> bbs = {};
+
+    bool has_to_be_computed = force_compute || m_meshes_dirty || m_children_dirty;
 
     for (auto child: m_children) {
-        if(child->is_node_game()){
-            auto* node = (NodeGameSG*) child;
-            node->refresh_bb_recursive(pos_camera);
+        if (child->is_node_game()) {
+            auto *node = (NodeGameSG *) child;
+            if(node->has_children() || node->has_meshes()){
+                has_to_be_computed = node->refresh_bb_recursive(pos_camera) || has_to_be_computed;
+            }
             bbs.push_back(node->get_bb());
         }
     }
-    m_bb->compute(bbs);
-//    std::vector<glm::vec3> verticies = ((OBB*)m_bb)->to_vertices();
-//    for(auto & vertex : verticies){
-//        std::cout << (float)vertex[0] << " "<< (float)vertex[1] << " "<< (float)vertex[2] << std::endl;
-//    }std::cout << std::endl;
 
+    if (has_to_be_computed) {
+        for (auto mesh: m_meshes) {
+            mesh->update_mesh(glm::distance(get_position_in_world(mesh->get_center()), pos_camera));
+            bbs.push_back(mesh->get_bb());
+        }
+        m_meshes_dirty = false;
+        m_bb = BBFactory::generate_bb(m_bb_type);
+        m_bb->compute(bbs);
+    }
 
+    return has_to_be_computed;
 }
 
-void NodeGameSG::refresh_bb(glm::vec3 pos_camera) {
-//    std::cout<< "first" << std::endl;
-    refresh_bb_aux(pos_camera);
-    m_bb->apply_transform(get_matrix_recursive_local());
-//    std::cout<< "first2" << std::endl;
-//    std::vector<glm::vec3> verticies = ((OBB*)m_bb)->to_vertices();
-//    for(auto & vertex : verticies){
-//        std::cout << (float)vertex[0] << " "<< (float)vertex[1] << " "<< (float)vertex[2] << std::endl;
-//    }std::cout << std::endl;
+bool NodeGameSG::refresh_bb(glm::vec3 pos_camera) {
+    auto *dirty = new TransformDirty(false);
+    glm::mat4 mat = get_matrix_recursive_local(dirty);
+    bool has_computed = refresh_bb_aux(pos_camera, dirty->has_dirty());
+    if (has_computed) m_bb->apply_transform(mat);
+    return has_computed;
 }
 
-void NodeGameSG::refresh_bb_recursive(glm::vec3 pos_camera) {
-//    std::cout<< "second" << std::endl;
-    refresh_bb_aux(pos_camera);
-    m_bb->apply_transform(m_trsf->get_matrix());
-//    std::cout<< "second2" << std::endl;
-//    std::vector<glm::vec3> verticies = ((OBB*)m_bb)->to_vertices();
-//    for(auto & vertex : verticies){
-//        std::cout << (float)vertex[0] << " "<< (float)vertex[1] << " "<< (float)vertex[2] << std::endl;
-//    }std::cout << std::endl;
+bool NodeGameSG::refresh_bb_recursive(glm::vec3 pos_camera) {
+    auto *dirty = new TransformDirty(false);
+    dirty->logic_or(*m_trsf->is_dirty());
+    bool has_computed = refresh_bb_aux(pos_camera, dirty->has_dirty());
+    if (has_computed) m_bb->apply_transform(m_trsf->get_matrix());
+    return has_computed;
 }
 
-BoundingBox* NodeGameSG::get_bb(){
+BoundingBox *NodeGameSG::get_bb() {
     return m_bb;
 }
 
@@ -256,4 +259,8 @@ void NodeGameSG::set_rigid_body(RigidBodyVolume *rigid_body) {
 void NodeGameSG::set_debug_rendering(bool dr, glm::vec3 color_rendering) {
     m_debug_rendering = dr;
     m_color_rendering = color_rendering;
+}
+
+bool NodeGameSG::has_meshes() const {
+    return !m_meshes.empty();
 }

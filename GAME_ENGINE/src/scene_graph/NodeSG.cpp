@@ -19,26 +19,31 @@ NodeSG::NodeSG(Shaders *shaders, ElementSG *parent)
     m_local_trsf = new Transform();
 }
 
-glm::mat4 NodeSG::get_matrix_recursive(bool inverse) {
+glm::mat4 NodeSG::get_matrix_recursive(TransformDirty* dirty,bool inverse) {
+    if(dirty != nullptr){
+        dirty->logic_or(*m_trsf->is_dirty());
+    }
     if(inverse) {
-        return m_trsf->get_inverse() * m_parent->get_matrix_recursive(inverse);
+        return m_trsf->get_inverse() * m_parent->get_matrix_recursive(dirty,inverse);
     }else{
-        return m_parent->get_matrix_recursive(inverse) * m_trsf->get_matrix();
+        return m_parent->get_matrix_recursive(dirty,inverse) * m_trsf->get_matrix();
     }
 }
 
-glm::mat4 NodeSG::get_matrix_recursive_local(bool inverse) {
+glm::mat4 NodeSG::get_matrix_recursive_local(TransformDirty* dirty,bool inverse) {
+    if(dirty != nullptr){
+        dirty->logic_or(*m_trsf->is_dirty());
+        dirty->logic_or(*m_local_trsf->is_dirty());
+    }
     if(inverse){
-        return m_local_trsf->get_inverse() * m_trsf->get_inverse() * m_parent->get_matrix_recursive(inverse);
+        return m_local_trsf->get_inverse() * m_trsf->get_inverse() * m_parent->get_matrix_recursive(dirty,inverse);
     } else {
-        return m_parent->get_matrix_recursive(inverse) * m_trsf->get_matrix() * m_local_trsf->get_matrix();
+        return m_parent->get_matrix_recursive(dirty,inverse) * m_trsf->get_matrix() * m_local_trsf->get_matrix();
     }
 }
 
 NodeSG::~NodeSG() {
     delete m_local_trsf;
-
-    delete m_parent;
 }
 
 glm::vec3 NodeSG::get_position_in_world(glm::vec3 center) {
@@ -74,5 +79,10 @@ void NodeSG::set_parent(ElementSG* parent){
     m_parent = parent;
 }
 
+
+void NodeSG::reset_trsf_dirty(bool dirty) {
+    ElementSG::reset_trsf_dirty(dirty);
+    m_local_trsf->is_dirty()->reset(dirty);
+}
 
 

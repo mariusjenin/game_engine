@@ -14,11 +14,13 @@ using namespace scene_graph;
 ElementSG::ElementSG(Shaders *shaders) {
     m_shaders = shaders;
     m_children = {};
+    m_children_dirty = true;
     m_trsf = new Transform();
 }
 
 void ElementSG::add_child(NodeSG *node) {
     m_children.push_back(node);
+    m_children_dirty = true;
 }
 
 void ElementSG::draw(glm::vec3 pos_camera) {
@@ -64,4 +66,37 @@ void ElementSG::load_uniforms() {
 
 bool ElementSG::is_node_game() {
     return false;
+}
+
+std::vector<NodeSG *> ElementSG::get_children() {
+    return m_children;
+}
+
+
+void ElementSG::remove_child_at(int i) {
+    m_children.erase(m_children.begin()+i);
+    m_children_dirty = true;
+}
+
+void ElementSG::clear_children() {
+    m_children.clear();
+    m_children_dirty = true;
+}
+
+void ElementSG::reset_trsf_dirty(bool dirty) {
+    m_trsf->is_dirty()->reset(dirty);
+    for(NodeSG* node:m_children){
+        node->reset_trsf_dirty(dirty);
+    }
+}
+
+void ElementSG::reset_children_dirty(bool dirty) {
+    m_children_dirty = false;
+    for(NodeSG* node:m_children){
+        node->reset_children_dirty(dirty);
+    }
+}
+
+bool ElementSG::has_children() const {
+    return !m_children.empty();
 }

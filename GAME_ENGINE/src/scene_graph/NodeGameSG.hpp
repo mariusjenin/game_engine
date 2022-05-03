@@ -25,6 +25,7 @@ namespace scene_graph {
     private:
         //Meshes
         std::vector<Mesh *> m_meshes;
+        bool m_meshes_dirty;
         //Material
         Material *m_material{};
         bool m_has_material;
@@ -44,14 +45,17 @@ namespace scene_graph {
         /**
          * Refresh the BoundingBox of the NodeGameSG without applying any Transform
          * @param pos_camera
+         * @param force_compute
+         * @return has refresh
          */
-        void refresh_bb_aux(glm::vec3 pos_camera);
+        bool refresh_bb_aux(glm::vec3 pos_camera, bool force_compute = false);
 
         /**
          * Refresh the BoundingBox of the NodeGameSG applying only the NodeGameSG Transform
          * @param pos_camera
+         * @return has refresh
          */
-        void refresh_bb_recursive(glm::vec3 pos_camera);
+        bool refresh_bb_recursive(glm::vec3 pos_camera);
     public:
         /**
          * Constructor of the NodeGameSG
@@ -85,8 +89,9 @@ namespace scene_graph {
         /**
          * Refresh the BoundingBox of the NodeGameSG
          * @param pos_camera
+         * @return has refresh
          */
-        void refresh_bb(glm::vec3 pos_camera);
+        bool refresh_bb(glm::vec3 pos_camera);
 
         /**
          * Set a light at this NodeGameSG
@@ -135,6 +140,12 @@ namespace scene_graph {
          * @return meshes
          */
         const std::vector<Mesh *> &get_meshes() const;
+
+        /**
+         * Getter of whether or not the ElementSG has children
+         * @return has meshes
+         */
+        bool has_meshes() const;
 
         /**
         * Gives the center of the NodeGameSG (mean of each \link mesh::Mesh Mesh\endlink centers)

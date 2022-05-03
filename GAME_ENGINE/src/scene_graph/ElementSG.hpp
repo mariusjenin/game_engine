@@ -25,7 +25,8 @@ namespace scene_graph {
         /// Transformation applied to the ElementSG and all the children
         Transform * m_trsf;
         Shaders *m_shaders;
-        std::vector<ElementSG *> m_children;
+        std::vector<NodeSG *> m_children;
+        bool m_children_dirty;
         std::map<GLuint, int> m_uniform_1i; //add others type of uniform value possible
     private:
         /**
@@ -71,11 +72,47 @@ namespace scene_graph {
          */
         Transform* get_trsf();
 
+
+        /**
+         * Getter of all the children NodeSG
+         * @return children
+         */
+        std::vector<NodeSG *> get_children();
+
+        /**
+         * Remove a child from the list of NodeSG at a given position
+         * @param i
+         */
+        void remove_child_at(int i);
+
+        /**
+         * Clear the list of NodeSG
+         */
+        void clear_children();
+
+        /**
+         * Getter of whether or not the ElementSG has children
+         * @return has children
+         */
+        bool has_children() const;
+
         /**
          * Give the matrix for an extern object (like a child) (recursive function)
          * @return matrix
          */
-        virtual glm::mat4 get_matrix_recursive(bool inverse) = 0;
+        virtual glm::mat4 get_matrix_recursive(TransformDirty* dirty, bool inverse) = 0;
+
+        /**
+         * Reset all the TransformDirty of the Transform of this node and children recursively
+         * @param dirty
+         */
+        virtual void reset_trsf_dirty(bool dirty);
+
+        /**
+         * Reset the children dirty of the this node and children recursively
+         * @param dirty
+         */
+        virtual void reset_children_dirty(bool dirty);
 
         /// Compute all the Transform list (itself and children)
         virtual void compute_trsf_scene_graph();

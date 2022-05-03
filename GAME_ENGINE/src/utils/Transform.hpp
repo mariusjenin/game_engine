@@ -18,6 +18,19 @@
 #define ORDER_XYZ 4
 #define ORDER_XZY 5
 
+///State of a Transform
+struct TransformDirty{
+    bool translation{};
+    bool rotation{};
+    bool scale{};
+    bool matrix{};
+    explicit TransformDirty(bool dirty);
+    bool has_dirty() const;
+    void logic_or(TransformDirty dirty);
+    void logic_and(TransformDirty dirty);
+    void reset(bool dirty);
+};
+
 /// Class representing a 4 by 4 Matrix (Translation + Rotation + Scale)
 class Transform {
 protected:
@@ -27,8 +40,8 @@ protected:
     glm::vec3 m_scale;
     //Global space information concatenate in matrix
     glm::mat4 m_matrix;
-    //Flag Up to date
     bool m_up_to_date{};
+    TransformDirty* m_dirty{};
     int m_order_rotation{};
 
     /**
@@ -169,8 +182,14 @@ public:
     glm::mat4 get_inverse();
 
     /**
-     * Getter of the flag up_to_date
-     * @return up_to_date
+     * Getter of the states dirty of the Transform
+     * @return is dirty
+     */
+    TransformDirty* is_dirty() const;
+
+    /**
+     * Getter of whether the Transform is up to date or no
+     * @return up to date
      */
     bool is_up_to_date() const;
 

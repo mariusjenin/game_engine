@@ -116,6 +116,7 @@ namespace utils {
         float equation(glm::vec3 point) const;
     };
 
+    ///Represent an interval between 2 float values
     struct Interval {
         float min;
         float max;

@@ -114,19 +114,20 @@ int main() {
     float current_time;
 
     //Frame updates
-    int frames_by_second = 60;
+    int frames_by_second = 144;
     float delta_time_frame_acc = 0.0f;
     float delta_time_frame_fixed = 1.0f / (float)frames_by_second;
     //Physics updates
     int update_physics_by_second = 40;
     float delta_time_physics_acc = 0.0f;
-    float delta_time_physics_fixed = 1.0f / (float)update_physics_by_second;
+    float delta_time_physics_fixed = 1.0f / (float)fmin(frames_by_second,update_physics_by_second);
 
 
     do {
         current_time = (float)glfwGetTime();
         delta_time_frame_acc += current_time - last_time;
         delta_time_physics_acc += current_time - last_time;
+
         if (delta_time_frame_acc > delta_time_frame_fixed) {
             delta_time_frame_acc -= delta_time_frame_fixed;
             camera_speed_rot = 150. * delta_time_frame_fixed; 
@@ -140,14 +141,12 @@ int main() {
             // Swap buffers
             glfwSwapBuffers(window);
             glfwPollEvents();
-
-
         }
+
         if (delta_time_physics_acc > delta_time_physics_fixed) {
             delta_time_physics_acc -= delta_time_physics_fixed;
             lab_scene->update_physics(window,delta_time_physics_fixed);
         }
-
         last_time = current_time;
 
     } // Check if the ESC key was pressed or the window was closed

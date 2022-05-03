@@ -59,7 +59,7 @@ void VAODataManager::draw(GLuint ebo_id, long nb_indices) {
 void VAODataManager::draw_verticies_debug(std::vector<glm::vec3> verticies) {
     size_t verticies_size = verticies.size();
     if((int)verticies_size>0){
-        glPointSize(20);
+        glPointSize(10);
         GLuint vao;
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
