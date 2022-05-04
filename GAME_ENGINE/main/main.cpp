@@ -20,17 +20,6 @@ GLFWwindow *window;
 
 using namespace scene;
 
-bool first_mouse = true;
-float cam_yaw   = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float cam_pitch =  0.0f;
-float last_x =  1024.f / 2.0;
-float last_y =  748.f / 2.0;
-glm::vec3 front = {0,0,-1};
-float camera_speed_rot;
-
-
-void process_mouse(GLFWwindow *window, double x, double y);
-// LabScene* lab_scene;
 int main() {
     
     // Initialise GLFW
@@ -104,7 +93,9 @@ int main() {
 
     scene.setup();
     //MOUSE PROCESSING
-    glfwSetCursorPosCallback(window, process_mouse);
+    // glfwSetCursorPosCallback(window, process_mouse);
+    // Character* character = scene.get_character();
+    glfwSetCursorPosCallback(window, MouseView::process_mouse);
 
     // For speed computation
     auto last_time = (float)glfwGetTime();
@@ -127,16 +118,12 @@ int main() {
 
         if (delta_time_frame_acc > delta_time_frame_fixed) {
             delta_time_frame_acc -= delta_time_frame_fixed;
-            camera_speed_rot = 150. * delta_time_frame_fixed; 
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             //RENDER SCENE
             scene.render();
-            // scene.update(window, delta_time_frame_fixed);
-
-            //SCENE WITH FPS CAMERA
-            scene.update(window, delta_time_frame_fixed, front);
+            scene.update(window, delta_time_frame_fixed);
 
             // Swap buffers
             glfwSwapBuffers(window);
@@ -166,39 +153,4 @@ void framebuffer_size_callback(GLFWwindow *wdow, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
-}
-
-void process_mouse(GLFWwindow *window, double x, double y) {
-    
-    if(first_mouse){
-        first_mouse = false;
-        last_x = x;
-        last_y = y;
-    }
-    
-    float x_offset = x - last_x;
-    float y_offset = last_y - y;
-
-    last_x = x;
-    last_y = y;
-
-    float sensivity = 0.1f;
-
-    x_offset *= sensivity;
-    y_offset *= sensivity;
-
-    cam_yaw += x_offset;
-    cam_pitch += y_offset;
-
-    if (cam_pitch > 89.0f)
-        cam_pitch = 89.0f;
-    if (cam_pitch < -89.0f)
-        cam_pitch = -89.0f;
-
-    front.x = cos(glm::radians(cam_yaw)) * cos(glm::radians(cam_pitch));
-    front.y = sin(glm::radians(cam_pitch));
-    front.z = sin(glm::radians(cam_yaw)) * cos(glm::radians(cam_pitch));
-
-    glm::vec3 y_rot(0, cam_yaw, 0);    
-
 }

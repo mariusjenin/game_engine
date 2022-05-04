@@ -25,6 +25,9 @@ Character::Character(Shaders* shaders, ElementSG* parent){
 
     m_body = new RigidBodyVolume(body_node, 10.f, 0.6f, 0.5f, true);
 
+    //MOUSE EVENT
+    m_mouse_view = MouseView::get_instance();
+
 }
 
 NodeGameSG* Character::get_camera(){

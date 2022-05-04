@@ -111,6 +111,8 @@ add_executable(
 		src/physics/force/GravityForce.cpp src/physics/force/GravityForce.hpp
 #		CHARACTER
 		src/Character.cpp src/Character.hpp
+		src/MouseView.cpp src/MouseView.hpp
+#       ODE		
 		src/physics/ode/ODE.cpp src/physics/ode/ODE.hpp
 		src/physics/ode/ODEFactory.cpp src/physics/ode/ODEFactory.hpp
 		src/physics/ode/EulerODE.cpp src/physics/ode/EulerODE.hpp

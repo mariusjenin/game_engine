@@ -6,7 +6,7 @@
 #include "physics/force/GravityForce.hpp"
 #include "src/utils/meshloader.hpp"
 #include "src/material/MaterialColor.hpp"
-
+#include "MouseView.hpp"
 
 class Character {
     private:
@@ -16,6 +16,9 @@ class Character {
         NodeGameSG* m_camera;
         
     public:
+
+        //Class to compute character's sight with mouse motion.
+        MouseView* m_mouse_view = nullptr;
 
         //Scene root to cut childs from character.
         ElementSG* m_scene_root;

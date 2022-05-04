@@ -146,9 +146,12 @@ RigidBodyVolume* LabScene::in_sight(){
 }
 
 
-void LabScene::update(GLFWwindow *window, float delta_time, glm::vec3 forward){
+void LabScene::update(GLFWwindow *window, float delta_time){
+    //Get character front updated by mouse callback
+    glm::vec3 front = m_character->m_mouse_view->get_front();
+    
     NodeGameSG *camera_node = m_character->get_camera();
-    camera_node->update_view_mat(forward);
+    camera_node->update_view_mat(front);
     camera_node->update_view_pos();
 
     if(m_physics_system != nullptr){
@@ -156,7 +159,7 @@ void LabScene::update(GLFWwindow *window, float delta_time, glm::vec3 forward){
     }
 
     //update character sight (computed with mouse listener)
-    m_character->set_sight(forward);
+    m_character->set_sight(front);
     
     //update ITEM IN HAND 
     if(m_character->has_item() ){

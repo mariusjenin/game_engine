@@ -31,7 +31,7 @@ namespace scene {
          */
         LabScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
         
-        void update(GLFWwindow *window, float delta_time, glm::vec3 = CAMERA_INIT_FORWARD);
+        void update(GLFWwindow *window, float delta_time);
         
         Character* get_character();
         std::vector<RigidBodyVolume*> get_items();
