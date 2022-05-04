@@ -7,6 +7,7 @@
 #include "src/utils/meshloader.hpp"
 #include "src/material/MaterialColor.hpp"
 
+
 class Character {
     private:
         glm::vec3 m_sight;
@@ -15,13 +16,13 @@ class Character {
         NodeGameSG* m_camera;
         
     public:
+
         //Scene root to cut childs from character.
         ElementSG* m_scene_root;
 
         Character(Shaders*, ElementSG*);
 
         NodeGameSG* get_character_node();
-
         RigidBodyVolume* get_body();
 
         NodeGameSG* get_camera();
@@ -30,7 +31,7 @@ class Character {
         glm::vec3 get_sight();
         void set_sight(glm::vec3);
 
-        void grab_item(RigidBodyVolume*, float = 6.f);
+        void grab_item(RigidBodyVolume*, float = 9.f);
         void throw_item();
 
         void jump();

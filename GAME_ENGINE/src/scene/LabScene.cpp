@@ -9,7 +9,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
         vertex_shader_path, fragment_shader_path) {
 
     //PHYSICS SYSTEM
-    m_physics_system = new PhysicsSystem(m_root,0.02f, 0.05f, 5, EULER_TYPE);        
+    m_physics_system = new PhysicsSystem(m_root,0.2f, 0.05f, 5, RK4_TYPE);        
     
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
@@ -32,13 +32,13 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     light_node->set_light(light_source);
     m_lights.push_back(light_node);
 
-    auto* lab_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
+    auto* lab_mat_color = new MaterialColor(m_shaders, {0.15, 0.3, 0.7}, 50);
     
     //floor
     auto* floor = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
     floor->get_trsf()->set_translation({0,0,0});
     // floor->get_trsf()->set_rotation({0, 0, -20});
-    floor->get_trsf()->set_scale({5, 1, 5});
+    floor->get_trsf()->set_scale({10, 2, 10});
     floor->set_meshes({slab_mesh});
     floor->set_material(lab_mat_color);
     floor->set_debug_rendering(true, {0.25, 0.65, 0.8});
@@ -46,11 +46,11 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 
     //walls
     auto* wall = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
-    wall->get_trsf()->set_translation({0.2,0,0});
+    wall->get_trsf()->set_translation({0.2,-3,0});
     wall->get_trsf()->set_scale({1, 2, 1});
     wall->get_trsf()->set_rotation({0, 0, -90});
     wall->set_meshes({slab_mesh});
-    wall->set_material(lab_mat_color);
+    wall->set_material(new MaterialColor(m_shaders, {0.79, 0.3, 0.3}, 50));
     wall->set_debug_rendering(true, {0.25, 0.65, 0.8});
     m_physics_system->add_rigid_body(new RigidBodyVolume(wall,0));
 
@@ -62,14 +62,14 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 //    m_cube->get_trsf()->set_uniform_scale(1/5.f);
     m_cube->set_meshes({cube_mesh2});
     m_cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
-    m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
+    // m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
 
     //ball
     auto* m_ball = new NodeGameSG(m_shaders, m_root,SPHEREBB_TYPE);
     m_ball->get_trsf()->set_translation({0.,20,0});
     m_ball->set_meshes({ball_mesh1});
     m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
-    m_ball->set_debug_rendering(true);
+    // m_ball->set_debug_rendering(true);
 
 ////   Cube 2
 //    auto* m_cube2 = new NodeGameSG(m_shaders, m_cube,OBB_TYPE);
@@ -80,7 +80,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 
     auto* gravity_force = new GravityForce();
     auto* rbv_cube = new RigidBodyVolume(m_cube,1);
-    auto* rbv_sphere = new RigidBodyVolume(m_ball,1, 0.8, 0.5);
+    auto* rbv_sphere = new RigidBodyVolume(m_ball,10, 0.8, 0.5);
     rbv_cube->add_force(gravity_force);
     rbv_sphere->add_force(gravity_force);
     m_physics_system->add_rigid_body(rbv_cube);
@@ -157,7 +157,7 @@ void LabScene::update(GLFWwindow *window, float delta_time, glm::vec3 forward){
 
     //update character sight (computed with mouse listener)
     m_character->set_sight(forward);
-
+    
     //update ITEM IN HAND 
     if(m_character->has_item() ){
         m_character->update_item();
@@ -185,29 +185,34 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     glm::vec3 forward_vec = glm::normalize(sight);
     glm::vec3 right_vec = glm::cross(forward_vec, glm::vec3(0., 1., 0.));
 
+    bool character_impulse = false;
+    glm::vec3 dir;
     //Camera Translation
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
-        glm::vec3 dir;
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
             dir += camera_speed * right_vec;
+            character_impulse = true;
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
             dir += -camera_speed * right_vec;
+            character_impulse = true;
+
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
             dir += -camera_speed * forward_vec;
+            character_impulse = true;
         }
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
             dir += camera_speed * forward_vec;
+            character_impulse = true;
         }
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            // if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE) {
             m_character->jump();
-            // }
         }
-
         character_trsf->set_translation(character_trsf->get_translation() + character_trsf->apply_to_vector(dir));
     }
+
+    // if(character_impulse)m_character->get_body()->add_linear_impulse(dir);
 
     if (!character_trsf->is_up_to_date()) character_trsf->compute();
 
@@ -252,8 +257,8 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
         translate_cube -= glm::vec3(0.f, 0.f, cube_translate_speed);
         impulse_cube =  true;
     }
-    
-    if(impulse_cube)m_cube->get_rigid_body()->add_linear_impulse(translate_cube);
+    translate_cube *= 10.f;
+    if(impulse_cube)m_cube->get_rigid_body()->set_linear_impulse(translate_cube);
 
     // cube_trsf->set_translation(cube_trsf->get_translation() + translate_cube);
     // if (!cube_trsf->is_up_to_date()) cube_trsf->compute();

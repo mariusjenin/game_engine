@@ -6,7 +6,7 @@ Character::Character(Shaders* shaders, ElementSG* parent){
 
     NodeGameSG* body_node = new NodeGameSG(shaders, parent, OBB_TYPE);
 
-    Mesh* body_mesh = new Mesh(create_rectangle_cuboid({2,8,2}), true, OBB_TYPE);
+    Mesh* body_mesh = new Mesh(create_rectangle_cuboid({1,8,1}), true, OBB_TYPE);
 
     body_node->get_trsf()->set_translation({2.,4,0});
     body_node->set_material(new MaterialColor(shaders, {0.75, 0., 0.95}, 50));
@@ -14,7 +14,7 @@ Character::Character(Shaders* shaders, ElementSG* parent){
     body_node->set_meshes({body_mesh});
 
 
-    Mesh* cam_mesh = new Mesh(create_rectangle_cuboid({0.1,7,0.1}), true, SPHEREBB_TYPE);
+    // Mesh* cam_mesh = new Mesh(create_rectangle_cuboid({0.1,7,0.1}), true, SPHEREBB_TYPE);
     m_camera = new NodeGameSG(shaders, body_node);
     // m_camera->set_meshes({cam_mesh});
     m_sight = CAMERA_INIT_FORWARD;
@@ -23,7 +23,7 @@ Character::Character(Shaders* shaders, ElementSG* parent){
     m_camera->get_trsf()->set_translation({0, 8, 0});
     // m_camera->get_trsf()->set_rotation({-10, 0, 0});
 
-    m_body = new RigidBodyVolume(body_node, 1.f, 0.6f, 0.5f, true);
+    m_body = new RigidBodyVolume(body_node, 10.f, 0.6f, 0.5f, true);
 
 }
 
@@ -39,6 +39,7 @@ void Character::set_camera(NodeGameSG* cam){
     m_camera = cam;
     m_body->get_node()->add_child(cam);
 }
+
 
 glm::vec3 Character::get_sight(){
     return m_sight;

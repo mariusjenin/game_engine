@@ -68,6 +68,10 @@ Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
             collision = Collision();
             break;
     }
+    
+    if(rbv.is_character || this->is_character){
+        glm::vec3 normal = collision.normal;
+    }
     collision.rigid_body_1 = this;
     collision.rigid_body_2 = &rbv;
     return collision;
@@ -90,6 +94,8 @@ void RigidBodyVolume::set_linear_impulse(glm::vec3 &impulse) {
 }
 
 void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &collision, int index_contact) {
+    bool use_angular = !this->is_character && !rbv.is_character;
+    
     float inv_ma = inverse_mass();
     float inv_mb = rbv.inverse_mass();
     float inv_mass_sum = inv_ma + inv_mb;
@@ -102,7 +108,9 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &colli
     glm::mat4 i1 = inverse_tensor();
     glm::mat4 i2 = rbv.inverse_tensor();
 
-    glm::vec3 rel_velocity =(rbv.m_velocity + glm::cross(rbv.m_angular_velocity, r2))
+    glm::vec3 rel_velocity = rbv.m_velocity - m_velocity;
+    if(use_angular)
+        rel_velocity =(rbv.m_velocity + glm::cross(rbv.m_angular_velocity, r2))
                        - (m_velocity + glm::cross(m_angular_velocity, r1));
 
     glm::vec3 rel_normal = glm::normalize(collision.normal);
@@ -133,8 +141,11 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &colli
     glm::vec3 impulse = rel_normal * j;
     m_velocity -= impulse *  inv_ma;
     rbv.m_velocity += impulse *  inv_mb;
-    m_angular_velocity -= glm::vec3( i1*glm::vec4(glm::cross(r1, impulse),0));
-    rbv.m_angular_velocity += glm::vec3(i2*glm::vec4(glm::cross(r2, impulse),0));
+
+    if(use_angular){
+        m_angular_velocity -= glm::vec3( i1*glm::vec4(glm::cross(r1, impulse),0));
+        rbv.m_angular_velocity += glm::vec3(i2*glm::vec4(glm::cross(r2, impulse),0));
+    }
 
     //friction
     glm::vec3 t = rel_velocity - (rel_normal * dot_normal_velocity);
@@ -166,8 +177,12 @@ void RigidBodyVolume::apply_impulse(RigidBodyVolume &rbv, const Collision &colli
     glm::vec3 tan_impulse = t * jt;
     m_velocity -= tan_impulse * inv_ma;
     rbv.m_velocity += tan_impulse * inv_mb;
-    m_angular_velocity -= glm::vec3(i1*glm::vec4(glm::cross(r1, tan_impulse),0));
-    rbv.m_angular_velocity += glm::vec3(i2*glm::vec4(glm::cross(r2, tan_impulse),0));
+
+    if(use_angular){
+        m_angular_velocity -= glm::vec3(i1*glm::vec4(glm::cross(r1, tan_impulse),0));
+        rbv.m_angular_velocity += glm::vec3(i2*glm::vec4(glm::cross(r2, tan_impulse),0));
+    }
+
 }
 
 NodeGameSG *RigidBodyVolume::get_node() {

@@ -16,7 +16,8 @@ void EulerODE::update(RigidBodyVolume *rbv,float delta_time, bool use_angular) {
 
     glm::vec3 angular_acceleration = glm::vec3(rbv->inverse_tensor()*glm::vec4(rbv->get_torques(),0));
     glm::vec3 angular_velocity = rbv->get_angular_velocity() + angular_acceleration * delta_time;
-    rbv->set_angular_velocity(angular_velocity);
+    if(use_angular)
+        rbv->set_angular_velocity(angular_velocity);
 
     glm::vec3 translation = velocity * delta_time;
     glm::vec3 rotation = angular_velocity * delta_time;

@@ -56,7 +56,7 @@ namespace physics {
         ~RigidBodyVolume();
 
         /**
-         * Track if rigidBody is a character.
+         * Track if rigidBody is a character. (useful to remove angular velocity)
          */
         bool is_character;
     
@@ -115,7 +115,7 @@ namespace physics {
          * @param collision
          */
         void apply_impulse(RigidBodyVolume &rbv, const Collision &collision, int index_contact);
-
+       
         /**
          * Compute if there is a Collision between this RigidBodyVolume and another
          * @param rbv

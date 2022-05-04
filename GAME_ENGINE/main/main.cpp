@@ -32,10 +32,7 @@ float camera_speed_rot;
 void process_mouse(GLFWwindow *window, double x, double y);
 // LabScene* lab_scene;
 int main() {
-
     
-
-
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");
@@ -118,7 +115,7 @@ int main() {
     float delta_time_frame_acc = 0.0f;
     float delta_time_frame_fixed = 1.0f / (float)frames_by_second;
     //Physics updates
-    int update_physics_by_second = 40;
+    int update_physics_by_second = 30;
     float delta_time_physics_acc = 0.0f;
     float delta_time_physics_fixed = 1.0f / (float)fmin(frames_by_second,update_physics_by_second);
 
