@@ -3,20 +3,19 @@
 Character::Character(Shaders* shaders, ElementSG* parent){
     m_scene_root = parent;
     m_item = nullptr;
+    m_power = 1.f;
 
     NodeGameSG* body_node = new NodeGameSG(shaders, parent, OBB_TYPE);
 
-    Mesh* body_mesh = new Mesh(create_rectangle_cuboid({1,8,1}), true, OBB_TYPE);
+    Mesh* body_mesh = new Mesh(create_rectangle_cuboid({2,8,2}), true, OBB_TYPE);
 
     body_node->get_trsf()->set_translation({2.,4,0});
     body_node->set_material(new MaterialColor(shaders, {0.75, 0., 0.95}, 50));
     body_node->set_debug_rendering(true);
     body_node->set_meshes({body_mesh});
+    
 
-
-    // Mesh* cam_mesh = new Mesh(create_rectangle_cuboid({0.1,7,0.1}), true, SPHEREBB_TYPE);
     m_camera = new NodeGameSG(shaders, body_node);
-    // m_camera->set_meshes({cam_mesh});
     m_sight = CAMERA_INIT_FORWARD;
 
     //Initial camera (FPS)
@@ -87,8 +86,8 @@ void Character::update_item(){
 }
 
 void Character::throw_item(){
-    glm::vec3 throw_dir = 15.f * m_sight;
-    
+    glm::vec3 throw_dir = m_power * m_sight;
+    m_power = 0.f;
     RigidBodyVolume* item = m_item;
     m_item = nullptr;
 
@@ -113,6 +112,11 @@ void Character::jump(){
     m_body->add_force(new GravityForce());
 
 }
+
+void Character::accumulate_power(){
+    m_power += 0.2f;
+}
+
 
 
 

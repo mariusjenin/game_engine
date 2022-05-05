@@ -112,7 +112,18 @@ namespace physics {
              */
             virtual std::vector<glm::vec3> to_vertices() const = 0;
 
+            /**
+             * Returns intersection distance along ray direction between ray and boundingbox.
+             * @return
+             */
             virtual float is_intersected(Ray) = 0;
+
+            /**
+             * Returns return closest point on bounding box to pt.
+             * @return
+             */
+            virtual glm::vec3 closest_point(glm::vec3 pt) const = 0;
+            
             /**
              * Getter of the tensor matrix
              * @return tensor matrix

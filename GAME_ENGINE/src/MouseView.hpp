@@ -31,6 +31,9 @@ class MouseView{
         //Getter of m_front vec3.
         glm::vec3 get_front();
 
+        float get_pitch();
+        float get_yaw();
+
         
 
 };

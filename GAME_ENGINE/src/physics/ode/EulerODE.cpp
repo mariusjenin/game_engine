@@ -9,9 +9,11 @@
 using namespace physics::ode;
 
 void EulerODE::update(RigidBodyVolume *rbv,float delta_time, bool use_angular) {
+    float damping = 0.99f;
     glm::vec3 forces = rbv->get_forces();
     glm::vec3 acceleration =  forces * rbv->inverse_mass();
     glm::vec3 velocity = rbv->get_velocity() + acceleration * delta_time;
+    velocity *= damping;
     rbv->set_velocity(velocity);
 
     glm::vec3 angular_acceleration = glm::vec3(rbv->inverse_tensor()*glm::vec4(rbv->get_torques(),0));

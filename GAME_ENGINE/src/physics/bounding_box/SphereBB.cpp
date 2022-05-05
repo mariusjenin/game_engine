@@ -186,6 +186,13 @@ float SphereBB::is_intersected(Ray ray){
     return a - f;
 }
 
+glm::vec3 SphereBB::closest_point(glm::vec3 pt) const {
+    glm::vec3 sphere_to_pt = glm::normalize(pt - m_position);
+    sphere_to_pt *= m_radius;
+    return sphere_to_pt + m_position;
+}
+
+
 glm::vec3 SphereBB::get_tensor() {
     float fraction = (2.0f / 5.0f);
     return glm::vec3(m_radius*m_radius * fraction);

@@ -14,6 +14,7 @@ class Character {
         RigidBodyVolume* m_body;
         RigidBodyVolume* m_item;
         NodeGameSG* m_camera;
+        float m_power;
         
     public:
 
@@ -35,14 +36,15 @@ class Character {
         void set_sight(glm::vec3);
 
         void grab_item(RigidBodyVolume*, float = 9.f);
+        void accumulate_power();
         void throw_item();
-
-        void jump();
 
         bool has_item();
         RigidBodyVolume* get_item();
 
         void update_item();
+
+        void jump();
 
 };
 #endif

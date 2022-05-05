@@ -95,3 +95,8 @@ float AABB::is_intersected(Ray){
     return -1.f;
 }
 
+glm::vec3 AABB::closest_point(glm::vec3 pt) const {
+    return glm::vec3(0.f);
+};
+
+

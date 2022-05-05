@@ -9,7 +9,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
         vertex_shader_path, fragment_shader_path) {
 
     //PHYSICS SYSTEM
-    m_physics_system = new PhysicsSystem(m_root,0.2f, 0.05f, 5, RK4_TYPE);        
+    m_physics_system = new PhysicsSystem(m_root, 0.2f, 0.00001f, 5, EULER_TYPE);        
     
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
@@ -46,7 +46,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 
     //walls
     auto* wall = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
-    wall->get_trsf()->set_translation({0.2,-3,0});
+    wall->get_trsf()->set_translation({0.2,10,0});
     wall->get_trsf()->set_scale({1, 2, 1});
     wall->get_trsf()->set_rotation({0, 0, -90});
     wall->set_meshes({slab_mesh});
@@ -79,8 +79,8 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 //    m_cube2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
 
     auto* gravity_force = new GravityForce();
-    auto* rbv_cube = new RigidBodyVolume(m_cube,1);
-    auto* rbv_sphere = new RigidBodyVolume(m_ball,10, 0.8, 0.5);
+    auto* rbv_cube = new RigidBodyVolume(m_cube,1.);
+    auto* rbv_sphere = new RigidBodyVolume(m_ball,1, 0.8, 0.5);
     rbv_cube->add_force(gravity_force);
     rbv_sphere->add_force(gravity_force);
     m_physics_system->add_rigid_body(rbv_cube);
@@ -102,7 +102,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 
     
     //PROJECTION
-    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 10000.0f);
+    mat4 projection_mat = perspective(radians(65.0f), 4.f / 3.0f, 0.1f, 10000.0f);
     glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
                        GL_FALSE, &projection_mat[0][0]);
 }
@@ -160,12 +160,11 @@ void LabScene::update(GLFWwindow *window, float delta_time){
 
     //update character sight (computed with mouse listener)
     m_character->set_sight(front);
-    
+
     //update ITEM IN HAND 
     if(m_character->has_item() ){
         m_character->update_item();
     }
-        
 
     process_input(window, delta_time);
     // glm::vec3 forces = m_items[0]->get_forces();
@@ -222,10 +221,11 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
 
     //Be sure to get only 1 input
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        if(m_character->has_item())
+            m_character->accumulate_power();
         if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
 
             if(m_character->has_item()){
-
                 m_character->throw_item();
                 
             }else{

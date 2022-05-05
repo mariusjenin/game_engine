@@ -56,6 +56,15 @@ glm::vec3 MouseView::get_front(){
     return m_front;
 }
 
+float MouseView::get_pitch(){
+    return m_pitch;
+}
+
+float MouseView::get_yaw(){
+    return m_yaw;
+}
+
+
 
 
 
