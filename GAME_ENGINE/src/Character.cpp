@@ -6,20 +6,26 @@ Character::Character(Shaders* shaders, ElementSG* parent){
     m_power = 1.f;
 
     NodeGameSG* body_node = new NodeGameSG(shaders, parent, OBB_TYPE);
+    m_camera = new NodeGameSG(shaders, body_node);
 
-    Mesh* body_mesh = new Mesh(create_rectangle_cuboid({2,8,2}), true, OBB_TYPE);
+    Mesh* body_mesh = new Mesh(create_rectangle_cuboid({2,4,2}), true, OBB_TYPE);
+    Mesh* arm_mesh = new Mesh("../assets/mesh/arm_2.obj", true, OBB_TYPE);
 
     body_node->get_trsf()->set_translation({2.,4,0});
     body_node->set_material(new MaterialColor(shaders, {0.75, 0., 0.95}, 50));
     body_node->set_debug_rendering(true);
     body_node->set_meshes({body_mesh});
     
+    //Arm mesh 
+    NodeGameSG* arm_node = new NodeGameSG(shaders, m_camera, OBB_TYPE);
+    arm_node->set_meshes({arm_mesh});
+    arm_node->get_trsf()->set_rotation({0, -90, 0});
+    arm_node->get_trsf()->set_translation({2, -2, -2});
 
-    m_camera = new NodeGameSG(shaders, body_node);
     m_sight = CAMERA_INIT_FORWARD;
 
     //Initial camera (FPS)
-    m_camera->get_trsf()->set_translation({0, 8, 0});
+    m_camera->get_trsf()->set_translation({0, 4, 0});
     // m_camera->get_trsf()->set_rotation({-10, 0, 0});
 
     m_body = new RigidBodyVolume(body_node, 10.f, 0.6f, 0.5f, true);
@@ -86,7 +92,8 @@ void Character::update_item(){
 }
 
 void Character::throw_item(){
-    glm::vec3 throw_dir = m_power * m_sight;
+    glm::vec3 dir = m_camera->get_trsf()->apply_to_vector(m_sight);
+    glm::vec3 throw_dir = m_power * dir;
     m_power = 0.f;
     RigidBodyVolume* item = m_item;
     m_item = nullptr;

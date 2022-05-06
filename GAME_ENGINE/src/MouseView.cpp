@@ -3,7 +3,7 @@
 //Static members must be defined
 MouseView* MouseView::instance = nullptr;
 
-MouseView::MouseView(float width, float height): m_first_mouse(true), m_yaw(-90.f), m_pitch(0.0f), m_front(glm::vec3(0,0,-1)){
+MouseView::MouseView(float width, float height): m_first_mouse(true), m_yaw(0.f), m_pitch(0.0f), m_front(glm::vec3(0,0,-1)){
     m_last_x = width / 2.f;
     m_last_y = height / 2.f;
 }

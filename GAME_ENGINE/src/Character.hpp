@@ -13,6 +13,8 @@ class Character {
         glm::vec3 m_sight;
         RigidBodyVolume* m_body;
         RigidBodyVolume* m_item;
+
+        //Camera can rotate separately from body
         NodeGameSG* m_camera;
         float m_power;
         

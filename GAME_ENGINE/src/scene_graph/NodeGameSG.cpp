@@ -154,6 +154,8 @@ bool NodeGameSG::has_light() {
 
 
 void NodeGameSG::update_view_mat(glm::vec3 forward) {
+    //If forward is given: get only x and z coordinates
+    //y coordinates is used to rotate camera node.
     glm::mat4 mat = get_matrix_recursive_local();
     Transform trsf_tmp = Transform();
     trsf_tmp.set_matrix(mat);

@@ -16,8 +16,8 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 
     //TEXTURES
     int id_texture = 0;
-//    int id_land_texture = id_texture++;
-//    load_bmp_custom("../assets/texture/rock.bmp", id_land_texture);
+    int id_ball_texture = id_texture++;
+    load_bmp_custom("../assets/texture/rock.bmp", id_ball_texture);
     //MESHES
     auto *slab_mesh = new Mesh("../assets/mesh/slab.obj", true, OBB_TYPE);
     auto *cube_mesh = new Mesh(create_rectangle_cuboid({5,5,5}), true,OBB_TYPE);
@@ -68,7 +68,8 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     auto* m_ball = new NodeGameSG(m_shaders, m_root,SPHEREBB_TYPE);
     m_ball->get_trsf()->set_translation({0.,20,0});
     m_ball->set_meshes({ball_mesh1});
-    m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
+    // m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
+    m_ball->set_material(new MaterialTexture(m_shaders, id_ball_texture));
     // m_ball->set_debug_rendering(true);
 
 ////   Cube 2
@@ -96,7 +97,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     // m_character->get_body()->add_force(gravity_force);
     m_physics_system->add_rigid_body(m_character->get_body());
 
-    //SCENE ITEMS (grabbable items)
+    //SCENE ITEMS (grabbable items (=props))
     m_items.push_back(rbv_cube);
     m_items.push_back(rbv_sphere);
 
@@ -114,7 +115,10 @@ std::vector<RigidBodyVolume*> LabScene::get_items(){
 
 RigidBodyVolume* LabScene::in_sight(){
     //RAYCAST character's sight grabbable items in scene
+    Transform* cam_trsf = m_character->get_camera()->get_trsf();
     glm::vec3 sight = m_character->get_sight();
+    sight = cam_trsf->apply_to_vector(sight);
+
     glm::vec3 char_pos =  m_character->get_camera()->get_position_in_world();
 
     //DEBUG 
@@ -147,19 +151,30 @@ RigidBodyVolume* LabScene::in_sight(){
 
 
 void LabScene::update(GLFWwindow *window, float delta_time){
-    //Get character front updated by mouse callback
+    //Get character front updated by mouse callback.
     glm::vec3 front = m_character->m_mouse_view->get_front();
-    
+
+    //Camera front can rotate along X axis.
+    glm::vec3 cam_view = glm::vec3(0, front[1], -1);
+
     NodeGameSG *camera_node = m_character->get_camera();
-    camera_node->update_view_mat(front);
+    camera_node->update_view_mat(cam_view);
     camera_node->update_view_pos();
 
     if(m_physics_system != nullptr){
         m_physics_system->update_bodies(camera_node->get_position_in_world(),delta_time);
     }
 
+
+    //Camera node rotates along y axis.
+    if(m_character->get_sight()[0] != front[0]){
+        float yaw = m_character->m_mouse_view->get_yaw();
+        camera_node->get_trsf()->set_rotation({0, -yaw, 0});
+        camera_node->get_trsf()->compute();
+    }
+
     //update character sight (computed with mouse listener)
-    m_character->set_sight(front);
+    m_character->set_sight(cam_view);
 
     //update ITEM IN HAND 
     if(m_character->has_item() ){
@@ -179,6 +194,7 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     float cube_translate_speed = 15 * delta_time;
     
     Transform *character_trsf = m_character->get_character_node()->get_trsf();
+    Transform *character_cam_trsf = m_character->get_camera()->get_trsf();
     Transform *cube_trsf = m_cube->get_trsf();
 
     //Compute translation relative to camera direction
@@ -211,7 +227,7 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             m_character->jump();
         }
-        character_trsf->set_translation(character_trsf->get_translation() + character_trsf->apply_to_vector(dir));
+        character_trsf->set_translation(character_trsf->get_translation() + character_cam_trsf->apply_to_vector(dir));
     }
 
     // if(character_impulse)m_character->get_body()->add_linear_impulse(dir);
