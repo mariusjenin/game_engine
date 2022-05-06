@@ -77,7 +77,6 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     //Ball2
     auto *m_ball2 = new NodeGameSG(m_shaders, m_ball, SPHEREBB_TYPE);
     m_ball2->get_trsf()->set_translation({2, 2, 2});
-    m_ball2->get_trsf()->set_uniform_scale(2.f);
     m_ball2->set_meshes({ball_mesh1});
     m_ball2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
 

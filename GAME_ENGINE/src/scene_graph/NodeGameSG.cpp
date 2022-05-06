@@ -235,8 +235,9 @@ bool NodeGameSG::refresh_bb(glm::vec3 pos_camera) {
 bool NodeGameSG::refresh_bb_recursive(glm::vec3 pos_camera) {
     auto *dirty = new TransformDirty(false);
     dirty->logic_or(*m_trsf->is_dirty());
+    dirty->logic_or(*m_local_trsf->is_dirty());
     bool has_computed = refresh_bb_aux(pos_camera, dirty->has_dirty());
-    if (has_computed) m_bb->apply_transform(m_trsf->get_matrix());
+    if (has_computed) m_bb->apply_transform(m_trsf->get_matrix()*m_local_trsf->get_matrix() );
     return has_computed;
 }
 
