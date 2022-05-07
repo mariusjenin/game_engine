@@ -26,6 +26,8 @@ namespace scene_graph {
         //Meshes
         std::vector<Mesh *> m_meshes;
         bool m_meshes_dirty;
+        //Drawable
+        bool m_drawable;
         //Material
         Material *m_material{};
         bool m_has_material;
@@ -181,6 +183,12 @@ namespace scene_graph {
          * @return bb
          */
         BoundingBox *get_bb();
+
+        /**
+         * Setter of whether or not the NodeGameSG is drable
+         * @param drawable
+         */
+        void set_drawable(bool drawable);
     };
 }
 

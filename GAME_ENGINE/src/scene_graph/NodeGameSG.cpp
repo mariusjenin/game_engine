@@ -12,39 +12,43 @@ using namespace physics;
 
 void NodeGameSG::draw(glm::vec3 pos_camera) {
 
-    load_model_matrices();
-    load_uniforms();
+    if (m_drawable) {
+        load_model_matrices();
+        load_uniforms();
 
-    if (m_see_both_face) {
-        glDisable(GL_CULL_FACE);
-    } else {
-        glEnable(GL_CULL_FACE);
-    }
+        if (m_see_both_face) {
+            glDisable(GL_CULL_FACE);
+        } else {
+            glEnable(GL_CULL_FACE);
+        }
 
-    if (m_has_material) {
-        m_material->load_in_shader();
-    }
-
-    for (auto mesh: m_meshes) {
-        mesh->update_mesh(get_distance_from(pos_camera, pos_camera));
-        VAODataManager::bind_vao(mesh->get_vao_id());
-        VAODataManager::draw(mesh->get_ebo_triangle_indices_id(), (long) mesh->get_triangle_indices().size());
-    }
-    if (m_debug_rendering && m_bb != nullptr) {
-        glUniform1i(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME),
+        if (m_has_material) {
+            m_material->load_in_shader();
+            for (auto mesh: m_meshes) {
+                mesh->update_mesh(get_distance_from(pos_camera, pos_camera));
+                VAODataManager::bind_vao(mesh->get_vao_id());
+                VAODataManager::draw(mesh->get_ebo_triangle_indices_id(), (long) mesh->get_triangle_indices().size());
+            }
+        }
+        if (m_debug_rendering && m_bb != nullptr) {
+            glUniform1i(
+                    m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME),
                     true);
-        glUniform3fv(
-                m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_COLOR_LOC_NAME),
-                1, &m_color_rendering[0]);
-        VAODataManager::draw_verticies_debug(m_bb->to_vertices());
-        glUniform1i(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME),
+            glUniform3fv(
+                    m_shaders->get_shader_data_manager()->get_location(
+                            ShadersDataManager::DEBUG_RENDERING_COLOR_LOC_NAME),
+                    1, &m_color_rendering[0]);
+            VAODataManager::draw_verticies_debug(m_bb->to_vertices());
+            glUniform1i(
+                    m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME),
                     false);
+        }
+
+        ElementSG::draw(pos_camera);
+
+        ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
+        glUniform1i(shader_data_manager->get_location(ShadersDataManager::IS_NODE_ON_TOP_LOC_NAME), false);
     }
-
-    ElementSG::draw(pos_camera);
-
-    ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
-    glUniform1i(shader_data_manager->get_location(ShadersDataManager::IS_NODE_ON_TOP_LOC_NAME), false);
 }
 
 
@@ -138,10 +142,15 @@ NodeGameSG::NodeGameSG(Shaders *shaders, ElementSG *parent, BB_TYPE bb_type) : N
     m_light = nullptr;
     m_bb_type = bb_type;
     m_meshes_dirty = true;
+    m_drawable = true;
 }
 
 void NodeGameSG::set_light(Light *light) {
     m_light = light;
+}
+
+void NodeGameSG::set_drawable(bool drawable) {
+    m_drawable = drawable;
 }
 
 void NodeGameSG::remove_light() {
@@ -205,7 +214,7 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
         if (child->is_node_game()) {
 
             auto *node = (NodeGameSG *) child;
-            if(node->has_children() || node->has_meshes()){
+            if (node->has_children() || node->has_meshes()) {
                 has_to_be_computed = node->refresh_bb_recursive(pos_camera) || has_to_be_computed;
             }
             //TODO mesh null getbb
@@ -214,7 +223,7 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
     }
     if (has_to_be_computed) {
         for (auto mesh: m_meshes) {
-            
+
             mesh->update_mesh(glm::distance(get_position_in_world(mesh->get_center()), pos_camera));
             bbs.push_back(mesh->get_bb());
 
@@ -240,7 +249,7 @@ bool NodeGameSG::refresh_bb_recursive(glm::vec3 pos_camera) {
     dirty->logic_or(*m_trsf->is_dirty());
     dirty->logic_or(*m_local_trsf->is_dirty());
     bool has_computed = refresh_bb_aux(pos_camera, dirty->has_dirty());
-    if (has_computed) m_bb->apply_transform(m_trsf->get_matrix()*m_local_trsf->get_matrix() );
+    if (has_computed) m_bb->apply_transform(m_trsf->get_matrix() * m_local_trsf->get_matrix());
     return has_computed;
 }
 

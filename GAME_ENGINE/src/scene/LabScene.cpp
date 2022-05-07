@@ -308,7 +308,7 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
    if(m_camera_index == 1){
        glm::vec3 translate_camera_free = {0,0,0};
        //Scene rotation
-       if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+       if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS) {
            translate_camera_free += glm::vec3(camera_speed, 0.f, 0.f);
        }
        if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
