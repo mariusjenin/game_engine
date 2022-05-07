@@ -46,6 +46,10 @@ namespace physics {
 
             std::vector<glm::vec3> to_vertices() const override;
 
+            float is_intersected(Ray) override;
+
+            glm::vec3 closest_point(glm::vec3 pt) const override;
+
             glm::vec3 get_tensor() override;
         };
     }

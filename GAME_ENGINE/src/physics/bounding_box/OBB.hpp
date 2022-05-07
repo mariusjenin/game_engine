@@ -29,7 +29,7 @@ namespace physics {
 
             bool is_point_in(glm::vec3 point) const override;
 
-            glm::vec3 closest_point(glm::vec3 pt) const;
+            glm::vec3 closest_point(glm::vec3 pt) const override;
 
             void apply_transform(glm::mat4 matrix) override;
 
@@ -38,6 +38,9 @@ namespace physics {
             Collision get_data_collision(const AABB &bb) override;
 
             Collision get_data_collision(const OBB &bb) override;
+
+            float is_intersected(Ray) override;
+
 
         };
     }

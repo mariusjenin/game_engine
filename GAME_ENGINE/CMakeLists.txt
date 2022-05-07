@@ -82,6 +82,7 @@ add_executable(
 		src/scene/Scene.cpp src/scene/Scene.hpp
 		src/scene/BounceOBBScene.cpp src/scene/BounceOBBScene.hpp
 		src/scene/BounceSphereBBScene.cpp src/scene/BounceSphereBBScene.hpp
+		src/scene/LabScene.cpp src/scene/LabScene.hpp
 #		MATERIAL
 		src/material/Material.cpp src/material/Material.hpp
 		src/material/MaterialColor.cpp src/material/MaterialColor.hpp
@@ -108,6 +109,10 @@ add_executable(
 		src/physics/PhysicsSystem.cpp src/physics/PhysicsSystem.hpp
 		src/physics/force/Force.cpp src/physics/force/Force.hpp
 		src/physics/force/GravityForce.cpp src/physics/force/GravityForce.hpp
+#		CHARACTER
+		src/Character.cpp src/Character.hpp
+		src/MouseView.cpp src/MouseView.hpp
+#       ODE		
 		src/physics/ode/ODE.cpp src/physics/ode/ODE.hpp
 		src/physics/ode/ODEFactory.cpp src/physics/ode/ODEFactory.hpp
 		src/physics/ode/EulerODE.cpp src/physics/ode/EulerODE.hpp

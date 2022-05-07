@@ -28,7 +28,7 @@ namespace physics{
              * @param rbv
              * @param delta_time
              */
-            virtual void update(RigidBodyVolume *rbv,float delta_time) = 0;
+            virtual void update(RigidBodyVolume *rbv,float delta_time, bool use_angular = true) = 0;
         };
     }
 }

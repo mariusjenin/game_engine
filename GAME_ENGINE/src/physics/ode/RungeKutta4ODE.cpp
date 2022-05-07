@@ -9,7 +9,8 @@
 
 using namespace physics::ode;
 
-void RungeKutta4ODE::update(RigidBodyVolume *rbv, float delta_time) {
+void RungeKutta4ODE::update(RigidBodyVolume *rbv, float delta_time, bool use_angular) {
+    float damping = 0.99f;
     glm::vec3 start_pos, start_vel, start_accel,start_ang_vel,start_ang_accel,start_rot;
     glm::vec3 pos, pos1, pos2, pos3, pos4,rot, rot1, rot2, rot3, rot4, vel, vel1, vel2, vel3, vel4,ang_vel, ang_vel1, ang_vel2, ang_vel3, ang_vel4;
     Transform* trsf_node = rbv->get_node()->get_trsf();
@@ -45,10 +46,12 @@ void RungeKutta4ODE::update(RigidBodyVolume *rbv, float delta_time) {
     rot = (rot1 + rot2 * 2.f + rot3 * 2.f + rot4) / 6.f; //new delta rotation
     ang_vel = (ang_vel1 + ang_vel2 * 2.f + ang_vel3 * 2.f + ang_vel4) / 6.f; //new delta angular velocity
 
-    rbv->set_velocity(start_vel + vel);
+    glm::vec3 velocity = damping * (start_vel + vel);
+    rbv->set_velocity(velocity);
     rbv->set_angular_velocity(start_ang_vel + ang_vel);
     trsf_node->set_translation(start_pos + pos);
     rot = {glm::degrees(rot.x),glm::degrees(rot.y),glm::degrees(rot.z)};
-    trsf_node->set_rotation(start_rot + rot);
+    if(use_angular)
+        trsf_node->set_rotation(start_rot + rot);
     trsf_node->compute();
 }

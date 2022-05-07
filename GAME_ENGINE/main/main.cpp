@@ -10,16 +10,18 @@
 GLFWwindow *window;
 
 
-#include <src/scene/SceneLand.hpp>
-#include <src/scene/SolarSystem.hpp>
+// #include <src/scene/SceneLand.hpp>
+// #include <src/scene/SolarSystem.hpp>
 #include <src/scene/BounceOBBScene.hpp>
 #include <src/scene/BounceSphereBBScene.hpp>
+#include <src/scene/LabScene.hpp>
 
 #include <src/utils/printer.hpp>
 
 using namespace scene;
 
 int main() {
+    
     // Initialise GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");
@@ -47,7 +49,6 @@ int main() {
     //Get the primary monitor size and pos
     glfwSetWindowPos(window, pos_monitor_x, pos_monitor_y);
 
-
     if (window == nullptr) {
         fprintf(stderr,
                 "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
@@ -69,7 +70,7 @@ int main() {
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     // Hide the mouse and enable unlimited mouvement
-    //  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // Set the mouse at the center of the screen
     glfwPollEvents();
@@ -85,21 +86,27 @@ int main() {
 
     //CREATE THE SCENE
 //    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
-//    BounceOBBScene scene = BounceOBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
-    BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
+    LabScene scene = LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
+    // BounceOBBScene scene = BounceOBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
+    // BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
 //    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl");
+
     scene.setup();
+    //MOUSE PROCESSING
+    // glfwSetCursorPosCallback(window, process_mouse);
+    // Character* character = scene.get_character();
+    glfwSetCursorPosCallback(window, MouseView::process_mouse);
 
     // For speed computation
     auto last_time = (float)glfwGetTime();
     float current_time;
 
     //Frame updates
-    int frames_by_second = 144;
+    int frames_by_second = 60;
     float delta_time_frame_acc = 0.0f;
     float delta_time_frame_fixed = 1.0f / (float)frames_by_second;
     //Physics updates
-    int update_physics_by_second = 40;
+    int update_physics_by_second = 60;
     float delta_time_physics_acc = 0.0f;
     float delta_time_physics_fixed = 1.0f / (float)fmin(frames_by_second,update_physics_by_second);
 
@@ -111,7 +118,6 @@ int main() {
 
         if (delta_time_frame_acc > delta_time_frame_fixed) {
             delta_time_frame_acc -= delta_time_frame_fixed;
-
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -128,6 +134,7 @@ int main() {
             delta_time_physics_acc -= delta_time_physics_fixed;
             scene.update_physics(window,delta_time_physics_fixed);
         }
+
         last_time = current_time;
 
     } // Check if the ESC key was pressed or the window was closed

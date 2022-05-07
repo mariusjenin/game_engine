@@ -57,6 +57,7 @@ void PhysicsSystem::refresh_bodies_bb(glm::vec3 pos_camera){
     for(auto & rigid_body : m_rigid_bodies){
         rigid_body->get_node()->refresh_bb(pos_camera);
     }
+    
     m_root_physics->reset_trsf_dirty(false);
     m_root_physics->reset_children_dirty(false);
 }
@@ -73,8 +74,10 @@ void PhysicsSystem::update_collisions(glm::vec3 pos_camera,float delta_time) {
             RigidBodyVolume* rbv1 = m_rigid_bodies.at(i);
             RigidBodyVolume* rbv2 = m_rigid_bodies.at(j);
             Collision collision = rbv1->find_data_collision(*rbv2);
+
             if(collision.colliding){
                 m_collisions.push_back(collision);
+                
             }
         }
     }
@@ -105,7 +108,19 @@ void PhysicsSystem::update_collisions(glm::vec3 pos_camera,float delta_time) {
         glm::vec3 correction = collision.normal * scalar * m_linear_projection_percent;
         Transform * trsf_rbv1 = rbv1->get_node()->get_trsf();
         Transform * trsf_rbv2 = rbv2->get_node()->get_trsf();
-        trsf_rbv1->set_translation(trsf_rbv1->get_translation() - correction * rbv1->inverse_mass());
-        trsf_rbv2->set_translation(trsf_rbv2->get_translation() + correction * rbv2->inverse_mass());
+
+        //JOINT CONSTRAINT
+        BoundingBox* bb1 = rbv1->get_node()->get_bb();
+        BoundingBox* bb2 = rbv2->get_node()->get_bb();
+
+        glm::vec3 p1 = bb1->closest_point(bb2->get_position());
+        glm::vec3 p2 = bb2->closest_point(bb1->get_position());
+
+        //Adds stability
+        if(glm::length(p2 - p1) > 0.1f){
+            trsf_rbv1->set_translation(trsf_rbv1->get_translation() - correction * rbv1->inverse_mass());
+            trsf_rbv2->set_translation(trsf_rbv2->get_translation() + correction * rbv2->inverse_mass());
+            
+        }
     }
 }

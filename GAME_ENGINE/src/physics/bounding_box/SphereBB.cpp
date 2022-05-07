@@ -168,6 +168,31 @@ std::vector<glm::vec3> SphereBB::to_vertices() const {
     return verticies;
 }
 
+float SphereBB::is_intersected(Ray ray){
+    glm::vec3 e = m_position - ray.origin;
+    float sq_rad = m_radius * m_radius;
+    float sq_e = glm::dot(e, e);
+
+    float a = glm::dot(e, ray.direction);
+    float sq_b = sq_e - (a * a);
+    float f = sqrt(sq_rad - sq_b);
+
+    if(sq_rad - (sq_e - (a * a)) < 0.f){
+        return -1.f;
+    }else if(sq_e < sq_rad){
+        return a + f;
+    }
+
+    return a - f;
+}
+
+glm::vec3 SphereBB::closest_point(glm::vec3 pt) const {
+    glm::vec3 sphere_to_pt = glm::normalize(pt - m_position);
+    sphere_to_pt *= m_radius;
+    return sphere_to_pt + m_position;
+}
+
+
 glm::vec3 SphereBB::get_tensor() {
     float fraction = (2.0f / 5.0f);
     return glm::vec3(m_radius*m_radius * fraction);

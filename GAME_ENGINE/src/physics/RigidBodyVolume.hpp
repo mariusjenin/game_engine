@@ -48,13 +48,18 @@ namespace physics {
          * @param friction
          * @param cor
          */
-        RigidBodyVolume(NodeGameSG *ng, float mass = 1.0f, float friction = 0.6f, float cor = 0.5f);
+        RigidBodyVolume(NodeGameSG *ng, float mass = 1.0f, float friction = 0.6f, float cor = 0.5f, bool character=false);
 
         /**
          * Destructor of a RigidBodyVolume
          */
         ~RigidBodyVolume();
 
+        /**
+         * Track if rigidBody is a character. (useful to remove angular velocity)
+         */
+        bool is_character;
+    
         /**
          * Add a force to the list of force to apply at each updates
          * @param f
@@ -90,6 +95,12 @@ namespace physics {
          * @param impulse
          */
         void add_linear_impulse(glm::vec3 &impulse);
+        
+        /**
+         * set a linear impulse to the RigidBodyVolume
+         * @param impulse
+         */
+        void set_linear_impulse(glm::vec3 &impulse);
 
         /**
          * Add a rotational impulse to the RigidBodyVolume
@@ -104,7 +115,7 @@ namespace physics {
          * @param collision
          */
         void apply_impulse(RigidBodyVolume &rbv, const Collision &collision, int index_contact);
-
+       
         /**
          * Compute if there is a Collision between this RigidBodyVolume and another
          * @param rbv
@@ -123,12 +134,20 @@ namespace physics {
          * @return mass
          */
         float get_mass() const;
+        
+        /**
+         * Setter of the mass
+         * @return mass
+         */
+        void set_mass(float);
 
         /**
          * Setter of the forces
          * @param forces
          */
         void set_forces(const glm::vec3 &forces);
+
+        void clear_forces();
 
         /**
          * Getter of the forces

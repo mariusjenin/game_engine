@@ -7,7 +7,7 @@
 
 #include "BoundingBox.hpp"
 #include <cfloat>
-#include <src/utils/Geometry3D.hpp>
+// #include <src/utils/Geometry3D.hpp>
 
 namespace utils {
     struct Line;
@@ -65,6 +65,8 @@ namespace physics {
             AABB *to_AABB() const override;
 
             Interval get_interval(glm::vec3 axis) override;
+
+            virtual float is_intersected(Ray) = 0;
 
             glm::vec3 get_tensor() override;
         };

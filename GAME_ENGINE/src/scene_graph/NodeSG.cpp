@@ -75,6 +75,11 @@ void NodeSG::load_model_matrices() {
                        &normal_model[0][0]);
 }
 
+void NodeSG::set_parent(ElementSG* parent){
+    m_parent = parent;
+}
+
+
 void NodeSG::reset_trsf_dirty(bool dirty) {
     ElementSG::reset_trsf_dirty(dirty);
     m_local_trsf->is_dirty()->reset(dirty);

@@ -18,6 +18,7 @@
 #include <src/shader/VAODataManager.hpp>
 #include <src/physics/bounding_box/BBFactory.hpp>
 #include <src/physics/bounding_box/BoundingBox.hpp>
+#include "src/utils/objloader.hpp"
 
 using namespace physics;
 using namespace physics::bounding_box;
@@ -73,6 +74,15 @@ namespace mesh {
          * @param bb_type
          */
         explicit Mesh(const MeshData& md, bool load_data_now = true, BB_TYPE bb_type = AABB_TYPE);
+
+        /**
+         * Constructor of a Mesh with custom loaded .obj mesh file. 
+         * @param vp postions
+         * @param ti triangles indices
+         * @param vtc vertex texture coordinates
+         * @param vn vertex normals
+         */
+        Mesh(const char* path, bool load_data_now = true, BB_TYPE bb_type = AABB_TYPE);
 
         /// Load Mesh datas in his VAO
         void load_mesh_in_vao();

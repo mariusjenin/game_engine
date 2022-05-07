@@ -153,12 +153,14 @@ bool NodeGameSG::has_light() {
 }
 
 
-void NodeGameSG::update_view_mat() {
+void NodeGameSG::update_view_mat(glm::vec3 forward) {
+    //If forward is given: get only x and z coordinates
+    //y coordinates is used to rotate camera node.
     glm::mat4 mat = get_matrix_recursive_local();
     Transform trsf_tmp = Transform();
     trsf_tmp.set_matrix(mat);
     glm::vec3 camera_init_position = CAMERA_INIT_POSITION;
-    glm::vec3 camera_init_forward = CAMERA_INIT_FORWARD;
+    glm::vec3 camera_init_forward = forward;
     glm::vec3 camera_init_up = CAMERA_INIT_UP;
     glm::vec3 eye_camera = trsf_tmp.apply_to_point(camera_init_position);
     glm::vec3 dir_camera = trsf_tmp.apply_to_versor(camera_init_forward);
@@ -203,6 +205,7 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
 
     for (auto child: m_children) {
         if (child->is_node_game()) {
+
             auto *node = (NodeGameSG *) child;
             if(node->has_children() || node->has_meshes()){
                 has_to_be_computed = node->refresh_bb_recursive(pos_camera) || has_to_be_computed;
@@ -210,11 +213,12 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
             bbs.push_back(node->get_bb());
         }
     }
-
     if (has_to_be_computed) {
         for (auto mesh: m_meshes) {
+            
             mesh->update_mesh(glm::distance(get_position_in_world(mesh->get_center()), pos_camera));
             bbs.push_back(mesh->get_bb());
+
         }
         m_meshes_dirty = false;
         m_bb = BBFactory::generate_bb(m_bb_type);

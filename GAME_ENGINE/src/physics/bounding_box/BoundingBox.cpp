@@ -25,7 +25,11 @@ bool BoundingBox::compute(std::vector<BoundingBox *> bbs) {
     std::vector<glm::vec3> vertices = {};
     size_t size_bbs = bbs.size();
     for(int i = 0; i < size_bbs; i++){
-        std::vector<glm::vec3> verticies_2 = bbs[i]->to_vertices();
+        std::vector<glm::vec3> verticies_2;
+        
+        if(bbs[i] != nullptr)
+            verticies_2 = bbs[i]->to_vertices();
+        
         for(auto & vert : verticies_2){
             vertices.push_back(vert);
         }
