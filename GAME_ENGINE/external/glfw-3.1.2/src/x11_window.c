@@ -64,7 +64,7 @@ void selectDisplayConnection(struct timeval* timeout)
     //       wait inside those are guarded by the mutex protecting the display
     //       struct, locking out other threads from using X (including GLX)
     // NOTE: Only retry on EINTR if there is no timeout, as select is not
-    //       required to update it for the time elapsed
+    //       required to resolve it for the time elapsed
     // TODO: Update timeout value manually
     do
     {

@@ -5,21 +5,24 @@
 #include "RungeKutta4ODE.hpp"
 #include <src/physics/RigidBodyVolume.hpp>
 #include <src/utils/printer.hpp>
+#include "src/physics/rigid_body_behavior/MovementBehavior.hpp"
 
 
 using namespace physics::ode;
+using namespace physics::rigid_body_behavior;
 
-void RungeKutta4ODE::update(RigidBodyVolume *rbv, float delta_time, bool use_angular) {
+void RungeKutta4ODE::update(RigidBodyVolume *rbv, float delta_time) {
+    MovementBehavior* mov_behav = rbv->get_movement_behavior();
     float damping = 0.99f;
     glm::vec3 start_pos, start_vel, start_accel,start_ang_vel,start_ang_accel,start_rot;
     glm::vec3 pos, pos1, pos2, pos3, pos4,rot, rot1, rot2, rot3, rot4, vel, vel1, vel2, vel3, vel4,ang_vel, ang_vel1, ang_vel2, ang_vel3, ang_vel4;
     Transform* trsf_node = rbv->get_node()->get_trsf();
     start_pos = trsf_node->get_translation();
     start_rot = trsf_node->get_rotation();
-    start_vel = rbv->get_velocity();
-    start_accel = rbv->get_forces() * rbv->inverse_mass();
-    start_ang_vel = rbv->get_angular_velocity();
-    start_ang_accel = glm::vec3(rbv->inverse_tensor()*glm::vec4(rbv->get_torques(),0));
+    start_vel = mov_behav->get_velocity();
+    start_accel = mov_behav->get_forces() * mov_behav->inverse_mass();
+    start_ang_vel = mov_behav->get_angular_velocity();
+    start_ang_accel = glm::vec3(mov_behav->inverse_tensor()*glm::vec4(mov_behav->get_torques(),0));
 
     pos1 = start_vel * delta_time;
     vel1 = start_accel * delta_time;
@@ -47,11 +50,14 @@ void RungeKutta4ODE::update(RigidBodyVolume *rbv, float delta_time, bool use_ang
     ang_vel = (ang_vel1 + ang_vel2 * 2.f + ang_vel3 * 2.f + ang_vel4) / 6.f; //new delta angular velocity
 
     glm::vec3 velocity = damping * (start_vel + vel);
-    rbv->set_velocity(velocity);
-    rbv->set_angular_velocity(start_ang_vel + ang_vel);
+    mov_behav->set_velocity(velocity);
+    mov_behav->set_angular_velocity(start_ang_vel + ang_vel);
     trsf_node->set_translation(start_pos + pos);
     rot = {glm::degrees(rot.x),glm::degrees(rot.y),glm::degrees(rot.z)};
-    if(use_angular)
-        trsf_node->set_rotation(start_rot + rot);
+    trsf_node->set_rotation(start_rot + rot);
     trsf_node->compute();
+}
+
+RungeKutta4ODE::RungeKutta4ODE() {
+    m_type = RK4_TYPE;
 }

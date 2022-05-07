@@ -480,14 +480,14 @@ int main(int argc, char** argv)
     while (!glfwWindowShouldClose(window))
     {
         ++frame;
-        /* update the next frame */
+        /* resolve the next frame */
         glClear(GL_COLOR_BUFFER_BIT);
         glDrawElements(GL_LINES, 2* MAP_NUM_LINES , GL_UNSIGNED_INT, 0);
 
         /* display and process events through callbacks */
         glfwSwapBuffers(window);
         glfwPollEvents();
-        /* Check the frame rate and update the heightmap if needed */
+        /* Check the frame rate and resolve the heightmap if needed */
         dt = glfwGetTime();
         if ((dt - last_update_time) > 0.2)
         {

@@ -277,3 +277,7 @@ void NodeGameSG::set_debug_rendering(bool dr, glm::vec3 color_rendering) {
 bool NodeGameSG::has_meshes() const {
     return !m_meshes.empty();
 }
+
+Material *NodeGameSG::get_material() const {
+    return m_material;
+}

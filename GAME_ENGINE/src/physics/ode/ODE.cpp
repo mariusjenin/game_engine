@@ -6,3 +6,7 @@
 #include <src/physics/RigidBodyVolume.hpp>
 
 using namespace physics::ode;
+
+ODE_TYPE ODE::get_type() const {
+    return m_type;
+}

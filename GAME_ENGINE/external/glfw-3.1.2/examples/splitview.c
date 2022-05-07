@@ -169,7 +169,7 @@ static void drawGrid(float scale, int steps)
     }
     glLoadMatrixf((const GLfloat*) view);
 
-    // We don't want to update the Z-buffer
+    // We don't want to resolve the Z-buffer
     glDepthMask(GL_FALSE);
 
     // Set grid color

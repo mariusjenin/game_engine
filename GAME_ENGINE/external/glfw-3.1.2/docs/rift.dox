@@ -194,6 +194,6 @@ the HMD is updated by `ovrHmd_EndFrame`.
 @subsection rift_render_custom Client distortion rendering
 
 With client distortion rendering you are in full control of the contents of the
-HMD and should update and swap the buffers normally.
+HMD and should resolve and swap the buffers normally.
 
 */

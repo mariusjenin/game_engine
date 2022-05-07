@@ -1,5 +1,7 @@
 
 #include <src/physics/force/GravityForce.hpp>
+#include <src/physics/rigid_body_behavior/MovementBehavior.hpp>
+#include <src/physics/rigid_body_behavior/SwitchColorBehavior.hpp>
 #include "LabScene.hpp"
 
 
@@ -42,7 +44,9 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     floor->set_meshes({slab_mesh});
     floor->set_material(lab_mat_color);
     floor->set_debug_rendering(true, {0.25, 0.65, 0.8});
-    m_physics_system->add_rigid_body(new RigidBodyVolume(floor,0));
+    auto * floor_rbv = new RigidBodyVolume(floor);
+    floor_rbv->add_behavior(new MovementBehavior(0));
+    m_physics_system->add_collider(floor_rbv);
 
     //walls
     auto* wall = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
@@ -52,7 +56,10 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     wall->set_meshes({slab_mesh});
     wall->set_material(new MaterialColor(m_shaders, {0.79, 0.3, 0.3}, 50));
     wall->set_debug_rendering(true, {0.25, 0.65, 0.8});
-    m_physics_system->add_rigid_body(new RigidBodyVolume(wall,0));
+    auto * wall_rbv = new RigidBodyVolume(wall);
+    wall_rbv->add_behavior(new MovementBehavior(0));
+    wall_rbv->add_behavior(new SwitchColorBehavior(new MaterialColor(m_shaders,{1,1,0},50)));
+    m_physics_system->add_collider(wall_rbv);
 
 
     //cube
@@ -72,23 +79,19 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_ball->set_material(new MaterialTexture(m_shaders, id_ball_texture));
     // m_ball->set_debug_rendering(true);
 
-////   Cube 2
-//    auto* m_cube2 = new NodeGameSG(m_shaders, m_cube,OBB_TYPE);
-//    m_cube2->get_trsf()->set_translation({2,2,2});
-////    m_cube2->get_trsf()->set_uniform_scale(1/5.f);
-//    m_cube2->set_meshes({cube_mesh2});
-//    m_cube2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
 
     auto* gravity_force = new GravityForce();
-    auto* rbv_cube = new RigidBodyVolume(m_cube,1.);
-    auto* rbv_sphere = new RigidBodyVolume(m_ball,1, 0.8, 0.5);
-    rbv_cube->add_force(gravity_force);
-    rbv_sphere->add_force(gravity_force);
-    m_physics_system->add_rigid_body(rbv_cube);
-    m_physics_system->add_rigid_body(rbv_sphere);
+    auto* rbv_cube = new RigidBodyVolume(m_cube);
+    auto* rbv_sphere = new RigidBodyVolume(m_ball);
+    rbv_cube->add_behavior(new MovementBehavior(1, 0.8, 0.5));
+    rbv_sphere->add_behavior(new MovementBehavior(1, 0.8, 0.5));
+    rbv_cube->get_movement_behavior()->add_force(gravity_force);
+    rbv_sphere->get_movement_behavior()->add_force(gravity_force);
+    m_physics_system->add_collider(rbv_cube);
+    m_physics_system->add_collider(rbv_sphere);
 //    auto* rbv_cube2 = new RigidBodyVolume(m_cube2,1000,0.01,1);
 //    rbv_cube2->add_force(gravity_force);
-//    m_physics_system.add_rigid_body(rbv_cube2);
+//    m_physics_system.add_collider(rbv_cube2);
 
     //CHARACTER
     m_character = new Character(m_shaders, m_root);
@@ -101,7 +104,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
    m_cameras.push_back(camera_node);
 
     // m_character->get_body()->add_force(gravity_force);
-    m_physics_system->add_rigid_body(m_character->get_body());
+    m_physics_system->add_collider(m_character->get_body());
 
     //SCENE ITEMS (grabbable items (=props))
     m_items.push_back(rbv_cube);
@@ -167,9 +170,6 @@ void LabScene::update(GLFWwindow *window, float delta_time){
     //Camera front can rotate along X axis.
     glm::vec3 cam_view = glm::vec3(front[0], front[1], -1);
 
-//    NodeGameSG *camera_node = m_character->get_camera();
-//    camera_node->update_view_mat(cam_view);
-//    camera_node->update_view_pos();
     //CAMERA
     NodeGameSG *camera_node = m_cameras[m_camera_index];
     camera_node->update_view_mat();
@@ -188,10 +188,10 @@ void LabScene::update(GLFWwindow *window, float delta_time){
         camera_node->get_trsf()->compute();
     }
 
-    //update character sight (computed with mouse listener)
+    //resolve character sight (computed with mouse listener)
     // m_character->set_sight(cam_view);
 
-    //update ITEM IN HAND 
+    //resolve ITEM IN HAND
     if(m_character->has_item() ){
         m_character->update_item();
     }
@@ -274,9 +274,9 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
 
                 //GRAB ITEM
                 RigidBodyVolume* rbv = in_sight();
-                if(rbv != 0){
+                if(rbv != nullptr){
                     m_character->grab_item(rbv);
-                    glm::vec3 forces = rbv->get_forces();
+                    glm::vec3 forces = rbv->get_movement_behavior()->get_forces();
                 }
             }
         }
@@ -303,7 +303,7 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
         impulse_cube =  true;
     }
     translate_cube *= 10.f;
-    if(impulse_cube)m_cube->get_rigid_body()->set_linear_impulse(translate_cube);
+    if(impulse_cube && m_cube->get_rigid_body()->has_movement_behavior())m_cube->get_rigid_body()->get_movement_behavior()->set_linear_impulse(translate_cube);
 
    if(m_camera_index == 1){
        glm::vec3 translate_camera_free = {0,0,0};
