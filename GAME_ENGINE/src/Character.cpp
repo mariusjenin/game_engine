@@ -5,7 +5,7 @@ Character::Character(Shaders* shaders, ElementSG* parent){
     m_item = nullptr;
     m_power = 1.f;
 
-    NodeGameSG* body_node = new NodeGameSG(shaders, parent, OBB_TYPE);
+    auto* body_node = new NodeGameSG(shaders, parent, OBB_TYPE);
     m_camera = new NodeGameSG(shaders, body_node);
 
     Mesh* body_mesh = new Mesh(create_rectangle_cuboid({2,4,2}), true, OBB_TYPE);
@@ -17,7 +17,7 @@ Character::Character(Shaders* shaders, ElementSG* parent){
     body_node->set_meshes({body_mesh});
     
     //Arm mesh 
-    NodeGameSG* arm_node = new NodeGameSG(shaders, m_camera, OBB_TYPE);
+    auto* arm_node = new NodeGameSG(shaders, m_camera, OBB_TYPE);
     arm_node->set_meshes({arm_mesh});
     arm_node->get_trsf()->set_rotation({0, -90, 0});
     arm_node->get_trsf()->set_translation({2, -2, -2});

@@ -94,6 +94,12 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_character = new Character(m_shaders, m_root);
     m_cameras.push_back(m_character->get_camera());
 
+//    //CAMERA
+//    auto *camera_node = new NodeGameSG(m_shaders, m_root);
+//    camera_node->get_trsf()->set_translation({0, 9, 17});
+//    camera_node->get_trsf()->set_rotation({-20, 0, 0});
+//    m_cameras.push_back(camera_node);
+
     // m_character->get_body()->add_force(gravity_force);
     m_physics_system->add_rigid_body(m_character->get_body());
 
@@ -106,6 +112,9 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     mat4 projection_mat = perspective(radians(65.0f), 4.f / 3.0f, 0.1f, 10000.0f);
     glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
                        GL_FALSE, &projection_mat[0][0]);
+
+//    m_camera_index = 0;
+//    m_timing_camera_switch = 0;
 }
 
 std::vector<RigidBodyVolume*> LabScene::get_items(){
@@ -157,7 +166,11 @@ void LabScene::update(GLFWwindow *window, float delta_time){
     //Camera front can rotate along X axis.
     glm::vec3 cam_view = glm::vec3(0, front[1], -1);
 
-    NodeGameSG *camera_node = m_character->get_camera();
+//    NodeGameSG *camera_node = m_character->get_camera();
+//    camera_node->update_view_mat(cam_view);
+//    camera_node->update_view_pos();
+    //CAMERA
+    NodeGameSG *camera_node = m_cameras[m_camera_index];
     camera_node->update_view_mat(cam_view);
     camera_node->update_view_pos();
 
@@ -202,6 +215,13 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     sight[1] = 0.;    //disable flight
     glm::vec3 forward_vec = glm::normalize(sight);
     glm::vec3 right_vec = glm::cross(forward_vec, glm::vec3(0., 1., 0.));
+
+//    m_timing_camera_switch -= delta_time;
+//    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && m_timing_camera_switch <= 0) {
+//        m_timing_camera_switch = 1;
+//        m_camera_index++;
+//        if(m_camera_index == m_cameras.size()) m_camera_index = 0;
+//    }
 
     bool character_impulse = false;
     glm::vec3 dir;
@@ -278,6 +298,26 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     }
     translate_cube *= 10.f;
     if(impulse_cube)m_cube->get_rigid_body()->set_linear_impulse(translate_cube);
+
+//    if(m_camera_index == 1){
+//        glm::vec3 translate_camera_free = {0,0,0};
+//        //Scene rotation
+//        if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+//            translate_camera_free += glm::vec3(camera_speed, 0.f, 0.f);
+//        }
+//        if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+//            translate_camera_free -= glm::vec3(camera_speed, 0.f, 0.f);
+//        }
+//        if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+//            translate_camera_free += glm::vec3(0.f, 0.f, camera_speed);
+//        }
+//        if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+//            translate_camera_free -= glm::vec3(0.f, 0.f, camera_speed);
+//        }
+//        auto* camera_trsf = m_cameras[m_camera_index]->get_trsf();
+//        camera_trsf->set_translation(camera_trsf->get_translation() + dir);
+//    }
+
 
     // cube_trsf->set_translation(cube_trsf->get_translation() + translate_cube);
     // if (!cube_trsf->is_up_to_date()) cube_trsf->compute();

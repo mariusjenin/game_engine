@@ -20,6 +20,7 @@ namespace scene {
         NodeGameSG* m_cube;
         std::vector<RigidBodyVolume*> m_items;
         Character* m_character;
+        float m_timing_camera_switch;
     protected:
         void process_input(GLFWwindow *window, float delta_time) override;
     public:

@@ -18,7 +18,7 @@ class MouseView{
         MouseView(float, float);
 
         //Actual method that computes sight.
-        void process(GLFWwindow*, double, double);
+        void process(GLFWwindow*, float, float);
 
     public:
 
@@ -31,8 +31,8 @@ class MouseView{
         //Getter of m_front vec3.
         glm::vec3 get_front();
 
-        float get_pitch();
-        float get_yaw();
+        float get_pitch() const;
+        float get_yaw() const;
 
         
 
