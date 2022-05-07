@@ -161,42 +161,50 @@ RigidBodyVolume* LabScene::in_sight(){
 
 void LabScene::update(GLFWwindow *window, float delta_time){
 
+
+    process_input(window, delta_time);
+
     //Get character front updated by mouse callback.
     glm::vec3 front = m_character->m_mouse_view->get_front();
 
-    //Camera front can rotate along X axis.
-    glm::vec3 cam_view = glm::vec3(front[0], front[1], -1);
-
-//    NodeGameSG *camera_node = m_character->get_camera();
-//    camera_node->update_view_mat(cam_view);
-//    camera_node->update_view_pos();
     //CAMERA
     NodeGameSG *camera_node = m_cameras[m_camera_index];
+    
     camera_node->update_view_mat();
     camera_node->update_view_pos();
+
+    
+    //Camera node rotates along y axis.
+    // if(m_character->get_sight()[0] != front[0]){
+        float yaw = m_character->m_mouse_view->get_yaw();
+        float pitch = m_character->m_mouse_view->get_pitch();
+
+        // glm::vec3 translate = camera_node->get_trsf()->get_translation();
+
+        // camera_node->get_trsf()->set_translation({0,0,0});
+        camera_node->get_trsf()->set_rotation({pitch, -yaw, 0});
+        // if(m_camera_index == 0){
+
+        //     NodeSG* arm = camera_node->get_children()[0];
+        //     arm->get_trsf()->set_rotation({0, -90, 0});
+        //     arm->get_trsf()->set_translation({2, -2, -2});
+        //     arm->get_trsf()->compute();
+        // }
+        // camera_node->get_trsf()->set_translation(translate);
+        // camera_node->compute_trsf_scene_graph();
+        camera_node->get_trsf()->compute();
 
     if(m_physics_system != nullptr){
         m_physics_system->update_bodies(camera_node->get_position_in_world(),delta_time);
     }
+    // }
 
-
-    //Camera node rotates along y axis.
-    if(m_character->get_sight()[0] != front[0]){
-        float yaw = m_character->m_mouse_view->get_yaw();
-        float pitch = m_character->m_mouse_view->get_pitch();
-        camera_node->get_trsf()->set_rotation({pitch, -yaw, 0});
-        camera_node->get_trsf()->compute();
-    }
-
-    //update character sight (computed with mouse listener)
-    // m_character->set_sight(cam_view);
 
     //update ITEM IN HAND 
-    if(m_character->has_item() ){
-        m_character->update_item();
-    }
+    // if(m_character->has_item() ){
+    //     m_character->update_item();
+    // }
 
-    process_input(window, delta_time);
     // glm::vec3 forces = m_items[0]->get_forces();
     // std::cout<<forces[0]<<", "<<forces[1]<<", "<<forces[2]<<std::endl;
 }

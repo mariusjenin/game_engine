@@ -6,29 +6,38 @@ Character::Character(Shaders* shaders, ElementSG* parent){
     m_power = 1.f;
 
     auto* body_node = new NodeGameSG(shaders, parent, OBB_TYPE);
-    m_camera = new NodeGameSG(shaders, body_node);
 
-    Mesh* body_mesh = new Mesh(create_rectangle_cuboid({2,4,2}), true, OBB_TYPE);
+    Mesh* body_mesh = new Mesh(create_rectangle_cuboid({2,8,2}), true, OBB_TYPE);
     Mesh* arm_mesh = new Mesh("../assets/mesh/arm_2.obj", true, OBB_TYPE);
 
-    body_node->get_trsf()->set_translation({2.,4,0});
+    body_node->get_trsf()->set_translation({0, 4, 0});
     body_node->set_material(new MaterialColor(shaders, {0.75, 0., 0.95}, 50));
     body_node->set_debug_rendering(true);
-    body_node->set_meshes({body_mesh});
+    // body_node->set_meshes({body_mesh});
+
+    //Initial camera (FPS)
+    m_camera = new NodeGameSG(shaders, body_node);
+   
+    glm::vec3 pos;
+    m_camera->get_trsf()->set_translation({0, 4, 0});
+
+    // m_camera->set_meshes({arm_mesh});
+    // m_camera->get_trsf()->set_scale({0.3, 0.3, 0.3});
+    // m_camera->get_trsf()->set_rotation({-10, 0, 0});
     
     //Arm mesh 
     auto* arm_node = new NodeGameSG(shaders, m_camera, OBB_TYPE);
-    arm_node->set_meshes({arm_mesh});
+    // arm_node->get_trsf()->set_translation({2, -2, -2});
     arm_node->get_trsf()->set_rotation({0, -90, 0});
-    arm_node->get_trsf()->set_translation({2, -2, -2});
+    arm_node->set_meshes({arm_mesh});
+    arm_node->get_trsf()->compute();
+    arm_node->set_debug_rendering(true);
 
     m_sight = CAMERA_INIT_FORWARD;
 
-    //Initial camera (FPS)
-    m_camera->get_trsf()->set_translation({0, 4, 0});
-    // m_camera->get_trsf()->set_rotation({-10, 0, 0});
+    m_body = new RigidBodyVolume(body_node, 0.f, 0.6f, 0.5f, true);
 
-    m_body = new RigidBodyVolume(body_node, 10.f, 0.6f, 0.5f, true);
+    m_body->add_force(new GravityForce());
 
     //MOUSE EVENT
     m_mouse_view = MouseView::get_instance();
@@ -53,10 +62,6 @@ glm::vec3 Character::get_sight(){
     glm::vec3 fwd = CAMERA_INIT_FORWARD;
     return m_camera->get_trsf()->apply_to_vector(fwd);
 }
-
-// void Character::set_sight(glm::vec3 sight){
-//     m_sight = sight;
-// }
 
 void Character::grab_item(RigidBodyVolume* item, float action_area){
     
