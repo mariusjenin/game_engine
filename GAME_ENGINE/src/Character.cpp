@@ -50,12 +50,13 @@ void Character::set_camera(NodeGameSG* cam){
 
 
 glm::vec3 Character::get_sight(){
-    return m_sight;
+    glm::vec3 fwd = CAMERA_INIT_FORWARD;
+    return m_camera->get_trsf()->apply_to_vector(fwd);
 }
 
-void Character::set_sight(glm::vec3 sight){
-    m_sight = sight;
-}
+// void Character::set_sight(glm::vec3 sight){
+//     m_sight = sight;
+// }
 
 void Character::grab_item(RigidBodyVolume* item, float action_area){
     
@@ -69,6 +70,10 @@ void Character::grab_item(RigidBodyVolume* item, float action_area){
 
         //Item must be relative to camera
         m_item->get_node()->set_parent(m_camera);
+
+        glm::vec3 fwd(0,0,-4);
+        glm::vec3 item_translation = glm::normalize(m_camera->get_trsf()->apply_to_vector(fwd));
+        m_item->get_node()->get_trsf()->set_translation(2.f*item_translation);
 
     }
 }
@@ -88,11 +93,14 @@ RigidBodyVolume* Character::get_body(){
 
 //Keep item in front of camera when moving mouse
 void Character::update_item(){
-    m_item->get_node()->get_trsf()->set_translation(4.f*m_sight);
+//     glm::vec3 fwd = 4.f * CAMERA_INIT_FORWARD;
+//     glm::vec3 pos = m_camera->get_trsf()->apply_to_vector(fwd);
+//     m_item->get_node()->get_trsf()->set_translation(pos);
 }
 
 void Character::throw_item(){
-    glm::vec3 dir = m_camera->get_trsf()->apply_to_vector(m_sight);
+    glm::vec3 fwd = CAMERA_INIT_FORWARD;
+    glm::vec3 dir = m_camera->get_trsf()->apply_to_vector(fwd);
     glm::vec3 throw_dir = m_power * dir;
     m_power = 0.f;
     RigidBodyVolume* item = m_item;

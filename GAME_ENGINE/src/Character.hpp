@@ -35,7 +35,7 @@ class Character {
         void set_camera(NodeGameSG*);
 
         glm::vec3 get_sight();
-        void set_sight(glm::vec3);
+        // void set_sight(glm::vec3);
 
         void grab_item(RigidBodyVolume*, float = 9.f);
         void accumulate_power();

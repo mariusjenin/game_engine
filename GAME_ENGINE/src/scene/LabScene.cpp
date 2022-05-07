@@ -125,7 +125,7 @@ std::vector<RigidBodyVolume*> LabScene::get_items(){
 RigidBodyVolume* LabScene::in_sight(){
     //RAYCAST character's sight grabbable items in scene
     Transform* cam_trsf = m_character->get_camera()->get_trsf();
-    glm::vec3 sight = m_character->get_sight();
+    glm::vec3 sight = glm::vec3(0,0,-1);
     sight = cam_trsf->apply_to_vector(sight);
 
     glm::vec3 char_pos =  m_character->get_camera()->get_position_in_world();
@@ -160,18 +160,19 @@ RigidBodyVolume* LabScene::in_sight(){
 
 
 void LabScene::update(GLFWwindow *window, float delta_time){
+
     //Get character front updated by mouse callback.
     glm::vec3 front = m_character->m_mouse_view->get_front();
 
     //Camera front can rotate along X axis.
-    glm::vec3 cam_view = glm::vec3(0, front[1], -1);
+    glm::vec3 cam_view = glm::vec3(front[0], front[1], -1);
 
 //    NodeGameSG *camera_node = m_character->get_camera();
 //    camera_node->update_view_mat(cam_view);
 //    camera_node->update_view_pos();
     //CAMERA
     NodeGameSG *camera_node = m_cameras[m_camera_index];
-    camera_node->update_view_mat(cam_view);
+    camera_node->update_view_mat();
     camera_node->update_view_pos();
 
     if(m_physics_system != nullptr){
@@ -182,12 +183,13 @@ void LabScene::update(GLFWwindow *window, float delta_time){
     //Camera node rotates along y axis.
     if(m_character->get_sight()[0] != front[0]){
         float yaw = m_character->m_mouse_view->get_yaw();
-        camera_node->get_trsf()->set_rotation({0, -yaw, 0});
+        float pitch = m_character->m_mouse_view->get_pitch();
+        camera_node->get_trsf()->set_rotation({pitch, -yaw, 0});
         camera_node->get_trsf()->compute();
     }
 
     //update character sight (computed with mouse listener)
-    m_character->set_sight(cam_view);
+    // m_character->set_sight(cam_view);
 
     //update ITEM IN HAND 
     if(m_character->has_item() ){
@@ -211,10 +213,14 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     Transform *cube_trsf = m_cube->get_trsf();
 
     //Compute translation relative to camera direction
-    glm::vec3 sight = m_character->get_sight();
-    sight[1] = 0.;    //disable flight
-    glm::vec3 forward_vec = glm::normalize(sight);
-    glm::vec3 right_vec = glm::cross(forward_vec, glm::vec3(0., 1., 0.));
+    glm::vec3 forward(0, 0, -1);
+    glm::vec3 forward_vec = character_cam_trsf->apply_to_vector(forward);
+
+    forward_vec[1] = 0.;    //disable flight
+    forward_vec = glm::normalize(forward_vec);
+
+    glm::vec3 up(0, 1, 0);
+    glm::vec3 right_vec = glm::cross(forward_vec, up);
 
 //    m_timing_camera_switch -= delta_time;
 //    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && m_timing_camera_switch <= 0) {
@@ -247,7 +253,7 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             m_character->jump();
         }
-        character_trsf->set_translation(character_trsf->get_translation() + character_cam_trsf->apply_to_vector(dir));
+        character_trsf->set_translation(character_trsf->get_translation() + dir);
     }
 
     // if(character_impulse)m_character->get_body()->add_linear_impulse(dir);
