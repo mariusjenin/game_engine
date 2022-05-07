@@ -95,10 +95,10 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_cameras.push_back(m_character->get_camera());
 
 //    //CAMERA
-//    auto *camera_node = new NodeGameSG(m_shaders, m_root);
-//    camera_node->get_trsf()->set_translation({0, 9, 17});
-//    camera_node->get_trsf()->set_rotation({-20, 0, 0});
-//    m_cameras.push_back(camera_node);
+   auto *camera_node = new NodeGameSG(m_shaders, m_root);
+   camera_node->get_trsf()->set_translation({0, 9, 17});
+   camera_node->get_trsf()->set_rotation({-20, 0, 0});
+   m_cameras.push_back(camera_node);
 
     // m_character->get_body()->add_force(gravity_force);
     m_physics_system->add_rigid_body(m_character->get_body());
@@ -113,8 +113,8 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
                        GL_FALSE, &projection_mat[0][0]);
 
-//    m_camera_index = 0;
-//    m_timing_camera_switch = 0;
+   m_camera_index = 0;
+   m_timing_camera_switch = 0;
 }
 
 std::vector<RigidBodyVolume*> LabScene::get_items(){
@@ -222,12 +222,12 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     glm::vec3 up(0, 1, 0);
     glm::vec3 right_vec = glm::cross(forward_vec, up);
 
-//    m_timing_camera_switch -= delta_time;
-//    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && m_timing_camera_switch <= 0) {
-//        m_timing_camera_switch = 1;
-//        m_camera_index++;
-//        if(m_camera_index == m_cameras.size()) m_camera_index = 0;
-//    }
+   m_timing_camera_switch -= delta_time;
+   if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && m_timing_camera_switch <= 0) {
+       m_timing_camera_switch = 1;
+       m_camera_index++;
+       if(m_camera_index == m_cameras.size()) m_camera_index = 0;
+   }
 
     bool character_impulse = false;
     glm::vec3 dir;
@@ -305,24 +305,24 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     translate_cube *= 10.f;
     if(impulse_cube)m_cube->get_rigid_body()->set_linear_impulse(translate_cube);
 
-//    if(m_camera_index == 1){
-//        glm::vec3 translate_camera_free = {0,0,0};
-//        //Scene rotation
-//        if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
-//            translate_camera_free += glm::vec3(camera_speed, 0.f, 0.f);
-//        }
-//        if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
-//            translate_camera_free -= glm::vec3(camera_speed, 0.f, 0.f);
-//        }
-//        if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-//            translate_camera_free += glm::vec3(0.f, 0.f, camera_speed);
-//        }
-//        if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
-//            translate_camera_free -= glm::vec3(0.f, 0.f, camera_speed);
-//        }
-//        auto* camera_trsf = m_cameras[m_camera_index]->get_trsf();
-//        camera_trsf->set_translation(camera_trsf->get_translation() + dir);
-//    }
+   if(m_camera_index == 1){
+       glm::vec3 translate_camera_free = {0,0,0};
+       //Scene rotation
+       if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+           translate_camera_free += glm::vec3(camera_speed, 0.f, 0.f);
+       }
+       if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+           translate_camera_free -= glm::vec3(camera_speed, 0.f, 0.f);
+       }
+       if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+           translate_camera_free += glm::vec3(0.f, 0.f, camera_speed);
+       }
+       if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+           translate_camera_free -= glm::vec3(0.f, 0.f, camera_speed);
+       }
+       auto* camera_trsf = m_cameras[m_camera_index]->get_trsf();
+       camera_trsf->set_translation(camera_trsf->get_translation() + camera_trsf->apply_to_vector(translate_camera_free));
+   }
 
 
     // cube_trsf->set_translation(cube_trsf->get_translation() + translate_cube);
