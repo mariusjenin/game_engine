@@ -5,7 +5,9 @@ Character::Character(Shaders* shaders, ElementSG* parent, PhysicsSystem* phi){
     m_physics = phi;
     m_scene_root = parent;
     m_item = nullptr;
+    has_item = false;
     m_power = 1.f;
+    m_act_timestamp = 0;
 
     auto* body_node = new NodeGameSG(shaders, parent, OBB_TYPE);
 
@@ -35,6 +37,7 @@ Character::Character(Shaders* shaders, ElementSG* parent, PhysicsSystem* phi){
     arm_node->set_material(material_character);
 
 //   TODO use these to have the arm placed better
+//    arm_node->get_local_trsf()->set_uniform_scale(0.5f);
    arm_node->get_trsf()->set_uniform_scale(0.5f);
    arm_node->get_trsf()->set_order_rotation(ORDER_ZXY);
    arm_node->get_trsf()->set_rotation({20, -90, 35});
@@ -47,9 +50,6 @@ Character::Character(Shaders* shaders, ElementSG* parent, PhysicsSystem* phi){
     m_body = new RigidBodyVolume(body_node, true);
     m_body->add_behavior(new MovementBehavior(true,false,10.f, 0.6f, 0.5f));
     m_body->get_movement_behavior()->add_force(new GravityForce());
-
-    m_sight = CAMERA_INIT_FORWARD;
-
 
     //MOUSE EVENT
     m_mouse_view = MouseView::get_instance();
@@ -78,17 +78,19 @@ void Character::set_physics(PhysicsSystem* system){
     m_physics = system;
 }
 
-
 glm::vec3 Character::get_sight(){
     glm::vec3 fwd = CAMERA_INIT_FORWARD;
     return m_camera->get_trsf()->apply_to_vector(fwd);
 }
 
-void Character::grab_item(RigidBodyVolume* item, float action_area){
+void Character::grab_item(RigidBodyVolume* item, double ts, float action_area){
     
     glm::vec3 item_pos = item->get_node()->get_trsf()->get_translation();
     float distance = glm::length(item_pos - m_body->get_node()->get_trsf()->get_translation());
+    
     if(distance < action_area && item->has_movement_behavior()){
+        m_act_timestamp = ts;
+
         //ITEM can be grabbed
         m_item = item;
         m_item->get_movement_behavior()->clear_forces();
@@ -103,16 +105,14 @@ void Character::grab_item(RigidBodyVolume* item, float action_area){
         glm::vec3 trsf(-3., 2.5, 0);
         // glm::vec3 translation_wrld(1.2, -1.2, -2.1);
 
-        // translation_wrld += fwd;
 
         // glm::vec3 item_translation = m_camera->get_trsf()->apply_to_vector(fwd);
         m_item->get_node()->get_trsf()->set_translation(trsf);
+
+        has_item = true;
     }
 }
 
-bool Character::has_item(){
-    return m_item != nullptr;
-}
 
 RigidBodyVolume* Character::get_item(){
     return m_item;
@@ -122,31 +122,31 @@ RigidBodyVolume* Character::get_body(){
     return m_body;
 }
 
+void Character::throw_item(double ts){
+    m_act_timestamp = ts;
+    has_item = false;
 
-//Keep item in front of camera when moving mouse
-void Character::update_item(){
-//     glm::vec3 fwd = 4.f * CAMERA_INIT_FORWARD;
-//     glm::vec3 pos = m_camera->get_trsf()->apply_to_vector(fwd);
-//     m_item->get_node()->get_trsf()->set_translation(pos);
-}
-
-void Character::throw_item(){
     glm::vec3 fwd = CAMERA_INIT_FORWARD;
     glm::vec3 dir = m_camera->get_trsf()->apply_to_vector(fwd);
     glm::vec3 throw_dir = m_power * dir;
+    
     m_power = 0.f;
+    
     RigidBodyVolume* item = m_item;
     m_item = nullptr;
-
     m_camera->get_children()[0]->clear_children();
 
-    //save worldpos before getting new parent
-    glm::vec3 pos = item->get_node()->get_position_in_world();
 
+    //Get closest pt to item pos on character boundingbox
+    glm::vec3 pos = item->get_node()->get_position_in_world();
+    glm::vec3 bb_pt = get_character_node()->get_bb()->closest_point(pos);
+
+    //Add item back to physics
     m_physics->add_collider(item);
-    
     item->get_node()->set_parent(m_scene_root);
-    item->get_node()->get_trsf()->set_translation(pos);
+    m_scene_root->add_child(item->get_node());
+    
+    item->get_node()->get_trsf()->set_translation(bb_pt);
 
     //Add force back and throw item.
     item->get_movement_behavior()->add_linear_impulse(throw_dir);
@@ -165,8 +165,13 @@ void Character::jump(){
 }
 
 void Character::accumulate_power(){
-    m_power += 0.2f;
+    m_power += 0.5f;
 }
+
+bool Character::can_interact(double timestamp){
+    return (timestamp - m_act_timestamp) > 0.5;
+}
+
 
 
 

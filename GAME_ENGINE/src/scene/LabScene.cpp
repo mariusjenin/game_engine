@@ -179,11 +179,14 @@ void LabScene::update(GLFWwindow *window, float delta_time){
 }
 
 void LabScene::process_input(GLFWwindow *window, float delta_time) {
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+        
     float camera_speed = 15.f * delta_time;
     float camera_speed_rot = 150 * delta_time;
     float cube_translate_speed = 15 * delta_time;
+    double timestamp = glfwGetTime();
     
     Transform *character_trsf = m_character->get_character_node()->get_trsf();
     Transform *character_cam_trsf = m_character->get_camera()->get_trsf();
@@ -237,22 +240,24 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
 
     if (!character_trsf->is_up_to_date()) character_trsf->compute();
 
-
     //Be sure to get only 1 input
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        if(m_character->has_item())
+        if(m_character->has_item)
             m_character->accumulate_power();
-        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
 
-            if(m_character->has_item()){
-                m_character->throw_item();
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
+            bool available = m_character->can_interact(timestamp);
+
+            if(m_character->has_item && available){
+
+                m_character->throw_item(timestamp);
                 
             }else{
 
                 //GRAB ITEM
                 RigidBodyVolume* rbv = in_sight();
-                if(rbv != nullptr){
-                    m_character->grab_item(rbv);
+                if(rbv != nullptr && available){
+                    m_character->grab_item(rbv, timestamp);
                     glm::vec3 forces = rbv->get_movement_behavior()->get_forces();
                 }
             }
