@@ -10,7 +10,7 @@ Character::Character(Shaders* shaders, ElementSG* parent, PhysicsSystem* phi){
     auto* body_node = new NodeGameSG(shaders, parent, OBB_TYPE);
 
     Mesh* body_mesh = new Mesh(create_rectangle_cuboid({2,8,2}), true, OBB_TYPE);
-    Mesh* arm_mesh = new Mesh("../assets/mesh/arm_2.obj", true, OBB_TYPE);
+    Mesh* arm_mesh = new Mesh("../assets/mesh/arm_3_3.obj", true, OBB_TYPE);
 
     auto* material_character = new MaterialColor(shaders, {0.8,0.8,0.8}, 100);
     
