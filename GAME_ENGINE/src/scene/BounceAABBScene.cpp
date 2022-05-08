@@ -8,14 +8,14 @@
 
 using namespace scene;
 
-BounceAABBScene::BounceAABBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path) : Scene(
-        vertex_shader_path, fragment_shader_path) {
+BounceAABBScene::BounceAABBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(
+        vertex_shader_path, fragment_shader_path, mult_physics) {
 
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
 
     //Physics System
-    m_physics_system = new PhysicsSystem(m_root,0.9f, 0.05f, 15,EULER_TYPE);
+    m_physics_system = new PhysicsSystem(m_root,mult_physics,0.9f, 0.05f, 15,EULER_TYPE);
 
     //MESHES
     auto *cube_mesh = new Mesh(create_rectangle_cuboid({5,5,5}), true,AABB_TYPE);
@@ -35,7 +35,7 @@ BounceAABBScene::BounceAABBScene(const std::string &vertex_shader_path, const st
     big_cube->set_material(big_cube_mat_color);
     big_cube->set_debug_rendering(true, {0.25, 0.65, 0.8});
     auto * rbv_big_cube = new RigidBodyVolume(big_cube);
-    rbv_big_cube->add_behavior(new MovementBehavior(false,false,0,0.01,2));
+    rbv_big_cube->add_behavior(new MovementBehavior(false,false,mult_physics,0,0.01,2));
     m_physics_system->add_collider(rbv_big_cube);
 
 
@@ -49,7 +49,7 @@ BounceAABBScene::BounceAABBScene(const std::string &vertex_shader_path, const st
     m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
     auto* gravity_force = new GravityForce();
     auto* rbv_cube = new RigidBodyVolume(m_cube);
-    rbv_cube->add_behavior(new MovementBehavior(true,true,0.1,0.01,0.4));
+    rbv_cube->add_behavior(new MovementBehavior(true,true,mult_physics,0.1,0.01,0.4));
     rbv_cube->get_movement_behavior()->add_force(gravity_force);
     m_physics_system->add_collider(rbv_cube);
 

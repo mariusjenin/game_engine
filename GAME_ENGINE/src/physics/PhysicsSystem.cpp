@@ -6,13 +6,14 @@
 
 using namespace physics;
 
-PhysicsSystem::PhysicsSystem(ElementSG* root_physics,float lpp, float ps, int ii, ODE_TYPE ode_type) {
+PhysicsSystem::PhysicsSystem(ElementSG* root_physics,float mult_physics, float lpp, float ps, int ii, ODE_TYPE ode_type) {
     m_linear_projection_percent = lpp;
     m_penetration_slack = ps;
     m_impulse_iteration = ii;
     m_colliders = {};
     m_ode = ODEFactory::generate_ode(ode_type);
     m_root_physics = root_physics;
+    m_multiplicator = mult_physics;
 }
 
 void PhysicsSystem::add_collider(physics::RigidBodyVolume *rbv) {
@@ -94,4 +95,12 @@ float PhysicsSystem::get_linear_projection_percent() const {
 
 float PhysicsSystem::get_penetration_slack() const {
     return m_penetration_slack;
+}
+
+void PhysicsSystem::set_multiplicator_physics(float mult_physics) {
+    m_multiplicator = mult_physics;
+}
+
+float PhysicsSystem::get_multiplicator_physics() const{
+    return m_multiplicator;
 }

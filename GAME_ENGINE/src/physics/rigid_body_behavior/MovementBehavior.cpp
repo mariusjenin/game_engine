@@ -7,7 +7,7 @@
 using namespace physics::rigid_body_behavior;
 
 
-MovementBehavior::MovementBehavior(bool translatable,bool rotatable,float mass, float friction, float cor) {
+MovementBehavior::MovementBehavior(bool translatable,bool rotatable,float mult_physics,float mass, float friction, float cor) {
     m_type = MovementBehavior_TYPE;
     m_translatable = translatable;
     m_rotatable = rotatable;
@@ -15,6 +15,7 @@ MovementBehavior::MovementBehavior(bool translatable,bool rotatable,float mass, 
     m_friction = friction;
     m_cor = cor;
     m_list_forces = {};
+    m_multiplicator = mult_physics;
 }
 
 void MovementBehavior::action(PhysicsSystem *ps, Collision collision, float delta_time) {
@@ -56,6 +57,7 @@ void MovementBehavior::update_physics(float delta_time) {
     for (auto *force: m_list_forces) {
         force->apply(m_rigid_body);
     }
+    m_forces *= m_multiplicator;
 }
 
 void MovementBehavior::update_render(float delta_time, ODE *ode) {
@@ -100,7 +102,7 @@ void MovementBehavior::add_rotational_impulse(glm::vec3 &point, glm::vec3 &impul
         glm::vec3 center_of_mass = bb->get_position();
         glm::vec3 torque = glm::cross(point - center_of_mass, impulse);
         glm::vec3 angular_acceleration = glm::vec3(inverse_tensor() * glm::vec4(torque, 0.f));
-        m_angular_velocity = m_angular_velocity + angular_acceleration;
+        m_angular_velocity = m_angular_velocity + angular_acceleration ;
     }
 }
 

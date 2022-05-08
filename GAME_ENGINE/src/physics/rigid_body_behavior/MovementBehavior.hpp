@@ -30,9 +30,10 @@ namespace physics {
             float m_cor{};
             float m_friction{};
             std::vector<Force*> m_list_forces;
+            float m_multiplicator;
         public:
 
-            explicit MovementBehavior(bool translatable = true,bool rotatable = true, float mass = 1.0f, float friction = 0.6f, float cor = 0.5f);
+            explicit MovementBehavior(bool translatable = true,bool rotatable = true, float mult_physics = 1.0f,float mass = 1.0f, float friction = 0.6f, float cor = 0.5f);
 
 
             void action(PhysicsSystem* ps,Collision collision,float delta_time) override;

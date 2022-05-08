@@ -85,15 +85,6 @@ int main() {
     // Cull triangles which normal is not towards the camera
 //    glEnable(GL_CULL_FACE);
 
-    //CREATE THE SCENE
-//    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
-    LabScene scene = LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
-//     BounceOBBScene scene = BounceOBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
-//     BounceAABBScene scene = BounceAABBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
-//     BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
-//    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl");
-
-    scene.setup();
     //MOUSE PROCESSING
     // glfwSetCursorPosCallback(window, process_mouse);
     // Character* character = scene.get_character();
@@ -104,13 +95,24 @@ int main() {
     float current_time;
 
     //Frame updates
-    int frames_by_second = 60;
+    int frames_by_second = 120;
     float delta_time_frame_acc = 0.0f;
     float delta_time_frame_fixed = 1.0f / (float)frames_by_second;
     //Physics updates
     int update_physics_by_second = 60;
     float delta_time_physics_acc = 0.0f;
     float delta_time_physics_fixed = 1.0f / (float)fmin(frames_by_second,update_physics_by_second);
+    //Multiplicator physics
+    float mult_physics = (float)frames_by_second/8.f;
+
+    //CREATE THE SCENE
+//    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl",mult_physics);
+    LabScene scene = LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
+//     BounceOBBScene scene = BounceOBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
+//     BounceAABBScene scene = BounceAABBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
+//     BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
+//    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl",mult_physics);
+    scene.setup();
 
     do {
         current_time = (float)glfwGetTime();

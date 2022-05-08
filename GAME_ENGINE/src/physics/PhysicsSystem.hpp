@@ -22,6 +22,7 @@ namespace physics{
         float m_linear_projection_percent;
         float m_penetration_slack;
         int m_impulse_iteration;
+        float m_multiplicator;
         ODE* m_ode;
     public:
         /**
@@ -30,7 +31,7 @@ namespace physics{
          * @param ps
          * @param ii
          */
-        explicit PhysicsSystem(ElementSG* root_physics,float lpp = 0.2f, float ps=0.01f, int ii=5, ODE_TYPE ode_type = EULER_TYPE);
+        explicit PhysicsSystem(ElementSG* root_physics,float mult_physics = 1.0f, float lpp = 0.2f, float ps=0.01f, int ii=5, ODE_TYPE ode_type = EULER_TYPE);
 
         /**
          * Add a RigidBodyVolume to the PhysicsSystem
@@ -92,6 +93,18 @@ namespace physics{
          * @return linear projection percent
          */
         float get_linear_projection_percent() const;
+
+        /**
+         * Setter of the Physics forces multiplicator
+         * @param mult_physics
+         */
+        void set_multiplicator_physics(float mult_physics);
+
+        /**
+         * Getter of the Physics forces multiplicator
+         * @return multiplicator
+         */
+        float get_multiplicator_physics() const;
     };
 }
 

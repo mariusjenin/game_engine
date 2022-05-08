@@ -7,11 +7,11 @@
 
 using namespace scene;
 
-LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path) : Scene(
-        vertex_shader_path, fragment_shader_path) {
+LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(
+        vertex_shader_path, fragment_shader_path, mult_physics)  {
 
     //PHYSICS SYSTEM
-    m_physics_system = new PhysicsSystem(m_root, 0.2f, 0.00001f, 5, EULER_TYPE);        
+    m_physics_system = new PhysicsSystem(m_root, mult_physics,0.2f, 0.00001f, 5,EULER_TYPE);
     
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
@@ -45,7 +45,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     floor->set_material(lab_mat_color);
     floor->set_debug_rendering(true, {0.25, 0.65, 0.8});
     auto * floor_rbv = new RigidBodyVolume(floor);
-    floor_rbv->add_behavior(new MovementBehavior(false,false,0,1,1));
+    floor_rbv->add_behavior(new MovementBehavior(false,false,mult_physics,0,1,1));
     m_physics_system->add_collider(floor_rbv);
 
     //walls
@@ -57,7 +57,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     wall->set_material(new MaterialColor(m_shaders, {0.79, 0.3, 0.3}, 50));
     wall->set_debug_rendering(true, {0.25, 0.65, 0.8});
     auto * wall_rbv = new RigidBodyVolume(wall);
-    wall_rbv->add_behavior(new MovementBehavior(false,false,0));
+    wall_rbv->add_behavior(new MovementBehavior(false,false,mult_physics,0));
     wall_rbv->add_behavior(new SwitchColorBehavior(new MaterialColor(m_shaders,{1,1,0},50)));
     m_physics_system->add_collider(wall_rbv);
 
@@ -83,8 +83,8 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     auto* gravity_force = new GravityForce();
     auto* rbv_cube = new RigidBodyVolume(m_cube);
     auto* rbv_sphere = new RigidBodyVolume(m_ball);
-    rbv_cube->add_behavior(new MovementBehavior(true,true,1, 0.8, 0.5));
-    rbv_sphere->add_behavior(new MovementBehavior(true,true,1, 0.8, 0.5));
+    rbv_cube->add_behavior(new MovementBehavior(true,true,mult_physics,1, 0.8, 0.5));
+    rbv_sphere->add_behavior(new MovementBehavior(true,true,mult_physics,1, 0.8, 0.5));
     rbv_cube->get_movement_behavior()->add_force(gravity_force);
     rbv_sphere->get_movement_behavior()->add_force(gravity_force);
     m_physics_system->add_collider(rbv_cube);
@@ -182,10 +182,11 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-        
+
     float camera_speed = 15.f * delta_time;
     float camera_speed_rot = 150 * delta_time;
     float cube_translate_speed = 15 * delta_time;
+    float character_speed = 35.f * delta_time;
     double timestamp = glfwGetTime();
     
     Transform *character_trsf = m_character->get_character_node()->get_trsf();
@@ -209,35 +210,27 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
        if(m_camera_index == m_cameras.size()) m_camera_index = 0;
    }
 
-    bool character_impulse = false;
     glm::vec3 dir;
     //Camera Translation
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            dir += camera_speed * right_vec;
-            character_impulse = true;
+            dir += character_speed * right_vec;
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            dir += -camera_speed * right_vec;
-            character_impulse = true;
+            dir += -character_speed * right_vec;
 
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            dir += -camera_speed * forward_vec;
-            character_impulse = true;
+            dir += -character_speed * forward_vec;
         }
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            dir += camera_speed * forward_vec;
-            character_impulse = true;
+            dir += character_speed * forward_vec;
         }
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             m_character->jump();
         }
         character_trsf->set_translation(character_trsf->get_translation() + dir);
     }
-
-    // if(character_impulse)m_character->get_body()->add_linear_impulse(dir);
-
     if (!character_trsf->is_up_to_date()) character_trsf->compute();
 
     //Be sure to get only 1 input

@@ -10,8 +10,8 @@
 
 using namespace scene;
 
-SceneLand::SceneLand(const std::string &vertex_shader_path, const std::string &fragment_shader_path) : Scene(
-        vertex_shader_path, fragment_shader_path) {
+SceneLand::SceneLand(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(
+        vertex_shader_path, fragment_shader_path, mult_physics)  {
     GLuint program_id = m_shaders->get_program_id();
     ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
 

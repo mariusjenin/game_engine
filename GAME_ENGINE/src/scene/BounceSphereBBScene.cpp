@@ -8,11 +8,11 @@
 
 using namespace scene;
 
-BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path)
-        : Scene(vertex_shader_path, fragment_shader_path) {
+BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(
+        vertex_shader_path, fragment_shader_path, mult_physics)  {
 
     //Physics System
-    m_physics_system = new PhysicsSystem(m_root,0.02f, 0.005f, 10, EULER_TYPE);
+    m_physics_system = new PhysicsSystem(m_root, mult_physics,0.02f, 0.005f, 10, EULER_TYPE);
 
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
@@ -54,10 +54,10 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     auto* rbv_big_ball2 = new RigidBodyVolume(big_ball2);
     auto* rbv_big_ball3 = new RigidBodyVolume(big_ball3);
     auto* rbv_big_ball4 = new RigidBodyVolume(big_ball4);
-    rbv_big_ball->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
-    rbv_big_ball2->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
-    rbv_big_ball3->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
-    rbv_big_ball4->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
+    rbv_big_ball->add_behavior(new MovementBehavior(false,false,mult_physics,0, 0.01, 2));
+    rbv_big_ball2->add_behavior(new MovementBehavior(false,false,mult_physics,0, 0.01, 2));
+    rbv_big_ball3->add_behavior(new MovementBehavior(false,false,mult_physics,0, 0.01, 2));
+    rbv_big_ball4->add_behavior(new MovementBehavior(false,false,mult_physics,0, 0.01, 2));
     m_physics_system->add_collider(rbv_big_ball);
     m_physics_system->add_collider(rbv_big_ball2);
     m_physics_system->add_collider(rbv_big_ball3);
@@ -79,7 +79,7 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     m_ball->set_debug_rendering(true, {1, 0, 1});
     auto *gravity_force = new GravityForce();
     auto *rbv_ball = new RigidBodyVolume(m_ball);
-    rbv_ball->add_behavior(new MovementBehavior(true,true,1, 0.01, 0.25));
+    rbv_ball->add_behavior(new MovementBehavior(true,true,mult_physics,1, 0.01, 0.25));
     rbv_ball->get_movement_behavior()->add_force(gravity_force);
     m_physics_system->add_collider(rbv_ball);
 
@@ -231,7 +231,7 @@ void BounceSphereBBScene::generate_balls(float height, float radius, float dispe
             ball->set_material(new MaterialColor(m_shaders, color, 50));
         }
         auto *rbv = new RigidBodyVolume(ball);
-        rbv->add_behavior(new MovementBehavior( true,true,100, 0.01, 0.2));
+        rbv->add_behavior(new MovementBehavior( true,true,m_physics_system->get_multiplicator_physics(),100, 0.01, 0.2));
         rbv->get_movement_behavior()->add_force(gravity_force);
         m_physics_system->add_collider(rbv);
     }

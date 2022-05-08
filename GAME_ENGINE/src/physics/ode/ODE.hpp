@@ -9,6 +9,7 @@
 
 namespace physics{
     class RigidBodyVolume;
+    class PhysicsSystem;
     namespace ode{
 
         /**
@@ -25,6 +26,7 @@ namespace physics{
         protected:
             ODE_TYPE m_type{};
         public:
+
             /**
              * Update position and rotation of a RigidBodyVolume with an ODE equation
              * @param rbv

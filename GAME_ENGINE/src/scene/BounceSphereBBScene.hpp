@@ -32,8 +32,9 @@ namespace scene {
          * Constructor of the BounceSphereBBScene
          * @param vertex_shader_path
          * @param fragment_shader_path
+         * @param mult_physics
          */
-        BounceSphereBBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
+        BounceSphereBBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
     };
 
 }

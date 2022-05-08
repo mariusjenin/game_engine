@@ -24,13 +24,13 @@ namespace scene {
         void process_input(GLFWwindow *window, float delta_time) override;
 
     public:
-
         /**
          * Constructor of the BounceAABBScene
          * @param vertex_shader_path
          * @param fragment_shader_path
+         * @param mult_physics
          */
-        BounceAABBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
+        BounceAABBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
     };
 
 }

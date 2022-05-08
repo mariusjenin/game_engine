@@ -45,12 +45,14 @@ namespace scene {
         void load_type_star_location() const;
 
     public:
+
         /**
          * Constructor of the SolarSystem
          * @param vertex_shader_path
          * @param fragment_shader_path
+         * @param mult_physics
          */
-        SolarSystem(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
+        SolarSystem(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
 
         void update(GLFWwindow *window, float delta_time) override;
     };

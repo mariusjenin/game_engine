@@ -40,8 +40,9 @@ namespace scene {
          * Constructor of the Scene with the paths to the shader files
          * @param vertex_shader_path
          * @param fragment_shader_path
+         * @param mult_physics
          */
-        Scene(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
+        Scene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
 
         /// Set up to load and compute datas of the Scene
         virtual void setup();

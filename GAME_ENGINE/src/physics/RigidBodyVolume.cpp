@@ -40,7 +40,8 @@ Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
         case OBB_TYPE: {
             switch (bb2->get_type()) {
                 case SPHEREBB_TYPE:
-                    collision = ((OBB *) bb1)->get_data_collision((SphereBB *) bb2);
+//                    collision = ((OBB *) bb1)->get_data_collision((SphereBB *) bb2);
+                    collision = ((SphereBB *) bb2)->get_data_collision((OBB *) bb1);
                     break;
                 case OBB_TYPE:
                 case AABB_TYPE:

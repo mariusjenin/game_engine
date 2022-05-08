@@ -6,7 +6,7 @@ Character::Character(Shaders* shaders, ElementSG* parent, PhysicsSystem* phi){
     m_scene_root = parent;
     m_item = nullptr;
     has_item = false;
-    m_power = 1.f;
+    m_power = POWER_INIT;
     m_act_timestamp = 0;
 
     auto* body_node = new NodeGameSG(shaders, parent, OBB_TYPE);
@@ -130,7 +130,7 @@ void Character::throw_item(double ts){
     glm::vec3 dir = m_camera->get_trsf()->apply_to_vector(fwd);
     glm::vec3 throw_dir = m_power * dir;
     
-    m_power = 0.f;
+    m_power = POWER_INIT;
     
     RigidBodyVolume* item = m_item;
     m_item = nullptr;
@@ -155,20 +155,20 @@ void Character::throw_item(double ts){
 }
 
 void Character::jump(){
-    float height_fact = 9.f;
     // m_body->get_movement_behavior()->clear_forces();
     
-    glm::vec3 vertical = height_fact*glm::vec3(0, 1, 0);
+    glm::vec3 vertical = glm::vec3(0, 1, 0);
+    vertical *= Character::HEIGHT_JUMP;
     m_body->get_movement_behavior()->set_velocity(vertical);
     // m_body->get_movement_behavior()->add_force(new GravityForce());
 
 }
 
 void Character::accumulate_power(){
-    m_power += 0.5f;
+    m_power += INCREASE_POWER;
 }
 
-bool Character::can_interact(double timestamp){
+bool Character::can_interact(double timestamp) const{
     return (timestamp - m_act_timestamp) > 0.5;
 }
 

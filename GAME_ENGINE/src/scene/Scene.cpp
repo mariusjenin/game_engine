@@ -29,7 +29,7 @@ void Scene::update(GLFWwindow *window, float delta_time) {
     process_input(window, delta_time);
 }
 
-Scene::Scene(const std::string &vertex_shader_path, const std::string &fragment_shader_path) {
+Scene::Scene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) {
     m_shaders = new Shaders(vertex_shader_path.c_str(), fragment_shader_path.c_str());
     GLuint program_id = m_shaders->get_program_id();
     glUseProgram(program_id);
