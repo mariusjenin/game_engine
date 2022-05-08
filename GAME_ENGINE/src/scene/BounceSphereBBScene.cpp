@@ -88,6 +88,7 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     m_ball2->get_trsf()->set_translation({2, 2, 2});
     m_ball2->set_meshes({ball_mesh1});
     m_ball2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
+    m_ball2->set_debug_rendering(true);
 
     //CAMERA
     auto *camera_node = new NodeGameSG(m_shaders, m_root);
