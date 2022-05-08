@@ -10,7 +10,6 @@
 
 class Character {
     private:
-        glm::vec3 m_sight;
         RigidBodyVolume* m_body;
         RigidBodyVolume* m_item;
 
@@ -19,7 +18,10 @@ class Character {
         float m_power;
         
         PhysicsSystem* m_physics;
+        double m_act_timestamp;
+
     public:
+        bool has_item;
 
         //Class to compute character's sight with mouse motion.
         MouseView* m_mouse_view = nullptr;
@@ -40,14 +42,14 @@ class Character {
 
         glm::vec3 get_sight();
         
-        void grab_item(RigidBodyVolume*, float = 9.f);
+        void grab_item(RigidBodyVolume*,double, float = 9.f);
         void accumulate_power();
-        void throw_item();
+        void throw_item(double);
 
-        bool has_item();
+        // bool has_item();
         RigidBodyVolume* get_item();
 
-        void update_item();
+        bool can_interact(double);
 
         void jump();
 
