@@ -45,7 +45,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     floor->set_material(lab_mat_color);
     floor->set_debug_rendering(true, {0.25, 0.65, 0.8});
     auto * floor_rbv = new RigidBodyVolume(floor);
-    floor_rbv->add_behavior(new MovementBehavior(0));
+    floor_rbv->add_behavior(new MovementBehavior(false,false,0));
     m_physics_system->add_collider(floor_rbv);
 
     //walls
@@ -57,7 +57,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     wall->set_material(new MaterialColor(m_shaders, {0.79, 0.3, 0.3}, 50));
     wall->set_debug_rendering(true, {0.25, 0.65, 0.8});
     auto * wall_rbv = new RigidBodyVolume(wall);
-    wall_rbv->add_behavior(new MovementBehavior(0));
+    wall_rbv->add_behavior(new MovementBehavior(false,false,0));
     wall_rbv->add_behavior(new SwitchColorBehavior(new MaterialColor(m_shaders,{1,1,0},50)));
     m_physics_system->add_collider(wall_rbv);
 
@@ -83,8 +83,8 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     auto* gravity_force = new GravityForce();
     auto* rbv_cube = new RigidBodyVolume(m_cube);
     auto* rbv_sphere = new RigidBodyVolume(m_ball);
-    rbv_cube->add_behavior(new MovementBehavior(1, 0.8, 0.5));
-    rbv_sphere->add_behavior(new MovementBehavior(1, 0.8, 0.5));
+    rbv_cube->add_behavior(new MovementBehavior(true,true,1, 0.8, 0.5));
+    rbv_sphere->add_behavior(new MovementBehavior(true,true,1, 0.8, 0.5));
     rbv_cube->get_movement_behavior()->add_force(gravity_force);
     rbv_sphere->get_movement_behavior()->add_force(gravity_force);
     m_physics_system->add_collider(rbv_cube);
@@ -303,7 +303,7 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
         impulse_cube =  true;
     }
     translate_cube *= 10.f;
-    if(impulse_cube && m_cube->get_rigid_body()->has_movement_behavior())m_cube->get_rigid_body()->get_movement_behavior()->set_linear_impulse(translate_cube);
+    if(impulse_cube && m_cube->get_rigid_body()->has_movement_behavior())m_cube->get_rigid_body()->get_movement_behavior()->set_velocity(translate_cube);
 
    if(m_camera_index == 1){
        glm::vec3 translate_camera_free = {0,0,0};

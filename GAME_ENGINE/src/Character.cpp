@@ -13,7 +13,7 @@ Character::Character(Shaders* shaders, ElementSG* parent){
     Mesh* arm_mesh = new Mesh("../assets/mesh/arm_2.obj", true, OBB_TYPE);
 
     body_node->get_trsf()->set_translation({2.,4,0});
-    auto* material_character = new MaterialColor(shaders, {0.75, 0., 0.95}, 50);
+    auto* material_character = new MaterialColor(shaders, {0.8,0.8,0.8}, 100);
     body_node->set_material(material_character);
     body_node->set_debug_rendering(true);
     body_node->set_meshes({body_mesh});
@@ -36,7 +36,7 @@ Character::Character(Shaders* shaders, ElementSG* parent){
     // m_camera->get_trsf()->set_rotation({-10, 0, 0});
 
     m_body = new RigidBodyVolume(body_node, true);
-    m_body->add_behavior(new MovementBehavior(10.f, 0.6f, 0.5f));
+    m_body->add_behavior(new MovementBehavior(true,false,10.f, 0.6f, 0.5f));
 
     //MOUSE EVENT
     m_mouse_view = MouseView::get_instance();
@@ -129,7 +129,7 @@ void Character::jump(){
     m_body->get_movement_behavior()->clear_forces();
     
     glm::vec3 vertical = height_fact*glm::vec3(0, 1, 0);
-    m_body->get_movement_behavior()->set_linear_impulse(vertical);
+    m_body->get_movement_behavior()->set_velocity(vertical);
     m_body->get_movement_behavior()->add_force(new GravityForce());
 
 }

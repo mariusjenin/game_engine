@@ -7,8 +7,10 @@
 using namespace physics::rigid_body_behavior;
 
 
-MovementBehavior::MovementBehavior(float mass, float friction, float cor) {
+MovementBehavior::MovementBehavior(bool translatable,bool rotatable,float mass, float friction, float cor) {
     m_type = MovementBehavior_TYPE;
+    m_translatable = translatable;
+    m_rotatable = rotatable;
     m_mass = mass;
     m_friction = friction;
     m_cor = cor;
@@ -86,24 +88,25 @@ glm::mat4 MovementBehavior::inverse_tensor() const {
 }
 
 void MovementBehavior::add_linear_impulse(glm::vec3 &impulse) {
-    m_velocity += impulse;
-}
-
-void MovementBehavior::set_linear_impulse(glm::vec3 &impulse) {
-    m_velocity = impulse;
+    if(m_translatable){
+        m_velocity += impulse;
+    }
 }
 
 void MovementBehavior::add_rotational_impulse(glm::vec3 &point, glm::vec3 &impulse) {
-    BoundingBox *bb = m_rigid_body->get_node()->get_bb();
-    if (bb == nullptr) return;
-    glm::vec3 center_of_mass = bb->get_position();
-    glm::vec3 torque = glm::cross(point - center_of_mass, impulse);
-    glm::vec3 angular_acceleration = glm::vec3(inverse_tensor() * glm::vec4(torque, 0.f));
-    m_angular_velocity = m_angular_velocity + angular_acceleration;
+    if(m_rotatable){
+        BoundingBox *bb = m_rigid_body->get_node()->get_bb();
+        if (bb == nullptr) return;
+        glm::vec3 center_of_mass = bb->get_position();
+        glm::vec3 torque = glm::cross(point - center_of_mass, impulse);
+        glm::vec3 angular_acceleration = glm::vec3(inverse_tensor() * glm::vec4(torque, 0.f));
+        m_angular_velocity = m_angular_velocity + angular_acceleration;
+    }
 }
 
 void MovementBehavior::apply_impulse(RigidBodyVolume &rbv, const Collision &collision, int index_contact) {
     MovementBehavior *mov_behav = rbv.get_movement_behavior();
+    if(!m_translatable && !m_rotatable && !mov_behav->m_translatable && !mov_behav->m_rotatable) return;
 
     float inv_ma = inverse_mass();
     float inv_mb = mov_behav->inverse_mass();
@@ -149,11 +152,11 @@ void MovementBehavior::apply_impulse(RigidBodyVolume &rbv, const Collision &coll
 
     //linear impulse
     glm::vec3 impulse = rel_normal * j;
-    m_velocity -= impulse * inv_ma;
-    mov_behav->m_velocity += impulse * inv_mb;
+    if(m_translatable) m_velocity -= impulse * inv_ma;
+    if(mov_behav->m_translatable) mov_behav->m_velocity += impulse * inv_mb;
+    if(m_rotatable) m_angular_velocity -= glm::vec3(i1 * glm::vec4(glm::cross(r1, impulse), 0));
+    if(mov_behav->m_rotatable) mov_behav->m_angular_velocity += glm::vec3(i2 * glm::vec4(glm::cross(r2, impulse), 0));
 
-    m_angular_velocity -= glm::vec3(i1 * glm::vec4(glm::cross(r1, impulse), 0));
-    mov_behav->m_angular_velocity += glm::vec3(i2 * glm::vec4(glm::cross(r2, impulse), 0));
 
     //friction
     glm::vec3 t = rel_velocity - (rel_normal * dot_normal_velocity);
@@ -183,11 +186,10 @@ void MovementBehavior::apply_impulse(RigidBodyVolume &rbv, const Collision &coll
     }
 
     glm::vec3 tan_impulse = t * jt;
-    m_velocity -= tan_impulse * inv_ma;
-    mov_behav->m_velocity += tan_impulse * inv_mb;
-
-    m_angular_velocity -= glm::vec3(i1 * glm::vec4(glm::cross(r1, tan_impulse), 0));
-    mov_behav->m_angular_velocity += glm::vec3(i2 * glm::vec4(glm::cross(r2, tan_impulse), 0));
+    if(m_translatable)  m_velocity -= tan_impulse * inv_ma;
+    if(mov_behav->m_translatable) mov_behav->m_velocity += tan_impulse * inv_mb;
+    if(m_rotatable) m_angular_velocity -= glm::vec3(i1 * glm::vec4(glm::cross(r1, tan_impulse), 0));
+    if(mov_behav->m_rotatable) mov_behav->m_angular_velocity += glm::vec3(i2 * glm::vec4(glm::cross(r2, tan_impulse), 0));
 }
 
 float MovementBehavior::get_mass() const {
@@ -240,4 +242,12 @@ glm::vec3 MovementBehavior::get_angular_velocity() const {
 
 glm::vec3 MovementBehavior::get_angular_acceleration() const {
     return m_angular_acceleration;
+}
+
+bool MovementBehavior::is_translatable() const {
+    return m_translatable;
+}
+
+bool MovementBehavior::is_rotatable() const {
+    return m_rotatable;
 }

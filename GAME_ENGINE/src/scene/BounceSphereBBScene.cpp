@@ -50,15 +50,14 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     big_ball4->get_trsf()->set_translation({gap, 0, gap});
     big_ball4->set_meshes({ball_mesh2});
     big_ball4->set_material(big_ball_mat_color);
-    float mass = 0;
     auto* rbv_big_ball = new RigidBodyVolume(big_ball);
     auto* rbv_big_ball2 = new RigidBodyVolume(big_ball2);
     auto* rbv_big_ball3 = new RigidBodyVolume(big_ball3);
     auto* rbv_big_ball4 = new RigidBodyVolume(big_ball4);
-    rbv_big_ball->add_behavior(new MovementBehavior(mass, 0.01, 2));
-    rbv_big_ball2->add_behavior(new MovementBehavior(mass, 0.01, 2));
-    rbv_big_ball3->add_behavior(new MovementBehavior(mass, 0.01, 2));
-    rbv_big_ball4->add_behavior(new MovementBehavior(mass, 0.01, 2));
+    rbv_big_ball->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
+    rbv_big_ball2->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
+    rbv_big_ball3->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
+    rbv_big_ball4->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
     m_physics_system->add_collider(rbv_big_ball);
     m_physics_system->add_collider(rbv_big_ball2);
     m_physics_system->add_collider(rbv_big_ball3);
@@ -80,7 +79,7 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     m_ball->set_debug_rendering(true, {1, 0, 1});
     auto *gravity_force = new GravityForce();
     auto *rbv_ball = new RigidBodyVolume(m_ball);
-    rbv_ball->add_behavior(new MovementBehavior(1, 0.01, 0.25));
+    rbv_ball->add_behavior(new MovementBehavior(true,true,1, 0.01, 0.25));
     rbv_ball->get_movement_behavior()->add_force(gravity_force);
     m_physics_system->add_collider(rbv_ball);
 
@@ -223,7 +222,7 @@ void BounceSphereBBScene::generate_balls(float height, float radius, float dispe
             ball->set_material(new MaterialColor(m_shaders, color, 50));
         }
         auto *rbv = new RigidBodyVolume(ball);
-        rbv->add_behavior(new MovementBehavior( 100, 0.01, 0.2));
+        rbv->add_behavior(new MovementBehavior( true,true,100, 0.01, 0.2));
         rbv->get_movement_behavior()->add_force(gravity_force);
         m_physics_system->add_collider(rbv);
     }

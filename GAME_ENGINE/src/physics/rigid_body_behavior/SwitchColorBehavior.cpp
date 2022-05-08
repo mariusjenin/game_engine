@@ -22,7 +22,7 @@ void SwitchColorBehavior::action(PhysicsSystem* ps,Collision collision,float del
 }
 
 void SwitchColorBehavior::update_physics(float delta_time) {
-
+    //Nothing
 }
 
 void SwitchColorBehavior::update_render(float delta_time, ODE* ode) {

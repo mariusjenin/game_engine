@@ -13,10 +13,17 @@ using namespace physics::rigid_body_behavior;
 
 void RungeKutta4ODE::update(RigidBodyVolume *rbv, float delta_time) {
     MovementBehavior* mov_behav = rbv->get_movement_behavior();
-    float damping = 0.99f;
-    glm::vec3 start_pos, start_vel, start_accel,start_ang_vel,start_ang_accel,start_rot;
-    glm::vec3 pos, pos1, pos2, pos3, pos4,rot, rot1, rot2, rot3, rot4, vel, vel1, vel2, vel3, vel4,ang_vel, ang_vel1, ang_vel2, ang_vel3, ang_vel4;
+    if(!mov_behav->is_translatable() && !mov_behav->is_rotatable()) return;
     Transform* trsf_node = rbv->get_node()->get_trsf();
+
+    float damping = 0.99f;
+    glm::vec3 start_pos, start_vel, start_accel;
+    glm::vec3 start_ang_vel,start_ang_accel,start_rot;
+    glm::vec3 pos, pos1, pos2, pos3, pos4;
+    glm::vec3 rot, rot1, rot2, rot3, rot4;
+    glm::vec3 vel, vel1, vel2, vel3, vel4;
+    glm::vec3 ang_vel, ang_vel1, ang_vel2, ang_vel3, ang_vel4;
+
     start_pos = trsf_node->get_translation();
     start_rot = trsf_node->get_rotation();
     start_vel = mov_behav->get_velocity();
@@ -49,12 +56,18 @@ void RungeKutta4ODE::update(RigidBodyVolume *rbv, float delta_time) {
     rot = (rot1 + rot2 * 2.f + rot3 * 2.f + rot4) / 6.f; //new delta rotation
     ang_vel = (ang_vel1 + ang_vel2 * 2.f + ang_vel3 * 2.f + ang_vel4) / 6.f; //new delta angular velocity
 
-    glm::vec3 velocity = damping * (start_vel + vel);
-    mov_behav->set_velocity(velocity);
-    mov_behav->set_angular_velocity(start_ang_vel + ang_vel);
-    trsf_node->set_translation(start_pos + pos);
-    rot = {glm::degrees(rot.x),glm::degrees(rot.y),glm::degrees(rot.z)};
-    trsf_node->set_rotation(start_rot + rot);
+    if(mov_behav->is_translatable()) {
+        glm::vec3 velocity = damping * (start_vel + vel);
+        mov_behav->set_velocity(velocity);
+        trsf_node->set_translation(start_pos + pos);
+    }
+
+    if(mov_behav->is_rotatable()) {
+        mov_behav->set_angular_velocity(start_ang_vel + ang_vel);
+        rot = {glm::degrees(rot.x),glm::degrees(rot.y),glm::degrees(rot.z)};
+        trsf_node->set_rotation(start_rot + rot);
+    }
+
     trsf_node->compute();
 }
 

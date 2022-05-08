@@ -17,6 +17,8 @@ namespace physics {
     namespace rigid_body_behavior {
         class MovementBehavior : public RigidBodyBehavior{
         private:
+            bool m_translatable;
+            bool m_rotatable;
             glm::vec3 m_velocity;
             glm::vec3 m_angular_velocity;
             glm::vec3 m_acceleration;
@@ -30,12 +32,24 @@ namespace physics {
             std::vector<Force*> m_list_forces;
         public:
 
-            explicit MovementBehavior(float mass = 1.0f, float friction = 0.6f, float cor = 0.5f);
+            explicit MovementBehavior(bool translatable = true,bool rotatable = true, float mass = 1.0f, float friction = 0.6f, float cor = 0.5f);
 
 
             void action(PhysicsSystem* ps,Collision collision,float delta_time) override;
             void update_physics(float delta_time) override;
             void update_render(float delta_time, ODE* ode) override;
+
+            /**
+             * Getter of whether or not the RigidBodyVolume is translatable
+             * @return is translatable
+             */
+            bool is_translatable() const;
+
+            /**
+             * Getter of whether or not the RigidBodyVolume is rotatable
+             * @return is rotatable
+             */
+            bool is_rotatable() const;
 
             /**
              * Add a force to the list of force to apply at each updates
@@ -60,12 +74,6 @@ namespace physics {
              * @param impulse
              */
             void add_linear_impulse(glm::vec3 &impulse);
-
-            /**
-             * set a linear impulse to the RigidBodyVolume
-             * @param impulse
-             */
-            void set_linear_impulse(glm::vec3 &impulse);
 
             /**
              * Add a rotational impulse to the RigidBodyVolume
