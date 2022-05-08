@@ -18,6 +18,7 @@ class Character {
         NodeGameSG* m_camera;
         float m_power;
         
+        PhysicsSystem* m_physics;
     public:
 
         //Class to compute character's sight with mouse motion.
@@ -26,7 +27,7 @@ class Character {
         //Scene root to cut childs from character.
         ElementSG* m_scene_root;
 
-        Character(Shaders*, ElementSG*);
+        Character(Shaders*, ElementSG*, PhysicsSystem*);
 
         NodeGameSG* get_character_node();
         RigidBodyVolume* get_body();
@@ -34,9 +35,11 @@ class Character {
         NodeGameSG* get_camera();
         void set_camera(NodeGameSG*);
 
-        glm::vec3 get_sight();
-        // void set_sight(glm::vec3);
+        PhysicsSystem* get_physics();
+        void set_physics(PhysicsSystem*);
 
+        glm::vec3 get_sight();
+        
         void grab_item(RigidBodyVolume*, float = 9.f);
         void accumulate_power();
         void throw_item();

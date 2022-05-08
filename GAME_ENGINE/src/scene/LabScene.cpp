@@ -66,7 +66,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
     m_cube->get_trsf()->set_translation({1,20,0});
     m_cube->get_trsf()->set_rotation({46,12,33});
-//    m_cube->get_trsf()->set_uniform_scale(1/5.f);
+   m_cube->get_trsf()->set_uniform_scale(3);
     m_cube->set_meshes({cube_mesh2});
     m_cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
     // m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
@@ -94,7 +94,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 //    m_physics_system.add_collider(rbv_cube2);
 
     //CHARACTER
-    m_character = new Character(m_shaders, m_root);
+    m_character = new Character(m_shaders, m_root, m_physics_system);
     m_cameras.push_back(m_character->get_camera());
 
 //    //CAMERA
@@ -164,41 +164,18 @@ RigidBodyVolume* LabScene::in_sight(){
 
 void LabScene::update(GLFWwindow *window, float delta_time){
 
-    //Get character front updated by mouse callback.
-    glm::vec3 front = m_character->m_mouse_view->get_front();
-
-    //Camera front can rotate along X axis.
-    glm::vec3 cam_view = glm::vec3(front[0], front[1], -1);
+    Scene::update(window, delta_time);
 
     //CAMERA
     NodeGameSG *camera_node = m_cameras[m_camera_index];
-    camera_node->update_view_mat();
-    camera_node->update_view_pos();
-
-    if(m_physics_system != nullptr){
-        m_physics_system->update_bodies(camera_node->get_position_in_world(),delta_time);
-    }
-
-
+    
     //Camera node rotates along y axis.
-    if(m_character->get_sight()[0] != front[0]){
-        float yaw = m_character->m_mouse_view->get_yaw();
-        float pitch = m_character->m_mouse_view->get_pitch();
-        camera_node->get_trsf()->set_rotation({pitch, -yaw, 0});
-        camera_node->get_trsf()->compute();
-    }
+    float yaw = m_character->m_mouse_view->get_yaw();
+    float pitch = m_character->m_mouse_view->get_pitch();
 
-    //resolve character sight (computed with mouse listener)
-    // m_character->set_sight(cam_view);
-
-    //resolve ITEM IN HAND
-    if(m_character->has_item() ){
-        m_character->update_item();
-    }
-
-    process_input(window, delta_time);
-    // glm::vec3 forces = m_items[0]->get_forces();
-    // std::cout<<forces[0]<<", "<<forces[1]<<", "<<forces[2]<<std::endl;
+    camera_node->get_trsf()->set_rotation({pitch, -yaw, 0});
+    camera_node->compute_trsf_scene_graph();
+        
 }
 
 void LabScene::process_input(GLFWwindow *window, float delta_time) {

@@ -119,7 +119,7 @@ namespace scene_graph {
         LightShader generate_light_struct();
 
         ///Update the view matrix in the shader
-        void update_view_mat(glm::vec3 fwd = CAMERA_INIT_FORWARD);
+        void update_view_mat();
 
         ///Update the view position in the shader
         void update_view_pos();

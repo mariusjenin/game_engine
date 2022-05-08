@@ -22,7 +22,6 @@ void Scene::update(GLFWwindow *window, float delta_time) {
     NodeGameSG *camera_node = m_cameras[m_camera_index];
     camera_node->update_view_mat();
     camera_node->update_view_pos();
-
     if(m_physics_system != nullptr){
         m_physics_system->update_bodies(camera_node->get_position_in_world(),delta_time);
     }

@@ -163,7 +163,7 @@ bool NodeGameSG::has_light() {
 }
 
 
-void NodeGameSG::update_view_mat(glm::vec3 forward) {
+void NodeGameSG::update_view_mat() {
     glm::mat4 mat = get_matrix_recursive_local();
     Transform trsf_tmp = Transform();
     trsf_tmp.set_matrix(mat);
@@ -209,7 +209,7 @@ LightShader NodeGameSG::generate_light_struct() {
 bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
     std::vector<BoundingBox *> bbs = {};
 
-    bool has_to_be_computed = force_compute || m_meshes_dirty || m_children_dirty || true;
+    bool has_to_be_computed = force_compute || m_meshes_dirty || m_children_dirty;
 
     for (auto child: m_children) {
         if (child->is_node_game()) {
@@ -219,9 +219,13 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
                 has_to_be_computed = node->refresh_bb_recursive(pos_camera) || has_to_be_computed;
             }
             //TODO mesh null getbb
-            bbs.push_back(node->get_bb());
+            // if(node->has_meshes())
+                bbs.push_back(node->get_bb());
         }
     }
+    
+
+    // std::cout<<"n° of BBS TO FUSION: "<<bbs.size()<<std::endl;
     if (has_to_be_computed) {
         for (auto mesh: m_meshes) {
 
@@ -231,6 +235,7 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
         }
         m_meshes_dirty = false;
         m_bb = BBFactory::generate_bb(m_bb_type);
+        
         m_bb->compute(bbs);
     }
 
@@ -240,7 +245,7 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
 bool NodeGameSG::refresh_bb(glm::vec3 pos_camera) {
     auto *dirty = new TransformDirty(false);
     glm::mat4 mat = get_matrix_recursive_local(dirty);
-    bool has_computed = refresh_bb_aux(pos_camera, dirty->has_dirty());
+    bool has_computed = refresh_bb_aux(pos_camera, dirty);
     if (has_computed) m_bb->apply_transform(mat);
     return has_computed;
 }
