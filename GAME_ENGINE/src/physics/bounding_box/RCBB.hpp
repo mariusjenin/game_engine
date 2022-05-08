@@ -46,14 +46,6 @@ namespace physics {
             std::vector<glm::vec3> get_intersections_lines(std::vector<Line> lines) const;
 
             /**
-             * Check if a point is in the RCBB
-             * @param point
-             * @return is_point_in
-             */
-            virtual bool is_point_in(glm::vec3 point) const = 0;
-
-
-            /**
              * Compute the depth of the penetration between 2 RCBB colliding
              * @param bb
              * @param axis
@@ -62,13 +54,30 @@ namespace physics {
              */
             float penetrate_depth(RCBB* bb,glm::vec3 axis, bool* out_should_flip);
 
+            /**
+             * Getter of the orientation of the RCBB
+             * @return orientation
+             */
+            virtual glm::mat3 get_orientation() const = 0;
+
+            /**
+             * Check if a point is in the RCBB
+             * @param point
+             * @return is point in
+             */
+            bool is_point_in(glm::vec3 point) const;
+
             AABB *to_AABB() const override;
 
             Interval get_interval(glm::vec3 axis) override;
 
-            virtual float is_intersected(Ray) = 0;
-
             glm::vec3 get_tensor() override;
+
+            Collision get_data_collision(RCBB *bb) override;
+
+            glm::vec3 closest_point(glm::vec3 pt) const override;
+
+            float is_intersected(Ray ray) override;
         };
     }
 }

@@ -23,31 +23,48 @@ Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
     BoundingBox *bb1 = m_node_game->get_bb();
     BoundingBox *bb2 = rbv.m_node_game->get_bb();
     switch (bb1->get_type()) {
-        case SPHEREBB_TYPE:
+        case SPHEREBB_TYPE: {
             switch (bb2->get_type()) {
                 case SPHEREBB_TYPE:
-                    collision = ((SphereBB &) *bb1).get_data_collision((SphereBB &) *bb2);
+                    collision = ((SphereBB *) bb1)->get_data_collision((SphereBB *) bb2);
                     break;
                 case OBB_TYPE:
-                    collision = ((SphereBB &) *bb1).get_data_collision((OBB &) *bb2);
+                case AABB_TYPE:
+                    collision = ((SphereBB *) bb1)->get_data_collision((RCBB *) bb2);
                     break;
                 default:
                     break;
             }
             break;
-        case OBB_TYPE:
+        }
+        case OBB_TYPE: {
             switch (bb2->get_type()) {
-                case OBB_TYPE:
-                    collision = ((OBB &) *bb1).get_data_collision((OBB &) *bb2);
-                    break;
                 case SPHEREBB_TYPE:
-
-                    collision = ((SphereBB &) *bb2).get_data_collision((OBB &) *bb1);
+                    collision = ((OBB *) bb1)->get_data_collision((SphereBB *) bb2);
+                    break;
+                case OBB_TYPE:
+                case AABB_TYPE:
+                    collision = ((RCBB *) bb1)->get_data_collision((RCBB *) bb2);
                     break;
                 default:
                     break;
             }
             break;
+        }
+        case AABB_TYPE: {
+            switch (bb2->get_type()) {
+                case SPHEREBB_TYPE:
+                    collision = ((AABB *) bb1)->get_data_collision((SphereBB *) bb2);
+                    break;
+                case OBB_TYPE:
+                case AABB_TYPE:
+                    collision = ((RCBB *) bb1)->get_data_collision((RCBB *) bb2);
+                    break;
+                default:
+                    break;
+            }
+            break;
+        }
         default:
             collision = Collision();
             break;

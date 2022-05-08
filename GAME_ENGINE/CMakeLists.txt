@@ -81,6 +81,7 @@ add_executable(
 		src/scene/SceneLand.cpp src/scene/SceneLand.hpp
 		src/scene/Scene.cpp src/scene/Scene.hpp
 		src/scene/BounceOBBScene.cpp src/scene/BounceOBBScene.hpp
+		src/scene/BounceAABBScene.cpp src/scene/BounceAABBScene.hpp
 		src/scene/BounceSphereBBScene.cpp src/scene/BounceSphereBBScene.hpp
 		src/scene/LabScene.cpp src/scene/LabScene.hpp
 #		MATERIAL

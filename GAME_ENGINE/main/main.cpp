@@ -13,6 +13,7 @@ GLFWwindow *window;
  #include <src/scene/SceneLand.hpp>
  #include <src/scene/SolarSystem.hpp>
 #include <src/scene/BounceOBBScene.hpp>
+#include <src/scene/BounceAABBScene.hpp>
 #include <src/scene/BounceSphereBBScene.hpp>
 #include <src/scene/LabScene.hpp>
 
@@ -86,8 +87,9 @@ int main() {
 
     //CREATE THE SCENE
 //    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl");
-    LabScene scene = LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
+//    LabScene scene = LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
 //     BounceOBBScene scene = BounceOBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
+     BounceAABBScene scene = BounceAABBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
 //     BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl");
 //    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl");
 
@@ -109,7 +111,6 @@ int main() {
     int update_physics_by_second = 60;
     float delta_time_physics_acc = 0.0f;
     float delta_time_physics_fixed = 1.0f / (float)fmin(frames_by_second,update_physics_by_second);
-
 
     do {
         current_time = (float)glfwGetTime();

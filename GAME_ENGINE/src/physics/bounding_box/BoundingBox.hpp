@@ -77,21 +77,17 @@ namespace physics {
 
             /**
              * Compute the Collision with a SphereBB
+             * @param bb
              * @return collision
              */
-            virtual Collision get_data_collision(const SphereBB &bb) = 0;
+            virtual Collision get_data_collision(SphereBB *bb) = 0;
 
             /**
-             * Compute the Collision with an AABB
+             * Compute the Collision with an RCBB
+             * @param bb
              * @return collision
              */
-            virtual Collision get_data_collision(const AABB &bb) = 0;
-
-            /**
-             * Compute the Collision with an OBB
-             * @return collision
-             */
-            virtual Collision get_data_collision(const OBB &bb) = 0;
+            virtual Collision get_data_collision(RCBB *bb) = 0;
 
             /**
              * Apply the Matrix to the BoundingBox

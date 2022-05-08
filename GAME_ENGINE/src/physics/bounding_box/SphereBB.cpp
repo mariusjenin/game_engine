@@ -53,11 +53,11 @@ AABB * SphereBB::to_AABB() const {
     return new AABB(m_position,{m_radius,m_radius,m_radius});
 }
 
-Collision SphereBB::get_data_collision(const SphereBB &bb) {
+Collision SphereBB::get_data_collision(SphereBB *bb) {
     Collision collision;
 
-    float sum_radius = this->get_radius() + bb.get_radius();
-    glm::vec3 dist = bb.get_position() - this->get_position();
+    float sum_radius = this->get_radius() + bb->get_radius();
+    glm::vec3 dist = bb->get_position() - this->get_position();
 
     if ((glm::length(dist) * glm::length(dist) - sum_radius * sum_radius) > 0.f || glm::length(dist) == 0.f)
         return collision;                  // no collision
@@ -76,14 +76,10 @@ Collision SphereBB::get_data_collision(const SphereBB &bb) {
     return collision;
 }
 
-Collision SphereBB::get_data_collision(const AABB &bb) {
-    return {}; //TODO
-}
-
-Collision SphereBB::get_data_collision(const OBB &bb) {
+Collision SphereBB::get_data_collision(RCBB *bb) {
     Collision collision;
 
-    glm::vec3 closest_pt = bb.closest_point(m_position);
+    glm::vec3 closest_pt = bb->closest_point(m_position);
     float dist_sq = glm::dot((closest_pt-m_position), (closest_pt-m_position));
     
     if(dist_sq > m_radius*m_radius)
@@ -91,12 +87,12 @@ Collision SphereBB::get_data_collision(const OBB &bb) {
     
     glm::vec3 normal;
     if(cmp_float(dist_sq, 0.f)){
-        float len2 = glm::dot(closest_pt-bb.get_position(), closest_pt-bb.get_position());
+        float len2 = glm::dot(closest_pt-bb->get_position(), closest_pt-bb->get_position());
         
         if(cmp_float(len2, 0.f))
             return collision;
 
-        normal = glm::normalize(closest_pt - bb.get_position());
+        normal = glm::normalize(closest_pt - bb->get_position());
     }else{
 
         normal = glm::normalize(m_position - closest_pt);

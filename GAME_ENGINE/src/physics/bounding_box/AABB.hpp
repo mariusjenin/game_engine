@@ -44,20 +44,11 @@ namespace physics {
 
             void apply_transform(glm::mat4 matrix) override;
 
-            bool is_point_in(glm::vec3 point) const override;
-
-            Collision get_data_collision(const SphereBB &bb) override;
-
-            Collision get_data_collision(const AABB &bb) override;
-
-            Collision get_data_collision(const OBB &bb) override;
+            Collision get_data_collision(SphereBB *bb) override;
 
             std::vector<glm::vec3> to_vertices() const override;
 
-            float is_intersected(Ray) override;
-
-            glm::vec3 closest_point(glm::vec3 pt) const override;
-
+            glm::mat3 get_orientation() const override;
         };
     }
 }

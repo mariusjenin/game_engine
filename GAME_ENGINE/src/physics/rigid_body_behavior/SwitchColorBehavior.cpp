@@ -17,8 +17,8 @@ SwitchColorBehavior::SwitchColorBehavior(Material* material) {
 void SwitchColorBehavior::action(PhysicsSystem* ps,Collision collision,float delta_time) {
     if(m_timer <=0){
         switch_color();
-        m_timer = 5;
     }
+    m_timer = 5;
 }
 
 void SwitchColorBehavior::update_physics(float delta_time) {

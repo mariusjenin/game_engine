@@ -3,7 +3,10 @@
 //
 
 #include "AABB.hpp"
+#include "OBB.hpp"
+#include "SphereBB.hpp"
 #include "src/physics/Collision.hpp"
+#include <src/utils/printer.hpp>
 
 using namespace physics;
 using namespace physics::bounding_box;
@@ -31,16 +34,8 @@ AABB* AABB::to_AABB() const {
     return new AABB(*this);
 }
 
-Collision AABB::get_data_collision(const SphereBB &bb) {
-    return {}; //TODO
-}
-
-Collision AABB::get_data_collision(const AABB &bb) {
-    return {}; //TODO
-}
-
-Collision AABB::get_data_collision(const OBB &bb) {
-    return {}; //TODO
+Collision AABB::get_data_collision(SphereBB *bb) {
+    return bb->get_data_collision(this);
 }
 
 void AABB::apply_transform(glm::mat4 matrix) {
@@ -54,20 +49,7 @@ void AABB::apply_transform(glm::mat4 matrix) {
     positions_with_size.emplace_back(glm::vec3(matrix * glm::vec4(m_position + glm::vec3(-m_size.x,-m_size.y,m_size.z),1)));
     positions_with_size.emplace_back(glm::vec3(matrix * glm::vec4(m_position + glm::vec3(-m_size.x,-m_size.y,-m_size.z),1)));
     RCBB::compute(positions_with_size);
-    m_position = glm::vec3(matrix * glm::vec4(m_position,1));
-}
-
-bool AABB::is_point_in(glm::vec3 point) const {
-    glm::vec3 distance = point - m_position;
-    for (int i = 0; i < 3; ++i) {
-        if (distance[i] > m_size[i]) {
-            return false;
-        }
-        if (distance[i] < -m_size[i]) {
-            return false;
-        }
-    }
-    return true;
+//    m_position = glm::vec3(matrix * glm::vec4(m_position,1));
 }
 
 std::vector<glm::vec3> AABB::to_vertices() const {
@@ -91,12 +73,8 @@ AABB::AABB(const AABB &aabb)  : RCBB(aabb) {
     m_type = AABB_TYPE;
 }
 
-float AABB::is_intersected(Ray){
-    return -1.f;
-}
-
-glm::vec3 AABB::closest_point(glm::vec3 pt) const {
-    return glm::vec3(0.f);
+glm::mat3 AABB::get_orientation() const {
+    return glm::mat3(1);
 };
 
 

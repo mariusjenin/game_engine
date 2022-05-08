@@ -6,6 +6,8 @@
 #include "AABB.hpp"
 #include <glm/glm.hpp>
 #include <iostream>
+#include <src/physics/Collision.hpp>
+#include <src/utils/printer.hpp>
 
 using namespace physics;
 using namespace physics::bounding_box;
@@ -119,4 +121,155 @@ glm::vec3 RCBB::get_tensor() {
     float y2 = size.y * size.y;
     float z2 = size.z * size.z;
     return {(y2 + z2) * fraction,(x2 + z2) * fraction,(x2 + y2) * fraction};
+}
+
+Collision RCBB::get_data_collision(RCBB *bb) {
+    Collision collision;
+    glm::mat3 bb1_orientation = get_orientation();
+    glm::mat3 bb2_orientation = bb->get_orientation();
+    std::vector<glm::vec3> test;
+    test.reserve(15);
+    test = {
+            bb1_orientation[0], bb1_orientation[1], bb1_orientation[2],
+            bb2_orientation[0], bb2_orientation[1], bb2_orientation[2]
+    };
+    for (int i = 0; i< 3; ++i) { // Fill out rest of axis
+        test[6 + i * 3 + 0] = glm::cross(test[i], test[0]);
+        test[6 + i * 3 + 1] = glm::cross(test[i], test[1]);
+        test[6 + i * 3 + 2] = glm::cross(test[i], test[2]);
+    }
+    glm::vec3* hit_normal = nullptr;
+    bool should_flip;
+    for (int i = 0; i< 15; ++i) {
+        if (glm::dot(test[i],test[i])< 0.001f) {
+            continue;
+        }
+        float depth = penetrate_depth((RCBB *) bb, test[i], &should_flip);
+        if (depth <= 0.0f) {
+            return collision;
+        }else if (depth < collision.depth) {
+            if (should_flip) {
+                test[i] = test[i] * -1.0f;
+            }
+            collision.depth = depth;
+            hit_normal = &test[i];
+        }
+    }
+    if (hit_normal == nullptr) {
+        return collision;
+    }
+
+    glm::vec3 axis = glm::normalize(*hit_normal);
+    std::vector<glm::vec3> c1 = get_intersections_lines(bb->to_edges());
+    std::vector<glm::vec3> c2 = bb->get_intersections_lines(to_edges());
+
+    collision.contacts.reserve(c1.size() + c2.size());
+    collision.contacts.insert(collision.contacts.end(), c1.begin(), c1.end());
+    collision.contacts.insert(collision.contacts.end(), c2.begin(), c2.end());
+
+    Interval interval = get_interval(axis);
+    float distance = (interval.max - interval.min)* 0.5f - collision.depth * 0.5f;
+    glm::vec3 point_on_plane = m_position + axis * distance;
+    size_t size_contacts_minus_one = collision.contacts.size() - 1;
+    for (int i = (int)size_contacts_minus_one; i>= 0; --i) {
+        glm::vec3 contact = collision.contacts[i];
+        collision.contacts[i] = contact + (axis * glm::dot(axis, point_on_plane - contact));
+    }
+    collision.colliding = true;
+    collision.normal = axis;
+    return collision;
+}
+
+float RCBB::is_intersected(Ray ray) {
+    glm::mat3 bb_orientation = get_orientation();
+    glm::vec3 sz = m_size;
+
+    glm::vec3 p = m_position - ray.origin;
+    glm::vec3 f = {
+            glm::dot(bb_orientation[0], ray.direction),
+            glm::dot(bb_orientation[1], ray.direction),
+            glm::dot(bb_orientation[2], ray.direction),
+    };
+
+    glm::vec3 e = {
+            glm::dot(bb_orientation[0], p),
+            glm::dot(bb_orientation[1], p),
+            glm::dot(bb_orientation[2], p),
+    };
+
+    float t[6] = {0};
+    for(int i = 0; i < 3; i ++){
+        if(cmp_float(f[i], 0)){
+            if(-e[i] - sz[i] > 0 || -e[i] + sz[i] < 0){
+                return -1.f;
+            }
+            f[i] = 0.000001f;
+        }
+
+        t[i * 2] = (e[i] + sz[i]) / f[i];
+        t[i * 2 + 1] = (e[i] - sz[i]) / f[i];
+    }
+
+    float tmin = fmaxf(
+            fmaxf(
+                    fminf(t[0], t[1]),
+                    fminf(t[2], t[3])
+            ),
+            fminf(t[4], t[5])
+    );
+
+    float tmax = fminf(
+            fminf(
+                    fmaxf(t[0], t[1]),
+                    fmaxf(t[2], t[3])
+            ),
+            fmaxf(t[4], t[5])
+    );
+
+    if(tmax < 0)
+        return -1.f;
+
+    if(tmin > tmax)
+        return -1.f;
+
+    if(tmin < 0.f)
+        return tmax;
+
+    return tmin;
+}
+
+glm::vec3 RCBB::closest_point(glm::vec3 pt) const {
+
+    glm::vec3 result = m_position;
+    glm::vec3 dir = pt - m_position;
+    glm::mat3 orientation = get_orientation();
+
+    for(int i = 0; i < 3; i ++){
+        float distance = glm::dot(dir, orientation[i]);
+        if (distance > m_size[i]) {
+            distance = m_size[i];
+        }
+        if (distance < -m_size[i]) {
+            distance = -m_size[i];
+        }
+        result += (orientation[i] * distance);
+    }
+
+    return result;
+}
+
+bool RCBB::is_point_in(glm::vec3 point) const {
+    glm::mat3 orientation = get_orientation();
+    glm::vec3 direction = point - m_position;
+    for (int i = 0; i < 3; ++i) {
+        float distance = glm::dot(direction, orientation[i]);
+        if (distance > m_size[i]) {
+            return false;
+        }
+        if (distance < -m_size[i]) {
+            return false;
+        }
+    }
+
+    return true;
 }

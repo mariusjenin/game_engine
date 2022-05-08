@@ -34,11 +34,9 @@ namespace physics {
 
             void apply_transform(glm::mat4 matrix) override;
 
-            Collision get_data_collision(const SphereBB &bb) override;
+            Collision get_data_collision(SphereBB *bb) override;
 
-            Collision get_data_collision(const AABB &bb) override;
-
-            Collision get_data_collision(const OBB &bb) override;
+            Collision get_data_collision(RCBB *bb) override;
 
             AABB * to_AABB() const override;
 
