@@ -49,7 +49,6 @@ void AABB::apply_transform(glm::mat4 matrix) {
     positions_with_size.emplace_back(glm::vec3(matrix * glm::vec4(m_position + glm::vec3(-m_size.x,-m_size.y,m_size.z),1)));
     positions_with_size.emplace_back(glm::vec3(matrix * glm::vec4(m_position + glm::vec3(-m_size.x,-m_size.y,-m_size.z),1)));
     RCBB::compute(positions_with_size);
-//    m_position = glm::vec3(matrix * glm::vec4(m_position,1));
 }
 
 std::vector<glm::vec3> AABB::to_vertices() const {

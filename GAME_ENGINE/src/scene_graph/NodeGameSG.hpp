@@ -48,16 +48,18 @@ namespace scene_graph {
          * Refresh the BoundingBox of the NodeGameSG without applying any Transform
          * @param pos_camera
          * @param force_compute
+         * @param change_dirty_flags
          * @return has refresh
          */
-        bool refresh_bb_aux(glm::vec3 pos_camera, bool force_compute = false);
+        bool refresh_bb_aux(glm::vec3 pos_camera, bool force_compute = false, bool change_dirty_flags = true);
 
         /**
          * Refresh the BoundingBox of the NodeGameSG applying only the NodeGameSG Transform
          * @param pos_camera
+         * @param change_dirty_flags
          * @return has refresh
          */
-        bool refresh_bb_recursive(glm::vec3 pos_camera);
+        bool refresh_bb_recursive(glm::vec3 pos_camera, bool change_dirty_flags = true);
     public:
         /**
          * Constructor of the NodeGameSG
@@ -91,9 +93,10 @@ namespace scene_graph {
         /**
          * Refresh the BoundingBox of the NodeGameSG
          * @param pos_camera
+         * @param change_dirty_flags
          * @return has refresh
          */
-        bool refresh_bb(glm::vec3 pos_camera);
+        bool refresh_bb(glm::vec3 pos_camera, bool change_dirty_flags = true);
 
         /**
          * Set a light at this NodeGameSG

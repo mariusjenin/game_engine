@@ -89,13 +89,14 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     m_ball2->get_trsf()->set_rotation({0, 90, 0});
     m_ball2->set_meshes({ball_mesh1});
     m_ball2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
+    m_ball2->set_debug_rendering(true,{1,1,1});
     
     //Ball3
     auto *m_ball3 = new NodeGameSG(m_shaders, m_ball2, SPHEREBB_TYPE);
     m_ball3->get_trsf()->set_translation({4, 2, 4});
     m_ball3->set_meshes({ball_mesh1});
     m_ball3->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
-    m_ball2->set_debug_rendering(true);
+    m_ball3->set_debug_rendering(true,{0,1,1});
 
     //CAMERA
     auto *camera_node = new NodeGameSG(m_shaders, m_root);

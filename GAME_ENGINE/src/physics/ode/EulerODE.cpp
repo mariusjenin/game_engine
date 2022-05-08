@@ -14,9 +14,9 @@ void EulerODE::update(RigidBodyVolume *rbv, float delta_time) {
     MovementBehavior* mov_behav = rbv->get_movement_behavior();
     if(!mov_behav->is_translatable() && !mov_behav->is_rotatable()) return;
     Transform* trsf_node = rbv->get_node()->get_trsf();
+    float damping = 0.99f;
 
     if(mov_behav->is_translatable()){
-        float damping = 0.99f;
         glm::vec3 acceleration =  mov_behav->get_forces() * mov_behav->inverse_mass();
         glm::vec3 velocity = mov_behav->get_velocity() + acceleration * delta_time;
         velocity *= damping;
@@ -27,6 +27,7 @@ void EulerODE::update(RigidBodyVolume *rbv, float delta_time) {
     if(mov_behav->is_rotatable()){
         glm::vec3 angular_acceleration = glm::vec3(mov_behav->inverse_tensor()*glm::vec4(mov_behav->get_torques(),0));
         glm::vec3 angular_velocity = mov_behav->get_angular_velocity() + angular_acceleration * delta_time;
+        angular_velocity *= damping;
         mov_behav->set_angular_velocity(angular_velocity);
         glm::vec3 rotation = angular_velocity * delta_time;
         rotation = {glm::degrees(rotation.x),glm::degrees(rotation.y),glm::degrees(rotation.z)};

@@ -29,7 +29,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 //    auto *plane_mesh2 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
 
     //Light
-    auto *light_source = new DirectionLight({0.1, 0.1, 0.1}, {1., 1., 1.}, {0.8, 0.8, 0.8}, {-0.2, -1., -0.5});
+    auto *light_source = new DirectionLight({0.2, 0.2, 0.2}, {1., 1., 1.}, {0.8, 0.8, 0.8}, {-0.2, -1., -0.5});
     auto *light_node = new NodeGameSG(m_shaders, m_root);
     light_node->set_light(light_source);
     m_lights.push_back(light_node);
@@ -45,7 +45,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     floor->set_material(lab_mat_color);
     floor->set_debug_rendering(true, {0.25, 0.65, 0.8});
     auto * floor_rbv = new RigidBodyVolume(floor);
-    floor_rbv->add_behavior(new MovementBehavior(false,false,0));
+    floor_rbv->add_behavior(new MovementBehavior(false,false,0,1,1));
     m_physics_system->add_collider(floor_rbv);
 
     //walls

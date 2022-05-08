@@ -57,13 +57,12 @@ void RungeKutta4ODE::update(RigidBodyVolume *rbv, float delta_time) {
     ang_vel = (ang_vel1 + ang_vel2 * 2.f + ang_vel3 * 2.f + ang_vel4) / 6.f; //new delta angular velocity
 
     if(mov_behav->is_translatable()) {
-        glm::vec3 velocity = damping * (start_vel + vel);
-        mov_behav->set_velocity(velocity);
+        mov_behav->set_velocity(damping * (start_vel + vel));
         trsf_node->set_translation(start_pos + pos);
     }
 
     if(mov_behav->is_rotatable()) {
-        mov_behav->set_angular_velocity(start_ang_vel + ang_vel);
+        mov_behav->set_angular_velocity(damping* (start_ang_vel + ang_vel));
         rot = {glm::degrees(rot.x),glm::degrees(rot.y),glm::degrees(rot.z)};
         trsf_node->set_rotation(start_rot + rot);
     }

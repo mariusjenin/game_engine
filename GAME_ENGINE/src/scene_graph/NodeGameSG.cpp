@@ -31,7 +31,8 @@ void NodeGameSG::draw(glm::vec3 pos_camera) {
             }
         }
         if (m_debug_rendering) {
-            refresh_bb(pos_camera);
+            refresh_bb(pos_camera, false);
+
             glUniform1i(
                     m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME),
                     true);
@@ -206,7 +207,7 @@ LightShader NodeGameSG::generate_light_struct() {
     return light_struct;
 }
 
-bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
+bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute, bool change_dirty_flags) {
     std::vector<BoundingBox *> bbs = {};
 
     bool has_to_be_computed = force_compute || m_meshes_dirty || m_children_dirty;
@@ -216,16 +217,12 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
 
             auto *node = (NodeGameSG *) child;
             if (node->has_children() || node->has_meshes()) {
-                has_to_be_computed = node->refresh_bb_recursive(pos_camera) || has_to_be_computed;
+                has_to_be_computed = node->refresh_bb_recursive(pos_camera, change_dirty_flags) || has_to_be_computed;
             }
-            //TODO mesh null getbb
-            // if(node->has_meshes())
-                bbs.push_back(node->get_bb());
+            bbs.push_back(node->get_bb());
         }
     }
-    
 
-    // std::cout<<"n° of BBS TO FUSION: "<<bbs.size()<<std::endl;
     if (has_to_be_computed) {
         for (auto mesh: m_meshes) {
 
@@ -233,28 +230,29 @@ bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
             bbs.push_back(mesh->get_bb());
 
         }
-        m_meshes_dirty = false;
+        m_meshes_dirty = !change_dirty_flags;
+
         m_bb = BBFactory::generate_bb(m_bb_type);
-        
+
         m_bb->compute(bbs);
     }
 
     return has_to_be_computed;
 }
 
-bool NodeGameSG::refresh_bb(glm::vec3 pos_camera) {
+bool NodeGameSG::refresh_bb(glm::vec3 pos_camera, bool change_dirty_flags) {
     auto *dirty = new TransformDirty(false);
     glm::mat4 mat = get_matrix_recursive_local(dirty);
-    bool has_computed = refresh_bb_aux(pos_camera, dirty);
+    bool has_computed = refresh_bb_aux(pos_camera, dirty, change_dirty_flags);
     if (has_computed) m_bb->apply_transform(mat);
     return has_computed;
 }
 
-bool NodeGameSG::refresh_bb_recursive(glm::vec3 pos_camera) {
+bool NodeGameSG::refresh_bb_recursive(glm::vec3 pos_camera, bool change_dirty_flags) {
     auto *dirty = new TransformDirty(false);
     dirty->logic_or(*m_trsf->is_dirty());
     dirty->logic_or(*m_local_trsf->is_dirty());
-    bool has_computed = refresh_bb_aux(pos_camera, dirty->has_dirty());
+    bool has_computed = refresh_bb_aux(pos_camera, dirty->has_dirty(), change_dirty_flags);
     if (has_computed) m_bb->apply_transform(m_trsf->get_matrix() * m_local_trsf->get_matrix());
     return has_computed;
 }
