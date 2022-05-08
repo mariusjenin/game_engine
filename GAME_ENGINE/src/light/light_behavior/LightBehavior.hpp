@@ -14,7 +14,7 @@ namespace light {
         class LightBehavior {
         public:
             /**
-             * Apply the behavior on the LightShader to update its data's
+             * Apply the behavior on the LightShader to resolve its data's
              * @param light_shader
              */
             virtual void apply_to(LightShader *light_shader) = 0;

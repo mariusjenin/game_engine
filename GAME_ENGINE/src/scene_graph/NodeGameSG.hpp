@@ -138,6 +138,12 @@ namespace scene_graph {
         void set_material(Material *material);
 
         /**
+         * Getter of the material
+         * @return material
+         */
+        Material* get_material() const;
+
+        /**
          * Getter of the \link mesh::Mesh Mesh\endlink list of the NodeGameSG
          * @return meshes
          */
@@ -157,7 +163,7 @@ namespace scene_graph {
         glm::vec3 get_center(glm::vec3 pos_camera);
 
         /**
-         * Setter of the flag see_both_face (update both face of the \link mesh::Mesh Meshes\endlink))
+         * Setter of the flag see_both_face (resolve both face of the \link mesh::Mesh Meshes\endlink))
          * @param see_both_face
          */
         void set_see_both_face(bool see_both_face);

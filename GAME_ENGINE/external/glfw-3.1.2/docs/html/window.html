@@ -309,7 +309,7 @@ Window closing and close flag</h2>
 <p>The current state of the close flag is returned by <a class="el" href="group__window.html#ga24e02fbfefbb81fc45320989f8140ab5">glfwWindowShouldClose</a> and can be set or cleared directly with <a class="el" href="group__window.html#ga49c449dde2a6f87d996f4daaa09d6708">glfwSetWindowShouldClose</a>. A common pattern is to use the close flag as a main loop condition.</p>
 <div class="fragment"><div class="line"><span class="keywordflow">while</span> (!<a class="code" href="group__window.html#ga24e02fbfefbb81fc45320989f8140ab5">glfwWindowShouldClose</a>(window))</div>
 <div class="line">{</div>
-<div class="line">    update(window);</div>
+<div class="line">    resolve(window);</div>
 <div class="line"></div>
 <div class="line">    <a class="code" href="group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14">glfwSwapBuffers</a>(window);</div>
 <div class="line">    <a class="code" href="group__window.html#ga37bd57223967b4211d60ca1a0bf3c832">glfwPollEvents</a>();</div>
@@ -346,7 +346,7 @@ Framebuffer size</h2>
 <p>While the size of a window is measured in screen coordinates, OpenGL works with pixels. The size you pass into <code>glViewport</code>, for example, should be in pixels. On some machines screen coordinates and pixels are the same, but on others they will not be. There is a second set of functions to retrieve the size, in pixels, of the framebuffer of a window.</p>
 <p>If you wish to be notified when the framebuffer of a window is resized, whether by the user or the system, set a size callback.</p>
 <div class="fragment"><div class="line"><a class="code" href="group__window.html#ga3203461a5303bf289f2e05f854b2f7cf">glfwSetFramebufferSizeCallback</a>(window, framebuffer_size_callback);</div>
-</div><!-- fragment --><p>The callback function receives the new size of the framebuffer when it is resized, which can for example be used to update the OpenGL viewport.</p>
+</div><!-- fragment --><p>The callback function receives the new size of the framebuffer when it is resized, which can for example be used to resolve the OpenGL viewport.</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> framebuffer_size_callback(<a class="code" href="group__window.html#ga3c96d80d363e67d13a41b5d1821f3242">GLFWwindow</a>* window, <span class="keywordtype">int</span> width, <span class="keywordtype">int</span> height)</div>
 <div class="line">{</div>
 <div class="line">    glViewport(0, 0, width, height);</div>
@@ -494,7 +494,7 @@ Framebuffer related attributes</h3>
 <p>When calling <code>glGetFramebufferAttachmentParameteriv</code>, the red, green, blue and alpha sizes can be queried from the <code>GL_BACK_LEFT</code>, while the depth and stencil sizes can be queried from the <code>GL_DEPTH</code> and <code>GL_STENCIL</code> attachments, respectively.</p>
 <h1><a class="anchor" id="buffer_swap"></a>
 Buffer swapping</h1>
-<p>GLFW windows are by default double buffered. That means that you have two rendering buffers; a front buffer and a back buffer. The front buffer is the one being displayed and the back buffer the one you update to.</p>
+<p>GLFW windows are by default double buffered. That means that you have two rendering buffers; a front buffer and a back buffer. The front buffer is the one being displayed and the back buffer the one you resolve to.</p>
 <p>When the entire frame has been rendered, it is time to swap the back and the front buffers in order to display what has been rendered and begin rendering a new frame. This is done with <a class="el" href="group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14">glfwSwapBuffers</a>.</p>
 <div class="fragment"><div class="line"><a class="code" href="group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14">glfwSwapBuffers</a>(window);</div>
 </div><!-- fragment --><p>Sometimes it can be useful to select when the buffer swap will occur. With the function <a class="el" href="group__context.html#ga6d4e0cdf151b5e579bd67f13202994ed">glfwSwapInterval</a> it is possible to select the minimum number of monitor refreshes the driver wait should from the time <a class="el" href="group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14">glfwSwapBuffers</a> was called before swapping the buffers:</p>
@@ -504,7 +504,7 @@ Buffer swapping</h1>
 </div></div><!-- contents -->
 <address class="footer">
 <p>
-Last update on Mon Oct 12 2015 for GLFW 3.1.2
+Last resolve on Mon Oct 12 2015 for GLFW 3.1.2
 </p>
 </address>
 </body>

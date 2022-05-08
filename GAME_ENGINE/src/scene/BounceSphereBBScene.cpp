@@ -4,6 +4,7 @@
 
 #include <src/physics/force/GravityForce.hpp>
 #include "BounceSphereBBScene.hpp"
+#include <src/physics/rigid_body_behavior/MovementBehavior.hpp>
 
 using namespace scene;
 
@@ -11,7 +12,7 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
         : Scene(vertex_shader_path, fragment_shader_path) {
 
     //Physics System
-    m_physics_system = new PhysicsSystem(m_root,0.02f, 0.005f, 10, RK4_TYPE);
+    m_physics_system = new PhysicsSystem(m_root,0.02f, 0.005f, 10, EULER_TYPE);
 
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
@@ -49,11 +50,18 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     big_ball4->get_trsf()->set_translation({gap, 0, gap});
     big_ball4->set_meshes({ball_mesh2});
     big_ball4->set_material(big_ball_mat_color);
-    float mass = 0;
-    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball, mass, 0.01, 2));
-    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball2, mass, 0.01, 2));
-    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball3, mass, 0.01, 2));
-    m_physics_system->add_rigid_body(new RigidBodyVolume(big_ball4, mass, 0.01, 2));
+    auto* rbv_big_ball = new RigidBodyVolume(big_ball);
+    auto* rbv_big_ball2 = new RigidBodyVolume(big_ball2);
+    auto* rbv_big_ball3 = new RigidBodyVolume(big_ball3);
+    auto* rbv_big_ball4 = new RigidBodyVolume(big_ball4);
+    rbv_big_ball->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
+    rbv_big_ball2->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
+    rbv_big_ball3->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
+    rbv_big_ball4->add_behavior(new MovementBehavior(false,false,0, 0.01, 2));
+    m_physics_system->add_collider(rbv_big_ball);
+    m_physics_system->add_collider(rbv_big_ball2);
+    m_physics_system->add_collider(rbv_big_ball3);
+    m_physics_system->add_collider(rbv_big_ball4);
 //    big_ball->set_debug_rendering(true,{1,0,0});
 //    big_ball2->set_debug_rendering(true,{0,1,0});
 //    big_ball3->set_debug_rendering(true,{0,0,1});
@@ -70,9 +78,10 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
     m_ball->set_debug_rendering(true, {1, 0, 1});
     auto *gravity_force = new GravityForce();
-    auto *rbv_ball = new RigidBodyVolume(m_ball, 1, 0.01, 0.25);
-    rbv_ball->add_force(gravity_force);
-    m_physics_system->add_rigid_body(rbv_ball);
+    auto *rbv_ball = new RigidBodyVolume(m_ball);
+    rbv_ball->add_behavior(new MovementBehavior(true,true,1, 0.01, 0.25));
+    rbv_ball->get_movement_behavior()->add_force(gravity_force);
+    m_physics_system->add_collider(rbv_ball);
 
     //Ball2
     auto *m_ball2 = new NodeGameSG(m_shaders, m_ball, SPHEREBB_TYPE);
@@ -86,6 +95,7 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     m_ball3->get_trsf()->set_translation({4, 2, 4});
     m_ball3->set_meshes({ball_mesh1});
     m_ball3->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
+    m_ball2->set_debug_rendering(true);
 
     //CAMERA
     auto *camera_node = new NodeGameSG(m_shaders, m_root);
@@ -180,7 +190,7 @@ void BounceSphereBBScene::process_input(GLFWwindow *window, float delta_time) {
         translate_ball -= glm::vec3(0.f, 0.f, ball_translate_speed);
         impulse_ball = true;
     }
-    if (impulse_ball)m_ball->get_rigid_body()->add_linear_impulse(translate_ball);
+    if (impulse_ball)m_ball->get_rigid_body()->get_movement_behavior()->add_linear_impulse(translate_ball);
 //    ball_trsf->set_translation(ball_trsf->get_translation() + translate_ball);
 //    if (!ball_trsf->is_up_to_date()) ball_trsf->compute();
 }
@@ -191,7 +201,7 @@ void BounceSphereBBScene::generate_balls(float height, float radius, float dispe
     for (int i = 0; i < balls_size; i++) {
         if (m_physics_system != nullptr) {
             if (children[i]->is_node_game()) {
-                m_physics_system->remove_rigid_body_with_node(((NodeGameSG *) children[i]));
+                m_physics_system->remove_collider_with_node(((NodeGameSG *) children[i]));
             }
         }
     }
@@ -219,8 +229,9 @@ void BounceSphereBBScene::generate_balls(float height, float radius, float dispe
                                (float) rand() / (float) RAND_MAX,};
             ball->set_material(new MaterialColor(m_shaders, color, 50));
         }
-        auto *rbv = new RigidBodyVolume(ball, 100, 0.01, 0.2);
-        rbv->add_force(gravity_force);
-        m_physics_system->add_rigid_body(rbv);
+        auto *rbv = new RigidBodyVolume(ball);
+        rbv->add_behavior(new MovementBehavior( true,true,100, 0.01, 0.2));
+        rbv->get_movement_behavior()->add_force(gravity_force);
+        m_physics_system->add_collider(rbv);
     }
 }

@@ -109,6 +109,9 @@ add_executable(
 		src/physics/PhysicsSystem.cpp src/physics/PhysicsSystem.hpp
 		src/physics/force/Force.cpp src/physics/force/Force.hpp
 		src/physics/force/GravityForce.cpp src/physics/force/GravityForce.hpp
+		src/physics/rigid_body_behavior/RigidBodyBehavior.cpp src/physics/rigid_body_behavior/RigidBodyBehavior.hpp
+		src/physics/rigid_body_behavior/MovementBehavior.cpp src/physics/rigid_body_behavior/MovementBehavior.hpp
+		src/physics/rigid_body_behavior/SwitchColorBehavior.cpp src/physics/rigid_body_behavior/SwitchColorBehavior.hpp
 #		CHARACTER
 		src/Character.cpp src/Character.hpp
 		src/MouseView.cpp src/MouseView.hpp

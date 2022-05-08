@@ -30,7 +30,8 @@ void NodeGameSG::draw(glm::vec3 pos_camera) {
                 VAODataManager::draw(mesh->get_ebo_triangle_indices_id(), (long) mesh->get_triangle_indices().size());
             }
         }
-        if (m_debug_rendering && m_bb != nullptr) {
+        if (m_debug_rendering) {
+            refresh_bb(pos_camera);
             glUniform1i(
                     m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::DEBUG_RENDERING_LOC_NAME),
                     true);
@@ -208,8 +209,7 @@ LightShader NodeGameSG::generate_light_struct() {
 bool NodeGameSG::refresh_bb_aux(glm::vec3 pos_camera, bool force_compute) {
     std::vector<BoundingBox *> bbs = {};
 
-    // bool has_to_be_computed = force_compute || m_meshes_dirty || m_children_dirty;
-    bool has_to_be_computed = true;
+    bool has_to_be_computed = force_compute || m_meshes_dirty || m_children_dirty;
 
     for (auto child: m_children) {
         if (child->is_node_game()) {
@@ -282,4 +282,8 @@ void NodeGameSG::set_debug_rendering(bool dr, glm::vec3 color_rendering) {
 
 bool NodeGameSG::has_meshes() const {
     return !m_meshes.empty();
+}
+
+Material *NodeGameSG::get_material() const {
+    return m_material;
 }

@@ -6,15 +6,18 @@
 #include "Collision.hpp"
 #include "src/physics/ode/ODE.hpp"
 #include "src/scene_graph/NodeGameSG.hpp"
-
+namespace scene_graph{
+    class ElementSG;
+    class NodeGameSG;
+}
+using namespace scene_graph;
 namespace physics{
 
     using namespace ode;
     /// Manage a whole physic system with RigidBody
     class PhysicsSystem {
     private:
-        std::vector<RigidBodyVolume *> m_rigid_bodies;
-        std::vector<Collision> m_collisions;
+        std::vector<RigidBodyVolume *> m_colliders;
         ElementSG* m_root_physics;
         float m_linear_projection_percent;
         float m_penetration_slack;
@@ -33,13 +36,13 @@ namespace physics{
          * Add a RigidBodyVolume to the PhysicsSystem
          * @param rbv
          */
-        void add_rigid_body(RigidBodyVolume* rbv);
+        void add_collider(RigidBodyVolume* rbv);
 
         /**
          * Remove a RigidBodyVolume to the PhysicsSystem
          * @param rbv
          */
-        void remove_rigid_body(RigidBodyVolume* rbv);
+        void remove_collider(RigidBodyVolume* rbv);
 
         /**
          * Clear all the RigidBodyVolume
@@ -50,7 +53,7 @@ namespace physics{
          * Clear the RigidBodyVolume with the NodeGameSG given
          * @param node
          */
-        void remove_rigid_body_with_node(NodeGameSG* node);
+        void remove_collider_with_node(NodeGameSG* node);
 
         /**
          * Update the Collisions in the PhysicsSystem
@@ -71,6 +74,24 @@ namespace physics{
          * @param pos_camera
          */
         void refresh_bodies_bb(glm::vec3 pos_camera);
+
+        /**
+         * Getter of the impulse iteration
+         * @return impulse iteration
+         */
+        int get_impulse_iteration() const;
+
+        /**
+         * Getter of the penetration slack
+         * @return penetration slack
+         */
+        float get_penetration_slack() const;
+
+        /**
+         * Getter of the linear projection percent
+         * @return linear projection percent
+         */
+        float get_linear_projection_percent() const;
     };
 }
 

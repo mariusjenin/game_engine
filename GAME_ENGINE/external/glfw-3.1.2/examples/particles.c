@@ -428,7 +428,7 @@ static void draw_particles(GLFWwindow* window, double t, float dt)
     quad_lower_right.y = (PARTICLE_SIZE / 2) * (mat[4] - mat[5]);
     quad_lower_right.z = (PARTICLE_SIZE / 2) * (mat[8] - mat[9]);
 
-    // Don't update z-buffer, since all particles are transparent!
+    // Don't resolve z-buffer, since all particles are transparent!
     glDepthMask(GL_FALSE);
 
     glEnable(GL_BLEND);

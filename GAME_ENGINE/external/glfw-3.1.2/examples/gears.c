@@ -199,7 +199,7 @@ static void draw(void)
 }
 
 
-/* update animation parameters */
+/* resolve animation parameters */
 static void animate(void)
 {
   angle = 100.f * (float) glfwGetTime();

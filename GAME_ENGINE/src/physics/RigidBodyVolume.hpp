@@ -12,16 +12,19 @@
 namespace scene_graph {
     class NodeGameSG;
 }
-namespace force {
-}
-
 using namespace scene_graph;
 
 namespace physics {
+    class PhysicsSystem;
     namespace force {
         class Force;
     }
+    namespace rigid_body_behavior {
+        class MovementBehavior;
+        class RigidBodyBehavior;
+    }
     using namespace force;
+    using namespace rigid_body_behavior;
     struct Collision;
     using namespace ode;
 
@@ -29,17 +32,10 @@ namespace physics {
     class RigidBodyVolume {
     private:
         NodeGameSG *m_node_game;
-        glm::vec3 m_velocity;
-        glm::vec3 m_angular_velocity;
-        glm::vec3 m_acceleration;
-        glm::vec3 m_angular_acceleration;
-        glm::vec3 m_forces;
-        glm::vec3 m_torques;
-        float m_mass{};
-        /// Coefficient of restitution
-        float m_cor{};
-        float m_friction{};
-        std::vector<Force*> m_list_forces;
+
+        std::vector<RigidBodyBehavior*> m_behaviors{};
+        MovementBehavior* m_movement_behavior{};
+
     public:
         /**
          * Constructor of a RigidBodyVolume with a NodeGameSG and configurable coefficients
@@ -48,73 +44,12 @@ namespace physics {
          * @param friction
          * @param cor
          */
-        RigidBodyVolume(NodeGameSG *ng, float mass = 1.0f, float friction = 0.6f, float cor = 0.5f, bool character=false);
+        RigidBodyVolume(NodeGameSG *ng, bool character=false);
 
         /**
          * Destructor of a RigidBodyVolume
          */
         ~RigidBodyVolume();
-
-        /**
-         * Track if rigidBody is a character. (useful to remove angular velocity)
-         */
-        bool is_character;
-    
-        /**
-         * Add a force to the list of force to apply at each updates
-         * @param f
-         */
-        void add_force(Force* f);
-
-        /**
-         * Update the RigidBodyVolume according to the delta time
-         * @param delta_time
-         * @param ode
-         */
-        void update(float delta_time,ODE* ode);
-
-        /**
-         * Apply the force on the RigidBodyVolume
-         */
-        void apply_forces();
-
-        /**
-         * Getter of the inverse of the mass
-         * @return inverse mass
-         */
-        float inverse_mass() const;
-
-        /**
-         * Getter of the inverse of the tensor
-         * @return inverse tensor
-         */
-        glm::mat4 inverse_tensor() const;
-
-        /**
-         * Add a linear impulse to the RigidBodyVolume
-         * @param impulse
-         */
-        void add_linear_impulse(glm::vec3 &impulse);
-        
-        /**
-         * set a linear impulse to the RigidBodyVolume
-         * @param impulse
-         */
-        void set_linear_impulse(glm::vec3 &impulse);
-
-        /**
-         * Add a rotational impulse to the RigidBodyVolume
-         * @param point
-         * @param impulse
-         */
-        void add_rotational_impulse(glm::vec3 &point, glm::vec3 &impulse);
-
-        /**
-         * Apply an impulse to the RigidBodyVolume
-         * @param rbv
-         * @param collision
-         */
-        void apply_impulse(RigidBodyVolume &rbv, const Collision &collision, int index_contact);
        
         /**
          * Compute if there is a Collision between this RigidBodyVolume and another
@@ -130,80 +65,42 @@ namespace physics {
         NodeGameSG *get_node();
 
         /**
-         * Getter of the mass
-         * @return mass
+         * Add a RigidBodyBehavior to the RigidBodyVolume
+         * @param behavior
          */
-        float get_mass() const;
-        
-        /**
-         * Setter of the mass
-         * @return mass
-         */
-        void set_mass(float);
+        void add_behavior(RigidBodyBehavior* behavior);
 
         /**
-         * Setter of the forces
-         * @param forces
+         * Getter of whether or not the node has a MovementBehavior
+         * @return has movement behavior
          */
-        void set_forces(const glm::vec3 &forces);
-
-        void clear_forces();
+        bool has_movement_behavior();
 
         /**
-         * Getter of the forces
-         * @return forces
+         * Getter of the MovementBehavior
+         * @return movement behavior
          */
-        glm::vec3 get_forces() const;
+        MovementBehavior* get_movement_behavior();
 
         /**
-         * Getter of the torques
-         * @return torques
+         * Call the action function of each RigidBodyBehavior of the RigidBodyVolume
+         * @param ps
+         * @param delta_time
          */
-        glm::vec3 get_torques() const;
+        void action(PhysicsSystem* ps,const Collision& collision,float delta_time);
 
         /**
-         * Getter of the velocity
-         * @return velocity
+         * Call the update_physics function of each RigidBodyBehavior of the RigidBodyVolume
+         * @param delta_time
          */
-        glm::vec3 get_velocity() const;
-
+        void update_physics(float delta_time);
 
         /**
-         * Getter of the velocity
-         * @return velocity
+         * Call the update_render function of each RigidBodyBehavior of the RigidBodyVolume
+         * @param delta_time
+         * @param ode
          */
-        glm::vec3 get_acceleration() const;
-
-
-        /**
-         * Setter of the velocity
-         * @param velocity
-         */
-        void set_velocity(const glm::vec3 &velocity);
-
-        /**
-         * Setter of the angular velocity
-         * @param angular_velocity
-         */
-        void set_angular_velocity(const glm::vec3 &angular_velocity);
-
-        /**
-         * Setter of the acceleration
-         * @param acceleration
-         */
-        void set_acceleration(const glm::vec3 &acceleration);
-
-        /**
-         * Getter of the angular velocity
-         * @return angular velocity
-         */
-        glm::vec3 get_angular_velocity() const;
-
-        /**
-         * Getter of the angular acceleration
-         * @return angular acceleration
-         */
-        glm::vec3 get_angular_acceleration() const;
+        void update_render(float delta_time, ODE* ode);
     };
 }
 #endif //GAME_ENGINE_RIGIDBODYVOLUME_H

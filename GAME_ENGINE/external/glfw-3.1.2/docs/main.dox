@@ -13,7 +13,7 @@ See @ref news_31 for release highlights or the
 
 @ref quick is a guide for those new to GLFW.  It takes you through how to write
 a small but complete program.  For people coming from GLFW 2, the @ref moving
-guide explains what has changed and how to update existing code to use the new
+guide explains what has changed and how to resolve existing code to use the new
 API.
 
 There are guides for each of the various areas of the API.

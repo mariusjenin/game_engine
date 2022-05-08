@@ -22,13 +22,21 @@ namespace physics{
 
         ///Ordinary Differential Equation (Abstract) 
         class ODE {
+        protected:
+            ODE_TYPE m_type{};
         public:
             /**
              * Update position and rotation of a RigidBodyVolume with an ODE equation
              * @param rbv
              * @param delta_time
              */
-            virtual void update(RigidBodyVolume *rbv,float delta_time, bool use_angular = true) = 0;
+            virtual void update(RigidBodyVolume *rbv, float delta_time) = 0;
+
+            /**
+             * Getter of the type of the ODE
+             * @return type
+             */
+            ODE_TYPE get_type() const;
         };
     }
 }

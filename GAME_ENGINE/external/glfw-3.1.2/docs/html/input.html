@@ -124,7 +124,7 @@ Event processing</h1>
 <p>There are two functions for processing pending events. <a class="el" href="group__window.html#ga37bd57223967b4211d60ca1a0bf3c832">glfwPollEvents</a>, processes only those events that have already been received and then returns immediately.</p>
 <div class="fragment"><div class="line"><a class="code" href="group__window.html#ga37bd57223967b4211d60ca1a0bf3c832">glfwPollEvents</a>();</div>
 </div><!-- fragment --><p>This is the best choice when rendering continually, like most games do.</p>
-<p>If you only need to update the contents of the window when you receive new input, <a class="el" href="group__window.html#ga554e37d781f0a997656c26b2c56c835e">glfwWaitEvents</a> is a better choice.</p>
+<p>If you only need to resolve the contents of the window when you receive new input, <a class="el" href="group__window.html#ga554e37d781f0a997656c26b2c56c835e">glfwWaitEvents</a> is a better choice.</p>
 <div class="fragment"><div class="line"><a class="code" href="group__window.html#ga554e37d781f0a997656c26b2c56c835e">glfwWaitEvents</a>();</div>
 </div><!-- fragment --><p>It puts the thread to sleep until at least one event has been received and then processes all received events. This saves a great deal of CPU cycles and is useful for, for example, editing tools. There must be at least one GLFW window for this function to sleep.</p>
 <p>If the main thread is sleeping in <a class="el" href="group__window.html#ga554e37d781f0a997656c26b2c56c835e">glfwWaitEvents</a>, you can wake it from another thread by posting an empty event to the event queue with <a class="el" href="group__window.html#gab5997a25187e9fd5c6f2ecbbc8dfd7e9">glfwPostEmptyEvent</a>.</p>
@@ -336,7 +336,7 @@ Path drop input</h1>
 </div></div><!-- contents -->
 <address class="footer">
 <p>
-Last update on Mon Oct 12 2015 for GLFW 3.1.2
+Last resolve on Mon Oct 12 2015 for GLFW 3.1.2
 </p>
 </address>
 </body>

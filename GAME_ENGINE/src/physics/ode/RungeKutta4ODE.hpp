@@ -12,7 +12,8 @@ namespace physics {
         ///Runge Kutta Ordinary Differential Equation
         class RungeKutta4ODE : public ODE {
         public:
-            void update(RigidBodyVolume *rbv,float delta_time, bool use_angular = true) override;
+            RungeKutta4ODE();
+            void update(RigidBodyVolume *rbv, float delta_time) override;
         };
     }
 }

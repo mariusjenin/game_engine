@@ -45,7 +45,7 @@ glfwPollEvents();
 
 This is the best choice when rendering continually, like most games do.
 
-If you only need to update the contents of the window when you receive new
+If you only need to resolve the contents of the window when you receive new
 input, @ref glfwWaitEvents is a better choice.
 
 @code

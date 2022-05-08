@@ -348,7 +348,7 @@ GLFWAPI void glfwSetCursorPos(GLFWwindow* handle, double xpos, double ypos)
 
     if (window->cursorMode == GLFW_CURSOR_DISABLED)
     {
-        // Only update the accumulated position if the cursor is disabled
+        // Only resolve the accumulated position if the cursor is disabled
         window->cursorPosX = xpos;
         window->cursorPosY = ypos;
     }
