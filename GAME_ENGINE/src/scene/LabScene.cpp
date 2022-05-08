@@ -45,7 +45,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     floor->set_material(lab_mat_color);
     floor->set_debug_rendering(true, {0.25, 0.65, 0.8});
     auto * floor_rbv = new RigidBodyVolume(floor);
-    floor_rbv->add_behavior(new MovementBehavior(false,false,mult_physics,0,1,1));
+    floor_rbv->add_behavior(new MovementBehavior(false,false,mult_physics,0,0.2,1));
     m_physics_system->add_collider(floor_rbv);
 
     //walls
@@ -74,6 +74,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     //ball
     auto* m_ball = new NodeGameSG(m_shaders, m_root,SPHEREBB_TYPE);
     m_ball->get_trsf()->set_translation({0.,20,0});
+    m_ball->get_trsf()->set_uniform_scale(2);
     m_ball->set_meshes({ball_mesh1});
     // m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
     m_ball->set_material(new MaterialTexture(m_shaders, id_ball_texture));
