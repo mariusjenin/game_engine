@@ -17,7 +17,8 @@ namespace physics {
 
         enum RigidBodyBehavior_TYPE{
             MovementBehavior_TYPE,
-            SwitchColor_TYPE
+            SwitchColor_TYPE,
+            MoveDoor_TYPE
         };
 
         class RigidBodyBehavior {

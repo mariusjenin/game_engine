@@ -12,19 +12,26 @@
 #include <src/scene_graph/NodeOnTopSG.hpp>
 #include <src/light/SpotLight.hpp>
 #include "src/Character.hpp"
+#include "src/game_element/DoorElement.hpp"
+#include "src/game_element/ButtonElement.hpp"
 
 namespace scene {
     /// Scene with Collisions
     class LabScene : public Scene {
     private:
-        NodeGameSG* m_cube;
+        // std::vector<DoorElement*> m_doors;
         std::vector<RigidBodyVolume*> m_items;
+        std::vector<ButtonElement*> m_buttons;
         Character* m_character;
         float m_timing_camera_switch;
+
+        //helper fct
+        void cubePyramid(glm::vec3, float, float);
     protected:
         void process_input(GLFWwindow *window, float delta_time) override;
     public:
 
+        void setRoom(float scale, float mult);
         /**
          * Constructor of the LabScene
          * @param vertex_shader_path

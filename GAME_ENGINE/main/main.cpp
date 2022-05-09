@@ -107,10 +107,10 @@ int main() {
 
     //CREATE THE SCENE
 //    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl",mult_physics);
-//    LabScene scene = LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
+   LabScene scene = LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
 //     BounceOBBScene scene = BounceOBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
 //     BounceAABBScene scene = BounceAABBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
-     BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
+    //  BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
 //    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl",mult_physics);
     scene.setup();
 

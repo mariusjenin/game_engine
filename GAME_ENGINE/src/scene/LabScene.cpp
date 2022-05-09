@@ -7,6 +7,119 @@
 
 using namespace scene;
 
+void LabScene::setRoom(float scale, float mult){
+    TextureManager *texture_manager = m_shaders->get_texture_manager();
+
+    auto *slab_mesh = new Mesh("../assets/mesh/slab.obj", true, OBB_TYPE);
+    auto *roof_mesh = new Mesh("../assets/mesh/env/roof_lab.obj", true, OBB_TYPE);
+
+    int id_floor_texture = texture_manager->load_texture("../assets/texture/Floor10.bmp");
+
+    auto* floor_col = new MaterialColor(m_shaders, {0.8, 0.8, 0.8}, 100);
+
+     //floor
+    auto* floor = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+    floor->get_trsf()->set_translation({0,0,0});
+    floor->get_trsf()->set_scale({scale, 2, 2*scale});
+    floor->set_meshes({slab_mesh});
+    floor->set_material(new MaterialTexture(m_shaders, id_floor_texture));
+    floor->set_debug_rendering(true, {0.25, 0.65, 0.8});
+    auto * floor_rbv = new RigidBodyVolume(floor);
+    floor_rbv->add_behavior(new MovementBehavior(false,false,mult,0,0.2,1));
+    m_physics_system->add_collider(floor_rbv);
+
+    //walls
+    auto* wall = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+    wall->get_trsf()->set_translation({10*scale,10,0});
+    wall->get_trsf()->set_scale({1, 2, scale*1.5});
+    wall->get_trsf()->set_rotation({0, 0, -90});
+    wall->set_meshes({slab_mesh});
+    wall->set_material(new MaterialColor(m_shaders, {0.79, 0.3, 0.3}, 50));
+    wall->set_material(new MaterialTexture(m_shaders, id_floor_texture));
+    wall->set_debug_rendering(true, {0.25, 0.65, 0.8});
+    auto * wall_rbv = new RigidBodyVolume(wall);
+    wall_rbv->add_behavior(new MovementBehavior(false,false,mult,0));
+    m_physics_system->add_collider(wall_rbv);
+
+    auto* wall_1 = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+    wall_1->get_trsf()->set_translation({-10*scale,10,0});
+    wall_1->get_trsf()->set_scale({1, 2, scale*1.5});
+    wall_1->get_trsf()->set_rotation({0, 0, -90});
+    wall_1->set_meshes({slab_mesh});
+    wall_1->set_material(new MaterialTexture(m_shaders, id_floor_texture));
+    wall_1->set_debug_rendering(true, {0.25, 0.65, 0.8});
+    auto * wall_1_rbv = new RigidBodyVolume(wall_1);
+    wall_1_rbv->add_behavior(new MovementBehavior(false,false,mult,0));
+    m_physics_system->add_collider(wall_1_rbv);
+    
+    auto* wall_2 = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+    wall_2->get_trsf()->set_translation({0,10,10*scale});
+    wall_2->get_trsf()->set_scale({1, 2, scale*1.5});
+    wall_2->get_trsf()->set_rotation({0, 90, -90});
+    wall_2->set_meshes({slab_mesh});
+    wall_2->set_material(new MaterialTexture(m_shaders, id_floor_texture));
+    wall_2->set_debug_rendering(true, {0.25, 0.65, 0.8});
+    auto * wall_2_rbv = new RigidBodyVolume(wall_2);
+    wall_2_rbv->add_behavior(new MovementBehavior(false,false,mult,0));
+    m_physics_system->add_collider(wall_2_rbv);
+    
+    auto* wall_3 = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+    wall_3->get_trsf()->set_translation({0,10,-10*scale});
+    wall_3->get_trsf()->set_scale({1, 2, scale*1.5});
+    wall_3->get_trsf()->set_rotation({0, 90, -90});
+    wall_3->set_meshes({slab_mesh});    
+    wall_3->set_material(new MaterialTexture(m_shaders, id_floor_texture));
+    wall_3->set_debug_rendering(true, {0.25, 0.65, 0.8});
+    auto * wall_3_rbv = new RigidBodyVolume(wall_3);
+    wall_3_rbv->add_behavior(new MovementBehavior(false,false,mult,0));
+    m_physics_system->add_collider(wall_3_rbv);
+
+    //roof
+    auto* roof = new NodeGameSG(m_shaders, m_root, OBB_TYPE);
+    roof->get_trsf()->set_rotation({0, 90, 0});
+    roof->get_trsf()->set_translation({0,25,0});
+    roof->get_trsf()->set_scale({scale*2, 3, scale*2});
+    roof->set_meshes({roof_mesh});
+    roof->set_material(floor_col);
+    roof->set_debug_rendering(true, {0.25, 0.65, 0.8});
+    auto * roof_rbv = new RigidBodyVolume(roof);
+    roof_rbv->add_behavior(new MovementBehavior(false,false,mult,0,0.2,1));
+    m_physics_system->add_collider(roof_rbv);
+
+}
+
+void LabScene::cubePyramid(glm::vec3 center, float size, float mult_physics){
+    auto *cube_mesh = new Mesh(create_rectangle_cuboid({size,size,size}), true, OBB_TYPE);
+    int pyramid_height = 5;
+    float offset = 0.1;
+    
+    glm::vec3 translation; 
+    glm::vec3 line_start = center - glm::vec3((float) (pyramid_height-1)/2., 0, 0);
+
+    for(int i = 0; i < pyramid_height; i ++){
+        translation = line_start + glm::vec3(i*offset, i*size*offset, 0);
+
+        for(int j = 0; j < (pyramid_height-i); j ++){
+
+            auto* cube_node = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+            cube_node->set_meshes({cube_mesh});
+            cube_node->get_trsf()->set_translation(translation);
+            cube_node->set_material(new MaterialColor(m_shaders, {0.8, 0.8, 0.8}, 100));
+            RigidBodyVolume* rbv_cube = new RigidBodyVolume(cube_node);
+            rbv_cube->add_behavior(new MovementBehavior(true,true,mult_physics, 0.5, 0.8, 0.5));
+            // rbv_cube->get_movement_behavior()->add_force(new GravityForce());
+            
+            m_physics_system->add_collider(rbv_cube);
+
+            translation += glm::vec3(size*offset, 0, 0);
+            m_items.push_back(rbv_cube);
+
+        }
+    }
+
+}
+
+
 LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(
         vertex_shader_path, fragment_shader_path, mult_physics)  {
 
@@ -19,14 +132,16 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 
     //TEXTURES
     int id_ball_texture = texture_manager->load_texture("../assets/texture/rock.bmp");
+    // int id_floor_texture = texture_manager->load_texture("../assets/texture/Floor10.bmp");
 
     //MESHES
-    auto *slab_mesh = new Mesh("../assets/mesh/slab.obj", true, OBB_TYPE);
+    auto *btn1_mesh = new Mesh("../assets/mesh/props/button_1.obj", true, OBB_TYPE);
+    auto *btn2_mesh = new Mesh("../assets/mesh/props/button_2.obj", true, OBB_TYPE);
     auto *cube_mesh = new Mesh(create_rectangle_cuboid({5,5,5}), true,OBB_TYPE);
+    auto *cube_mesh_floor = new Mesh(create_rectangle_cuboid({20,5,20}), true,OBB_TYPE);
     auto *ball_mesh1 = new Mesh(create_sphere(1, 60, 60),true,SPHEREBB_TYPE);
     auto *cube_mesh2 = new Mesh(create_rectangle_cuboid({1,1,1}), true,OBB_TYPE);
-//    auto *plane_mesh1 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
-//    auto *plane_mesh2 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
+    auto *table_mesh= new Mesh("../assets/mesh/props/table_lab.obj", true, OBB_TYPE);
 
     //Light
     auto *light_source = new DirectionLight({0.2, 0.2, 0.2}, {1., 1., 1.}, {0.8, 0.8, 0.8}, {-0.2, -1., -0.5});
@@ -34,60 +149,66 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     light_node->set_light(light_source);
     m_lights.push_back(light_node);
 
-    auto* lab_mat_color = new MaterialColor(m_shaders, {0.15, 0.3, 0.7}, 50);
-    
-    //floor
-    auto* floor = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
-    floor->get_trsf()->set_translation({0,0,0});
-    // floor->get_trsf()->set_rotation({0, 0, -20});
-    floor->get_trsf()->set_scale({10, 2, 10});
-    floor->set_meshes({slab_mesh});
-    floor->set_material(lab_mat_color);
-    floor->set_debug_rendering(true, {0.25, 0.65, 0.8});
-    auto * floor_rbv = new RigidBodyVolume(floor);
-    floor_rbv->add_behavior(new MovementBehavior(false,false,mult_physics,0,0.2,1));
-    m_physics_system->add_collider(floor_rbv);
-
-    //walls
-    auto* wall = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
-    wall->get_trsf()->set_translation({0.2,10,0});
-    wall->get_trsf()->set_scale({1, 2, 1});
-    wall->get_trsf()->set_rotation({0, 0, -90});
-    wall->set_meshes({slab_mesh});
-    wall->set_material(new MaterialColor(m_shaders, {0.79, 0.3, 0.3}, 50));
-    wall->set_debug_rendering(true, {0.25, 0.65, 0.8});
-    auto * wall_rbv = new RigidBodyVolume(wall);
-    wall_rbv->add_behavior(new MovementBehavior(false,false,mult_physics,0));
-    wall_rbv->add_behavior(new SwitchColorBehavior(new MaterialColor(m_shaders,{1,1,0},50)));
-    m_physics_system->add_collider(wall_rbv);
+    //Basic room setup
+    float scale = 10;    
+    setRoom(scale, mult_physics);
 
 
+    //PROPS IN THE ROOM
     //cube
-    m_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
-    m_cube->get_trsf()->set_translation({1,20,0});
-    m_cube->get_trsf()->set_rotation({46,12,33});
-   m_cube->get_trsf()->set_uniform_scale(3);
-    m_cube->set_meshes({cube_mesh2});
-    m_cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
+    auto* cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+    cube->get_trsf()->set_translation({1,20,0});
+    cube->get_trsf()->set_rotation({46,12,33});
+    cube->get_trsf()->set_uniform_scale(3);
+    cube->set_meshes({cube_mesh2});
+    cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
     // m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
 
     //ball
     auto* m_ball = new NodeGameSG(m_shaders, m_root,SPHEREBB_TYPE);
-    m_ball->get_trsf()->set_translation({0.,20,0});
-    m_ball->get_trsf()->set_uniform_scale(2);
+    m_ball->get_trsf()->set_translation({5.,10,0});
     m_ball->set_meshes({ball_mesh1});
     // m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
     m_ball->set_material(new MaterialTexture(m_shaders, id_ball_texture));
     // m_ball->set_debug_rendering(true);
+    
+    //TEST PROPS
+    // auto* btn1 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    // btn1->get_trsf()->set_translation({15.,10,0});
+    // btn1->get_trsf()->set_uniform_scale(2);
+    // btn1->set_meshes({btn1_mesh});
+    // btn1->set_material(new MaterialTexture(m_shaders, id_ball_texture));
+    
+    // auto* btn2 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    // btn2->get_trsf()->set_translation({15.,10,0});
+    // btn2->get_trsf()->set_uniform_scale(2);
+    // btn2->set_meshes({btn2_mesh});
+    // btn2->set_material(new MaterialTexture(m_shaders, id_ball_texture));
+    // m_ball->set_debug_rendering(true);
 
+   
+    auto* table = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+    table->get_trsf()->set_translation({40.,5.5,0});
+    table->get_trsf()->set_scale({2, 2, 2});
+    table->set_meshes({table_mesh});
+    table->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
+    table->set_debug_rendering(true);
+
+    cubePyramid(glm::vec3(-40, 2, 0), 2, mult_physics);
 
     auto* gravity_force = new GravityForce();
-    auto* rbv_cube = new RigidBodyVolume(m_cube);
+    auto* rbv_cube = new RigidBodyVolume(cube);
     auto* rbv_sphere = new RigidBodyVolume(m_ball);
+    auto* rbv_table = new RigidBodyVolume(table);
+
     rbv_cube->add_behavior(new MovementBehavior(true,true,mult_physics,1, 0.8, 0.5));
     rbv_sphere->add_behavior(new MovementBehavior(true,true,mult_physics,1, 0.8, 0.5));
+    rbv_table->add_behavior(new MovementBehavior(false,false,mult_physics,0));
+
     rbv_cube->get_movement_behavior()->add_force(gravity_force);
     rbv_sphere->get_movement_behavior()->add_force(gravity_force);
+    
+    m_physics_system->add_collider(rbv_table);
     m_physics_system->add_collider(rbv_cube);
     m_physics_system->add_collider(rbv_sphere);
 //    auto* rbv_cube2 = new RigidBodyVolume(m_cube2,1000,0.01,1);
@@ -97,20 +218,38 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     //CHARACTER
     m_character = new Character(m_shaders, m_root, m_physics_system);
     m_cameras.push_back(m_character->get_camera());
+    m_physics_system->add_collider(m_character->get_body());
 
-//    //CAMERA
+   //CAMERA
    auto *camera_node = new NodeGameSG(m_shaders, m_root);
    camera_node->get_trsf()->set_translation({0, 9, 17});
    camera_node->get_trsf()->set_rotation({-20, 0, 0});
    m_cameras.push_back(camera_node);
 
-    // m_character->get_body()->add_force(gravity_force);
-    m_physics_system->add_collider(m_character->get_body());
 
     //SCENE ITEMS (grabbable items (=props))
     m_items.push_back(rbv_cube);
     m_items.push_back(rbv_sphere);
 
+    //DOOR
+    DoorElement* door = new DoorElement(m_shaders, m_root, OBB_TYPE);
+    door->add_behavior(mult_physics);
+    door->get_trsf()->set_translation({0,11,0});
+    // door->get_trsf()->set_rotation({0, 90, 0});
+    m_physics_system->add_collider(door->get_right());
+    m_physics_system->add_collider(door->get_left());
+
+    door->get_right()->get_node()->set_debug_rendering(true);
+    // m_doors.push_back(door);
+    
+    //BTN
+    ButtonElement* button = new ButtonElement(m_shaders, m_root, OBB_TYPE);
+    button->get_trsf()->set_translation({-15, 2, 20});
+    m_physics_system->add_collider(button->get_top());
+    button->link_door(door);
+    button->add_behavior(mult_physics);
+
+    m_buttons.push_back(button);
     
     //PROJECTION
     mat4 projection_mat = perspective(radians(65.0f), 4.f / 3.0f, 0.1f, 10000.0f);
@@ -192,7 +331,7 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     
     Transform *character_trsf = m_character->get_character_node()->get_trsf();
     Transform *character_cam_trsf = m_character->get_camera()->get_trsf();
-    Transform *cube_trsf = m_cube->get_trsf();
+    // Transform *cube_trsf = m_cube->get_trsf();
 
     //Compute translation relative to camera direction
     glm::vec3 forward(0, 0, -1);
@@ -241,7 +380,7 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
 
         if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
             bool available = m_character->can_interact(timestamp);
-
+            
             if(m_character->has_item && available){
 
                 m_character->throw_item(timestamp);
@@ -259,27 +398,27 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
 
     }
 
-    glm::vec3 translate_cube;
-    bool impulse_cube = false;
-    //Scene rotation
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        translate_cube += glm::vec3(cube_translate_speed, 0.f, 0.f);
-        impulse_cube =  true;
-    }
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        translate_cube -= glm::vec3(cube_translate_speed, 0.f, 0.f);
-        impulse_cube =  true;
-    }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-        translate_cube += glm::vec3(0.f, 0.f, cube_translate_speed);
-        impulse_cube =  true;
-    }
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-        translate_cube -= glm::vec3(0.f, 0.f, cube_translate_speed);
-        impulse_cube =  true;
-    }
-    translate_cube *= 10.f;
-    if(impulse_cube && m_cube->get_rigid_body()->has_movement_behavior())m_cube->get_rigid_body()->get_movement_behavior()->set_velocity(translate_cube);
+    // glm::vec3 translate_cube;
+    // bool impulse_cube = false;
+    // //Scene rotation
+    // if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+    //     translate_cube += glm::vec3(cube_translate_speed, 0.f, 0.f);
+    //     impulse_cube =  true;
+    // }
+    // if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+    //     translate_cube -= glm::vec3(cube_translate_speed, 0.f, 0.f);
+    //     impulse_cube =  true;
+    // }
+    // if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    //     translate_cube += glm::vec3(0.f, 0.f, cube_translate_speed);
+    //     impulse_cube =  true;
+    // }
+    // if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    //     translate_cube -= glm::vec3(0.f, 0.f, cube_translate_speed);
+    //     impulse_cube =  true;
+    // }
+    // translate_cube *= 10.f;
+    // if(impulse_cube && m_cube->get_rigid_body()->has_movement_behavior())m_cube->get_rigid_body()->get_movement_behavior()->set_velocity(translate_cube);
 
    if(m_camera_index == 1){
        glm::vec3 translate_camera_free = {0,0,0};

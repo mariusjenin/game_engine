@@ -114,6 +114,7 @@ add_executable(
 		src/physics/rigid_body_behavior/RigidBodyBehavior.cpp src/physics/rigid_body_behavior/RigidBodyBehavior.hpp
 		src/physics/rigid_body_behavior/MovementBehavior.cpp src/physics/rigid_body_behavior/MovementBehavior.hpp
 		src/physics/rigid_body_behavior/SwitchColorBehavior.cpp src/physics/rigid_body_behavior/SwitchColorBehavior.hpp
+		src/physics/rigid_body_behavior/MoveDoorBehavior.cpp src/physics/rigid_body_behavior/MoveDoorBehavior.hpp
 #		CHARACTER
 		src/Character.cpp src/Character.hpp
 		src/MouseView.cpp src/MouseView.hpp
@@ -123,6 +124,10 @@ add_executable(
 		src/physics/ode/EulerODE.cpp src/physics/ode/EulerODE.hpp
 		src/physics/ode/VerletODE.cpp src/physics/ode/VerletODE.hpp
 		src/physics/ode/RungeKutta4ODE.cpp src/physics/ode/RungeKutta4ODE.hpp
+		#		GAME ELEMENTS
+		src/game_element/DoorElement.cpp src/game_element/DoorElement.hpp
+		src/game_element/ButtonElement.cpp src/game_element/ButtonElement.hpp
+
 		)
 target_link_libraries(main
 	${ALL_LIBS}
