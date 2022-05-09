@@ -65,7 +65,8 @@ add_executable(
 		src/utils/Geometry3D.cpp src/utils/Geometry3D.hpp
 #		SHADERS
         src/shader/ShadersDataManager.cpp src/shader/ShadersDataManager.hpp
-        src/shader/VAODataManager.cpp src/shader/VAODataManager.hpp
+		src/shader/VAODataManager.cpp src/shader/VAODataManager.hpp
+		src/shader/TextureManager.cpp src/shader/TextureManager.hpp
 		src/shader/Shaders.cpp src/shader/Shaders.hpp
 #		MESH
 		src/mesh/Mesh.cpp src/mesh/Mesh.hpp

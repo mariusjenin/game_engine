@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <sstream>
 #include "GL/glew.h"
+#include "TextureManager.hpp"
 
 #include <src/shader/ShadersDataManager.hpp>
 
@@ -35,6 +36,7 @@ namespace shader {
     private:
         GLuint m_program_id;
         ShadersDataManager *m_shader_data_manager;
+        TextureManager *m_texture_manager;
     public:
         /**
          * Constructor of the Shaders given paths to the shaders files
@@ -54,6 +56,12 @@ namespace shader {
          * @return shader_data_manager
          */
         ShadersDataManager *get_shader_data_manager();
+
+        /**
+         * Getter of the TextureManager
+         * @return texture_manager
+         */
+        TextureManager *get_texture_manager();
 
         /// Load all the locations thanks to the ShadersDataManager
         void load_location() const;

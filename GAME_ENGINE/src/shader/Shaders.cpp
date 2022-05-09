@@ -17,6 +17,7 @@ glsl_vec3::glsl_vec3() {
 
 Shaders::Shaders(const char *vertex_file_path, const char *fragment_file_path) {
     m_shader_data_manager = new ShadersDataManager();
+    m_texture_manager = new TextureManager(m_shader_data_manager);
 
     // Create the shaders
     GLuint vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
@@ -127,4 +128,8 @@ void Shaders::load_location() const {
     m_shader_data_manager->load_material_const(m_program_id);
     m_shader_data_manager->load_material_locations(m_program_id);
     m_shader_data_manager->load_lights_locations(m_program_id);
+}
+
+TextureManager *Shaders::get_texture_manager() {
+    return m_texture_manager;
 }

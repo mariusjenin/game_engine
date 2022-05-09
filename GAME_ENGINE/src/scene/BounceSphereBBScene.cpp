@@ -197,6 +197,7 @@ void BounceSphereBBScene::process_input(GLFWwindow *window, float delta_time) {
 }
 
 void BounceSphereBBScene::generate_balls(float height, float radius, float dispersion, int nb_balls, bool texture) {
+    TextureManager *texture_manager = m_shaders->get_texture_manager();
     std::vector<NodeSG *> children = m_node_balls->get_children();
     size_t balls_size = children.size();
     for (int i = 0; i < balls_size; i++) {
@@ -213,9 +214,9 @@ void BounceSphereBBScene::generate_balls(float height, float radius, float dispe
 
     auto *ball_mesh1 = new Mesh(create_sphere(radius, 20, 20), true, SPHEREBB_TYPE);
     auto *gravity_force = new GravityForce();
-    int id_texture = 0;
+    int id_texture;
     if (texture) {
-        load_bmp_custom("../assets/texture/rock2.bmp", id_texture);
+        id_texture = texture_manager->load_texture("../assets/texture/rock2.bmp");
     }
     for (int i = 0; i < nb_balls; i++) {
         auto *ball = new NodeGameSG(m_shaders, m_node_balls, SPHEREBB_TYPE);

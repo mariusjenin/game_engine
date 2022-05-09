@@ -14,20 +14,16 @@ SceneLand::SceneLand(const std::string &vertex_shader_path, const std::string &f
         vertex_shader_path, fragment_shader_path, mult_physics)  {
     GLuint program_id = m_shaders->get_program_id();
     ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
+    TextureManager *texture_manager = m_shaders->get_texture_manager();
 
     //BACKGROUND
     glClearColor(0.4f, 0.7f, 0.9f, 0.0f);
 
     //TEXTURES
-    int id_texture = 0;
-    int id_land_texture = id_texture++;
-    load_bmp_custom("../assets/texture/rock.bmp", id_land_texture);
-
+    int id_land_texture = texture_manager->load_texture("../assets/texture/rock.bmp");
 
     //TEXTURE HEIGHT MAP
-    shader_data_manager->load_custom_uniform_location(program_id, HM_LAND_LOC_NAME);
-    glUniform1i(shader_data_manager->get_location(HM_LAND_LOC_NAME), id_texture);
-    load_bmp_custom("../assets/height_map/hm_land.bmp", id_texture);
+    texture_manager->load_uniform_texture(program_id,HM_LAND_LOC_NAME,"../assets/height_map/hm_land.bmp");
 
     //UNIFORM VALUES
     shader_data_manager->load_custom_uniform_location(program_id, HAS_HM_LOC_NAME);

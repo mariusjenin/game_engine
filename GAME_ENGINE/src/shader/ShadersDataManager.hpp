@@ -49,7 +49,6 @@ namespace shader {
         static constexpr const char *MATERIAL_SPECULAR_LOC_NAME = "material.specular";
         static constexpr const char *MATERIAL_DIFFUSE_TEXTURE_LOC_NAME = "material.diffuse_texture";
         static constexpr const char *MATERIAL_SPECULAR_TEXTURE_LOC_NAME = "material.specular_texture";
-
         //LIGHT TYPE
         static constexpr const char *LIGHT_TYPE_DIRECTIONAL_LOC_NAME = "LIGHT_TYPE_DIRECTIONAL";
         static constexpr const char *LIGHT_TYPE_POINT_LOC_NAME = "LIGHT_TYPE_POINT";
@@ -61,6 +60,8 @@ namespace shader {
         static constexpr const char *ON_TOP_UV_LOC_NAME = "on_top_uv";
         static constexpr const char *ON_TOP_MODEL_LOC_NAME = "on_top_model";
         static constexpr const char *ON_TOP_HEIGHT_ADJUSTMENT_LOC_NAME = "on_top_height_adjustement";
+        //SHADOW MAP
+        //TODO
         //DEBUG RENDERING
         static constexpr const char *DEBUG_RENDERING_LOC_NAME = "debug_rendering";
         static constexpr const char *DEBUG_RENDERING_COLOR_LOC_NAME = "debug_rendering_color";

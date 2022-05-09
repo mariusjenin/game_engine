@@ -12,14 +12,14 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 
     //PHYSICS SYSTEM
     m_physics_system = new PhysicsSystem(m_root, mult_physics,0.2f, 0.00001f, 5,EULER_TYPE);
+    TextureManager *texture_manager = m_shaders->get_texture_manager();
     
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
 
     //TEXTURES
-    int id_texture = 0;
-    int id_ball_texture = id_texture++;
-    load_bmp_custom("../assets/texture/rock.bmp", id_ball_texture);
+    int id_ball_texture = texture_manager->load_texture("../assets/texture/rock.bmp");
+
     //MESHES
     auto *slab_mesh = new Mesh("../assets/mesh/slab.obj", true, OBB_TYPE);
     auto *cube_mesh = new Mesh(create_rectangle_cuboid({5,5,5}), true,OBB_TYPE);

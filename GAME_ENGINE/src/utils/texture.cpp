@@ -3,7 +3,6 @@
 #include <src/utils/texture.hpp>
 
 GLuint load_bmp_custom(const std::string &path, int id_texture) {
-
     char *imagepath = const_cast<char *>(path.c_str());
     printf("Reading image %s\n", imagepath);
 

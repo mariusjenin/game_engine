@@ -16,16 +16,15 @@ namespace material {
         int m_id_specular_texture;
     public:
         /**
-         * Constructor of a textured Material with the paths to the texture files to has to be loaded and their ids
+         * Constructor of a textured Material with the paths to the texture files to has to be loaded
          * @param shaders
+         * @param texture_manager
          * @param path_diffuse_texture
-         * @param id_diffuse_texture
          * @param path_specular_texture
-         * @param id_specular_texture
          * @param shininess
          */
-        MaterialTexture(Shaders *shaders, const std::string &path_diffuse_texture, int id_diffuse_texture,
-                        const std::string &path_specular_texture, int id_specular_texture, float shininess = 0.);
+        MaterialTexture(Shaders *shaders, TextureManager* texture_manager, const std::string &path_diffuse_texture,
+                        const std::string &path_specular_texture, float shininess = 0.);
 
         /**
          * Constructor of a textured Material with the ids of the texture files already loaded

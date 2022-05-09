@@ -10,20 +10,14 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
         vertex_shader_path, fragment_shader_path, mult_physics) {
     GLuint program_id = m_shaders->get_program_id();
     ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
+    TextureManager *texture_manager = m_shaders->get_texture_manager();
 
     m_timing = 0;
 
-    int id_texture = 0;
     //TEXTURE HEIGHT MAP
-    shader_data_manager->load_custom_uniform_location(program_id, HM_SUN_LOC_NAME);
-    shader_data_manager->load_custom_uniform_location(program_id, HM_EARTH_LOC_NAME);
-    shader_data_manager->load_custom_uniform_location(program_id, HM_MOON_LOC_NAME);
-    glUniform1i(shader_data_manager->get_location(HM_SUN_LOC_NAME), id_texture);
-    load_bmp_custom("../assets/height_map/hm_sun.bmp", id_texture++);
-    glUniform1i(shader_data_manager->get_location(HM_EARTH_LOC_NAME), id_texture);
-    load_bmp_custom("../assets/height_map/hm_earth.bmp", id_texture++);
-    glUniform1i(shader_data_manager->get_location(HM_MOON_LOC_NAME), id_texture);
-    load_bmp_custom("../assets/height_map/hm_moon.bmp", id_texture++);
+    texture_manager->load_uniform_texture(program_id,HM_SUN_LOC_NAME,"../assets/height_map/hm_sun.bmp");
+    texture_manager->load_uniform_texture(program_id,HM_EARTH_LOC_NAME,"../assets/height_map/hm_earth.bmp");
+    texture_manager->load_uniform_texture(program_id,HM_MOON_LOC_NAME,"../assets/height_map/hm_moon.bmp");
 
     //UNIFORM DEFINED VALUES
     load_type_star_location();
@@ -49,14 +43,10 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     auto *moon_mesh = new LODMesh(create_sphere(0.25, 20, 40), 20, 60, 12, 2, 5);
 
     //TEXTURES
-    int id_skymap_texture = id_texture++;
-    int id_sun_texture = id_texture++;
-    int id_earth_texture = id_texture++;
-    int id_moon_texture = id_texture;
-    load_bmp_custom("../assets/texture/skymap.bmp", id_skymap_texture);
-    load_bmp_custom("../assets/texture/sun.bmp", id_sun_texture);
-    load_bmp_custom("../assets/texture/earth.bmp", id_earth_texture);
-    load_bmp_custom("../assets/texture/moon.bmp", id_moon_texture);
+    int id_skymap_texture = texture_manager->load_texture("../assets/texture/skymap.bmp");
+    int id_sun_texture = texture_manager->load_texture("../assets/texture/sun.bmp");
+    int id_earth_texture = texture_manager->load_texture("../assets/texture/earth.bmp");
+    int id_moon_texture = texture_manager->load_texture("../assets/texture/moon.bmp");
 
     //SKY
     m_sky = new NodeGameSG(m_shaders, (ElementSG *) m_root);
