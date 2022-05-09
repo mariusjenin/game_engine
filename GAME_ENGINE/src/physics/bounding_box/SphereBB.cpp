@@ -77,35 +77,9 @@ Collision SphereBB::get_data_collision(SphereBB *bb) {
 }
 
 Collision SphereBB::get_data_collision(RCBB *bb) {
-    Collision collision;
-
-    glm::vec3 closest_pt = bb->closest_point(m_position);
-    float dist_sq = glm::dot((closest_pt-m_position), (closest_pt-m_position));
-    
-    if(dist_sq > m_radius*m_radius)
-        return collision;
-    
-    glm::vec3 normal;
-    if(cmp_float(dist_sq, 0.f)){
-        float len2 = glm::dot(closest_pt-bb->get_position(), closest_pt-bb->get_position());
-        
-        if(cmp_float(len2, 0.f))
-            return collision;
-
-        normal = glm::normalize(closest_pt - bb->get_position());
-    }else{
-
-        normal = glm::normalize(m_position - closest_pt);
-    }
-
-    glm::vec3 outside_pt = m_position - normal * m_radius;
-    float dist = glm::length(closest_pt - outside_pt);
-    collision.colliding = true;
-    collision.contacts.push_back(closest_pt + (outside_pt - closest_pt) * 0.5f);
-    collision.normal = normal;
-    collision.depth = dist * 0.5f;
-
-    return collision;
+    Collision c = bb->get_data_collision(this);
+    c.normal*=-1;
+    return c;
 }
 
 void SphereBB::apply_transform(glm::mat4 matrix) {

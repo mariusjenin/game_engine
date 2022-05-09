@@ -38,10 +38,6 @@ std::vector<glm::vec3> OBB::to_vertices() const{
     };
 }
 
-Collision OBB::get_data_collision(SphereBB *bb) {
-    return bb->get_data_collision(this);
-}
-
 void OBB::apply_transform(glm::mat4 matrix) {
     //Decompose the matrix
     glm::mat4 t,r,s;

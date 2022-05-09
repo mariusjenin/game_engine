@@ -34,10 +34,6 @@ AABB* AABB::to_AABB() const {
     return new AABB(*this);
 }
 
-Collision AABB::get_data_collision(SphereBB *bb) {
-    return bb->get_data_collision(this);
-}
-
 void AABB::apply_transform(glm::mat4 matrix) {
     std::vector<glm::vec3> positions_with_size = {};
     positions_with_size.emplace_back(glm::vec3(matrix * glm::vec4(m_position + glm::vec3(m_size.x,m_size.y,m_size.z),1)));

@@ -44,8 +44,6 @@ namespace physics {
 
             void apply_transform(glm::mat4 matrix) override;
 
-            Collision get_data_collision(SphereBB *bb) override;
-
             std::vector<glm::vec3> to_vertices() const override;
 
             glm::mat3 get_orientation() const override;

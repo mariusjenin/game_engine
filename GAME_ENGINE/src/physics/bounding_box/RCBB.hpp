@@ -75,6 +75,8 @@ namespace physics {
 
             Collision get_data_collision(RCBB *bb) override;
 
+            Collision get_data_collision(SphereBB *bb) override;
+
             glm::vec3 closest_point(glm::vec3 pt) const override;
 
             float is_intersected(Ray ray) override;

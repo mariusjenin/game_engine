@@ -31,31 +31,18 @@ Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
                 case OBB_TYPE:
                 case AABB_TYPE:
                     collision = ((SphereBB *) bb1)->get_data_collision((RCBB *) bb2);
-                    collision.normal*=-1;
+//                    collision.normal*=-1;
                     break;
                 default:
                     break;
             }
             break;
         }
-        case OBB_TYPE: {
-            switch (bb2->get_type()) {
-                case SPHEREBB_TYPE:
-                    collision = ((OBB *) bb1)->get_data_collision((SphereBB *) bb2);
-                    break;
-                case OBB_TYPE:
-                case AABB_TYPE:
-                    collision = ((RCBB *) bb1)->get_data_collision((RCBB *) bb2);
-                    break;
-                default:
-                    break;
-            }
-            break;
-        }
+        case OBB_TYPE:
         case AABB_TYPE: {
             switch (bb2->get_type()) {
                 case SPHEREBB_TYPE:
-                    collision = ((AABB *) bb1)->get_data_collision((SphereBB *) bb2);
+                    collision = ((RCBB *) bb1)->get_data_collision((SphereBB *) bb2);
                     break;
                 case OBB_TYPE:
                 case AABB_TYPE:

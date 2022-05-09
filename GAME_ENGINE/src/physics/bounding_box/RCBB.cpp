@@ -4,6 +4,7 @@
 
 #include "RCBB.hpp"
 #include "AABB.hpp"
+#include "SphereBB.hpp"
 #include <glm/glm.hpp>
 #include <iostream>
 #include <src/physics/Collision.hpp>
@@ -272,4 +273,38 @@ bool RCBB::is_point_in(glm::vec3 point) const {
     }
 
     return true;
+}
+
+Collision RCBB::get_data_collision(SphereBB *bb) {
+    Collision collision;
+
+    glm::vec3 position_sphere = bb->get_position();
+    glm::vec3 closest_pt = closest_point(position_sphere);
+    float dist_sq = glm::dot((closest_pt-position_sphere), (closest_pt-position_sphere));
+
+    float radius = bb->get_radius();
+    if(dist_sq > radius*radius)
+        return collision;
+
+    glm::vec3 normal;
+    if(cmp_float(dist_sq, 0.f)){
+        float len2 = glm::dot(closest_pt-m_position, closest_pt-m_position);
+
+        if(cmp_float(len2, 0.f))
+            return collision;
+
+        normal = glm::normalize(closest_pt - m_position);
+    }else{
+
+        normal = glm::normalize(position_sphere - closest_pt);
+    }
+
+    glm::vec3 outside_pt = position_sphere - normal * radius;
+    float dist = glm::length(closest_pt - outside_pt);
+    collision.colliding = true;
+    collision.contacts.push_back(closest_pt + (outside_pt - closest_pt) * 0.5f);
+    collision.normal = normal;
+    collision.depth = dist * 0.5f;
+
+    return collision;
 }
