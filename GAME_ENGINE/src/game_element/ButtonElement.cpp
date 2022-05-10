@@ -10,7 +10,7 @@ ButtonElement::ButtonElement(
     if(door != nullptr)
         m_linked.push_back(door);
 
-    auto* lab_mat_color = new MaterialColor(m_shaders, {1., 0.8, 0.7}, 50);
+    auto* red = new MaterialColor(m_shaders, {1., 0.2, 0.2}, 500);
 
     auto *top_mesh = new Mesh("../assets/mesh/props/button_1.obj", true, OBB_TYPE);
     // auto *bottom_mesh = new Mesh("../assets/mesh/props/button_2.obj", true, OBB_TYPE);
@@ -19,7 +19,7 @@ ButtonElement::ButtonElement(
     // NodeGameSG* bottom_node = new NodeGameSG(shaders, this, OBB_TYPE);
 
     top_node->get_trsf()->set_translation({0, 15,0});
-    top_node->set_material(lab_mat_color);
+    top_node->set_material(red);
 
     top_node->set_meshes({top_mesh});
 
@@ -31,7 +31,10 @@ ButtonElement::ButtonElement(
 }
 
 void ButtonElement::add_behavior(float mult){
+    auto* green = new MaterialColor(m_shaders, {0.2, 1., 0.2}, 500);
+
     m_top->add_behavior(new MovementBehavior(true,false,mult,0,0.2,1));
+    m_top->add_behavior(new SwitchColorBehavior(green));
     if(m_linked.size() > 0){
         DoorElement* door = m_linked[0];
         m_top->add_behavior(new MoveDoorBehavior(m_linked[0]));

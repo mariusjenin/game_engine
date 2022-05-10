@@ -17,8 +17,8 @@ Character::Character(Shaders* shaders, ElementSG* parent, PhysicsSystem* phi){
     auto* material_character = new MaterialColor(shaders, {0.8,0.8,0.8}, 100);
     
     body_node->get_trsf()->set_translation({2.,4,0});
-    body_node->get_trsf()->set_translation({-20, 10, 0});
-    body_node->set_debug_rendering(true, {0, 0.5, 0.7});
+    body_node->get_trsf()->set_translation({20, 10, 0});
+    // body_node->set_debug_rendering(true, {0, 0.5, 0.7});
     body_node->set_meshes({body_mesh});
 
 

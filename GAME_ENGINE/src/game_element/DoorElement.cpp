@@ -7,16 +7,19 @@ DoorElement::DoorElement(
 ) : NodeGameSG(shaders, parent, bb_type){
 
     auto* lab_mat_color = new MaterialColor(m_shaders, {1., 0.8, 0.7}, 50);
+    TextureManager *texture_manager = m_shaders->get_texture_manager();
 
     auto *left_mesh = new Mesh("../assets/mesh/env/door_left_lab.obj", true, OBB_TYPE);
     auto *right_mesh = new Mesh("../assets/mesh/env/door_right_lab.obj", true, OBB_TYPE);
+    int id_blue_texture = texture_manager->load_texture("../assets/texture/red_texture.bmp");
+    int id_red_texture = texture_manager->load_texture("../assets/texture/blue_texture.bmp");
 
     NodeGameSG* left_node = new NodeGameSG(shaders, this, OBB_TYPE);
     NodeGameSG* right_node = new NodeGameSG(shaders, this, OBB_TYPE);
 
     right_node->get_trsf()->set_translation({0, 0, 1.15});
-    left_node->set_material(lab_mat_color);
-    right_node->set_material(lab_mat_color);
+    left_node->set_material(new MaterialTexture(shaders, id_blue_texture));
+    right_node->set_material(new MaterialTexture(shaders, id_red_texture));
 
     right_node->set_meshes({right_mesh});
     left_node->set_meshes({left_mesh});

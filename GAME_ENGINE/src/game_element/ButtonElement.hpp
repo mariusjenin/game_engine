@@ -5,6 +5,7 @@
 // #include "../utils/Geometry3D.hpp"
 #include <src/physics/rigid_body_behavior/MovementBehavior.hpp>
 #include <src/physics/rigid_body_behavior/MoveDoorBehavior.hpp>
+#include <src/physics/rigid_body_behavior/SwitchColorBehavior.hpp>
 #include "src/material/MaterialTexture.hpp"
 #include "src/material/MaterialColor.hpp"
 #include "DoorElement.hpp"
