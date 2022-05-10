@@ -22,16 +22,36 @@ class MouseView{
 
     public:
 
-        //Getter of the unique instance of this class.
+        /**
+         * Getter of the unique instance of this class.
+         * @return instance
+         */
         static MouseView* get_instance();
-        
-        // Static method called in main mouse callback.
-        static void process_mouse(GLFWwindow *, double, double);
 
-        //Getter of m_front vec3.
+        /**
+         *  Static method called in main mouse callback.
+         * @param window
+         * @param x
+         * @param y
+         */
+        static void process_mouse(GLFWwindow * window, double x, double y);
+
+        /**
+         * Getter of m_front vec3.
+         * @return front
+         */
         glm::vec3 get_front();
 
+        /**
+         * Getter of the pitch
+         * @return pitch
+         */
         float get_pitch() const;
+
+        /**
+         * getter of the yaw
+         * @return yaw
+         */
         float get_yaw() const;
 
         

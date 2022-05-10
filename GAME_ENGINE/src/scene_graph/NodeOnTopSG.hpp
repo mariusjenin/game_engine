@@ -15,12 +15,11 @@ namespace scene_graph {
     public:
         /**
          * Constructor of NodeOnTopSG
-         * @param shaders
          * @param parent
-         * @param on_node NodeGameSG under
-         * @param name
+         * @param on_node
+         * @param bb_type
          */
-        NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeGameSG *on_node, BB_TYPE bb_type = AABB_TYPE);
+        NodeOnTopSG(ElementSG *parent, NodeGameSG *on_node, BB_TYPE bb_type = AABB_TYPE);
 
         /**
          * Compute the data according to the NodeGameSG under
@@ -35,7 +34,7 @@ namespace scene_graph {
         get_data_on(glm::vec3 pos_camera, glm::vec3 &position, glm::vec2 &uv, glm::vec3 &normal,
                     float &height_adjustement);
 
-        void draw(glm::vec3 pos_camera) override;
+        void draw(Shaders *shaders,glm::vec3 pos_camera, bool allow_debug) override;
     };
 }
 

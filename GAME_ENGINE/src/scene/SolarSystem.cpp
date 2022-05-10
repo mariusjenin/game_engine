@@ -6,7 +6,7 @@
 
 using namespace scene;
 
-SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(
+SolarSystem::SolarSystem(GLFWwindow *window, const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(window,
         vertex_shader_path, fragment_shader_path, mult_physics) {
     GLuint program_id = m_shaders->get_program_id();
     ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
@@ -49,7 +49,7 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     int id_moon_texture = texture_manager->load_texture("../assets/texture/moon.bmp");
 
     //SKY
-    m_sky = new NodeGameSG(m_shaders, (ElementSG *) m_root);
+    m_sky = new NodeGameSG((ElementSG *) m_root);
     m_sky->get_local_trsf()->set_rotation({-90, 0, 0});
     m_sky->set_meshes({sky_mesh});
     m_sky->set_material(new MaterialTexture(m_shaders, id_skymap_texture));
@@ -59,7 +59,7 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
 
     //SUN
     auto *sun_light = new PositionLight({0.1, 0.1, 0.1}, {1., 1., 1.}, {0.5, 0.5, 0.5}, 1.0, 0.007, 0.0002);
-    m_sun = new NodeGameSG(m_shaders, (ElementSG *) m_sky);
+    m_sun = new NodeGameSG((ElementSG *) m_sky);
     m_sun->set_light(sun_light);
     m_sun->get_local_trsf()->set_rotation({-90, 0, 0});
     m_sun->set_meshes({sun_mesh});
@@ -69,9 +69,9 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     m_lights.push_back(m_sun);
 
     //EARTH
-    m_earth1 = new NodeGameSG(m_shaders, (ElementSG *) m_sun);
-    m_earth2 = new NodeGameSG(m_shaders, (ElementSG *) m_earth1);
-    m_earth3 = new NodeGameSG(m_shaders, (ElementSG *) m_earth2);
+    m_earth1 = new NodeGameSG((ElementSG *) m_sun);
+    m_earth2 = new NodeGameSG((ElementSG *) m_earth1);
+    m_earth3 = new NodeGameSG((ElementSG *) m_earth2);
     m_earth3->get_local_trsf()->set_rotation({-90, 180, -tilt_earth});
     m_earth3->get_local_trsf()->set_order_rotation(ORDER_ZYX);
     m_earth1->get_trsf()->set_rotation({0, 0, -inclination_sun_earth});
@@ -83,9 +83,9 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     m_earth3->add_uniform_1i(always_enlightened_location, false);
 
     //MOON
-    m_moon1 = new NodeGameSG(m_shaders, (ElementSG *) m_earth3);
-    m_moon2 = new NodeGameSG(m_shaders, (ElementSG *) m_moon1);
-    m_moon3 = new NodeGameSG(m_shaders, (ElementSG *) m_moon2);
+    m_moon1 = new NodeGameSG((ElementSG *) m_earth3);
+    m_moon2 = new NodeGameSG((ElementSG *) m_moon1);
+    m_moon3 = new NodeGameSG((ElementSG *) m_moon2);
     m_moon3->get_local_trsf()->set_rotation({-90, 0, tilt_moon});
     m_moon3->get_local_trsf()->set_order_rotation(ORDER_ZYX);
 //    m_moon->set_trsfs_general({moon_trsf_1, moon_trsf_2, moon_trsf_3});
@@ -98,15 +98,13 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     m_moon3->add_uniform_1i(always_enlightened_location, false);
 
     //CAMERA
-    auto *camera_node = new NodeGameSG(m_shaders,
-                                         (ElementSG *) m_root);
+    auto *camera_node = new NodeGameSG((ElementSG *) m_root);
     camera_node->get_trsf()->set_translation({0, 5, 20});
     camera_node->get_trsf()->set_rotation({-15, 0, 0});
     m_cameras.push_back(camera_node);
 
     //CAMERA 2
-    auto *camera_node_2 = new NodeGameSG(m_shaders,
-                                           (ElementSG *) m_earth3);
+    auto *camera_node_2 = new NodeGameSG((ElementSG *) m_earth3);
 
     camera_node_2->get_trsf()->set_rotation({0, -90, 0});
     m_cameras.push_back(camera_node_2);
@@ -114,17 +112,17 @@ SolarSystem::SolarSystem(const std::string &vertex_shader_path, const std::strin
     m_camera_index = 0;
 
     //PROJECTION
-    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 1.0f, 200.0f);
-    glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
-                       GL_FALSE, &projection_mat[0][0]);
+    m_fovy = 45.0f;
+    m_z_near = 1.0f;
+    m_z_far = 200.0f;
 
     //SPEED ANIMATION
     m_speed_anime = 5.f;
 }
 
-void SolarSystem::update(GLFWwindow *window, float delta_time) {
+void SolarSystem::update(float delta_time) {
 
-    Scene::update(window,delta_time);
+    Scene::update(delta_time);
 
     float speed_rotation_sky = 0.2f * delta_time * m_speed_anime;
     float speed_rotation_sun = 10 * delta_time * m_speed_anime;
@@ -191,67 +189,67 @@ void SolarSystem::update(GLFWwindow *window, float delta_time) {
 }
 
 
-void SolarSystem::process_input(GLFWwindow *window, float delta_time) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+void SolarSystem::process_input(float delta_time) {
+    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(m_window, true);
     float camera_speed = 7.f * delta_time;
     float camera_speed_rot = 100 * delta_time;
     float model_speed_rot = 100 * delta_time;
 
     m_timing -= delta_time;
 
-    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && m_timing <= 0) {
+    if (glfwGetKey(m_window, GLFW_KEY_C) == GLFW_PRESS && m_timing <= 0) {
         m_camera_index = (m_camera_index + 1) % 2;
         m_timing = 0.5;
     }
 
     //Speed animations
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         m_speed_anime = min(100.f, m_speed_anime + 0.1f);
     }
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS) {
         m_speed_anime = max(0.f, m_speed_anime - 0.1f);
     }
 
     Transform *camera_trsf = m_cameras.at(m_camera_index)->get_local_trsf();
     bool camera_changed = false;
     //Camera Translation
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
+    if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
         glm::vec3 dir;
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
             dir += glm::vec3(camera_speed, 0.f, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
             dir += glm::vec3(-camera_speed, 0.f, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS) {
             dir += glm::vec3(0.f, camera_speed, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS) {
             dir += glm::vec3(0.f, -camera_speed, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
             dir += glm::vec3(0.f, 0.f, +camera_speed);
         }
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
             dir += glm::vec3(0.f, 0.f, -camera_speed);
         }
         camera_trsf->set_translation(camera_trsf->get_translation() + camera_trsf->apply_to_vector(dir));
     }
 
     //Camera rotation
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
         glm::vec3 rot;
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
             rot += glm::vec3(camera_speed_rot, 0.f, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
             rot -= glm::vec3(camera_speed_rot, 0.f, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
             rot += glm::vec3(0.f, camera_speed_rot, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
             rot -= glm::vec3(0.f, camera_speed_rot, 0.f);
         }
         camera_trsf->set_rotation(camera_trsf->get_rotation() + rot);
@@ -261,16 +259,16 @@ void SolarSystem::process_input(GLFWwindow *window, float delta_time) {
     Transform *scene_trsf = m_sky->get_trsf();
     glm::vec3 rot_scene;
     //Scene rotation
-    if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_KP_4) == GLFW_PRESS) {
         rot_scene += glm::vec3(0.f, 0.f, model_speed_rot);
     }
-    if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_KP_6) == GLFW_PRESS) {
         rot_scene -= glm::vec3(0.f, 0.f, model_speed_rot);
     }
-    if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_KP_2) == GLFW_PRESS) {
         rot_scene += glm::vec3(model_speed_rot, 0.f, 0.f);
     }
-    if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_KP_8) == GLFW_PRESS) {
         rot_scene -= glm::vec3(model_speed_rot, 0.f, 0.f);
     }
     scene_trsf->set_rotation(scene_trsf->get_rotation() + rot_scene);

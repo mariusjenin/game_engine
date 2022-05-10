@@ -144,9 +144,9 @@ Full screen windows</h3>
 <tr>
 <th>Video mode field </th><th>Corresponds to  </th></tr>
 <tr>
-<td><a class="el" href="structGLFWvidmode.html#a698dcb200562051a7249cb6ae154c71d">GLFWvidmode.width</a> </td><td><code>width</code> parameter </td></tr>
+<td><a class="el" href="structGLFWvidmode.html#a698dcb200562051a7249cb6ae154c71d">GLFWvidmode.m_width</a> </td><td><code>m_width</code> parameter </td></tr>
 <tr>
-<td><a class="el" href="structGLFWvidmode.html#ac65942a5f6981695517437a9d571d03c">GLFWvidmode.height</a> </td><td><code>height</code> parameter </td></tr>
+<td><a class="el" href="structGLFWvidmode.html#ac65942a5f6981695517437a9d571d03c">GLFWvidmode.m_height</a> </td><td><code>m_height</code> parameter </td></tr>
 <tr>
 <td><a class="el" href="structGLFWvidmode.html#a6066c4ecd251098700062d3b735dba1b">GLFWvidmode.redBits</a> </td><td><code>GLFW_RED_BITS</code> hint </td></tr>
 <tr>
@@ -168,7 +168,7 @@ Full screen windows</h3>
 <div class="line"><a class="code" href="group__window.html#ga4fd9e504bb937e79588a0ffdca9f620b">glfwWindowHint</a>(<a class="code" href="glfw3_8h.html#ab292ea403db6d514537b515311bf9ae3">GLFW_BLUE_BITS</a>, mode-&gt;<a class="code" href="structGLFWvidmode.html#af310977f58d2e3b188175b6e3d314047">blueBits</a>);</div>
 <div class="line"><a class="code" href="group__window.html#ga4fd9e504bb937e79588a0ffdca9f620b">glfwWindowHint</a>(<a class="code" href="glfw3_8h.html#a0f20825e6e47ee8ba389024519682212">GLFW_REFRESH_RATE</a>, mode-&gt;<a class="code" href="structGLFWvidmode.html#a791bdd6c7697b09f7e9c97054bf05649">refreshRate</a>);</div>
 <div class="line"></div>
-<div class="line"><a class="code" href="group__window.html#ga3c96d80d363e67d13a41b5d1821f3242">GLFWwindow</a>* window = <a class="code" href="group__window.html#ga5c336fddf2cbb5b92f65f10fb6043344">glfwCreateWindow</a>(mode-&gt;<a class="code" href="structGLFWvidmode.html#a698dcb200562051a7249cb6ae154c71d">width</a>, mode-&gt;<a class="code" href="structGLFWvidmode.html#ac65942a5f6981695517437a9d571d03c">height</a>, <span class="stringliteral">&quot;My Title&quot;</span>, monitor, NULL);</div>
+<div class="line"><a class="code" href="group__window.html#ga3c96d80d363e67d13a41b5d1821f3242">GLFWwindow</a>* window = <a class="code" href="group__window.html#ga5c336fddf2cbb5b92f65f10fb6043344">glfwCreateWindow</a>(mode-&gt;<a class="code" href="structGLFWvidmode.html#a698dcb200562051a7249cb6ae154c71d">m_width</a>, mode-&gt;<a class="code" href="structGLFWvidmode.html#ac65942a5f6981695517437a9d571d03c">m_height</a>, <span class="stringliteral">&quot;My Title&quot;</span>, monitor, NULL);</div>
 </div><!-- fragment --><h2><a class="anchor" id="window_destruction"></a>
 Window destruction</h2>
 <p>When a window is no longer needed, destroy it with <a class="el" href="group__window.html#gacdf43e51376051d2c091662e9fe3d7b2">glfwDestroyWindow</a>.</p>
@@ -330,12 +330,12 @@ Window size</h2>
 <p>If you wish to be notified when a window is resized, whether by the user or the system, set a size callback.</p>
 <div class="fragment"><div class="line"><a class="code" href="group__window.html#gaa40cd24840daa8c62f36cafc847c72b6">glfwSetWindowSizeCallback</a>(window, window_size_callback);</div>
 </div><!-- fragment --><p>The callback function receives the new size, in screen coordinates, of the client area of the window when it is resized.</p>
-<div class="fragment"><div class="line"><span class="keywordtype">void</span> window_size_callback(<a class="code" href="group__window.html#ga3c96d80d363e67d13a41b5d1821f3242">GLFWwindow</a>* window, <span class="keywordtype">int</span> width, <span class="keywordtype">int</span> height)</div>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> window_size_callback(<a class="code" href="group__window.html#ga3c96d80d363e67d13a41b5d1821f3242">GLFWwindow</a>* window, <span class="keywordtype">int</span> m_width, <span class="keywordtype">int</span> m_height)</div>
 <div class="line">{</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>There is also <a class="el" href="group__window.html#gaeea7cbc03373a41fb51cfbf9f2a5d4c6">glfwGetWindowSize</a> for directly retrieving the current size of a window.</p>
-<div class="fragment"><div class="line"><span class="keywordtype">int</span> width, height;</div>
-<div class="line"><a class="code" href="group__window.html#gaeea7cbc03373a41fb51cfbf9f2a5d4c6">glfwGetWindowSize</a>(window, &amp;width, &amp;height);</div>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> m_width, m_height;</div>
+<div class="line"><a class="code" href="group__window.html#gaeea7cbc03373a41fb51cfbf9f2a5d4c6">glfwGetWindowSize</a>(window, &amp;m_width, &amp;m_height);</div>
 </div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>Do not pass the window size to <code>glViewport</code> or other pixel-based OpenGL calls. The window size is in screen coordinates, not pixels. Use the <a class="el" href="window.html#window_fbsize">framebuffer size</a>, which is in pixels, for pixel-based calls.</dd></dl>
 <p>The above functions work with the size of the client area, but decorated windows typically have title bars and window frames around this rectangle. You can retrieve the extents of these with <a class="el" href="group__window.html#ga1a9fd382058c53101b21cf211898f1f1">glfwGetWindowFrameSize</a>.</p>
 <div class="fragment"><div class="line"><span class="keywordtype">int</span> left, top, right, bottom;</div>
@@ -347,14 +347,14 @@ Framebuffer size</h2>
 <p>If you wish to be notified when the framebuffer of a window is resized, whether by the user or the system, set a size callback.</p>
 <div class="fragment"><div class="line"><a class="code" href="group__window.html#ga3203461a5303bf289f2e05f854b2f7cf">glfwSetFramebufferSizeCallback</a>(window, framebuffer_size_callback);</div>
 </div><!-- fragment --><p>The callback function receives the new size of the framebuffer when it is resized, which can for example be used to resolve the OpenGL viewport.</p>
-<div class="fragment"><div class="line"><span class="keywordtype">void</span> framebuffer_size_callback(<a class="code" href="group__window.html#ga3c96d80d363e67d13a41b5d1821f3242">GLFWwindow</a>* window, <span class="keywordtype">int</span> width, <span class="keywordtype">int</span> height)</div>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> framebuffer_size_callback(<a class="code" href="group__window.html#ga3c96d80d363e67d13a41b5d1821f3242">GLFWwindow</a>* window, <span class="keywordtype">int</span> m_width, <span class="keywordtype">int</span> m_height)</div>
 <div class="line">{</div>
-<div class="line">    glViewport(0, 0, width, height);</div>
+<div class="line">    glViewport(0, 0, m_width, m_height);</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>There is also <a class="el" href="group__window.html#ga0e2637a4161afb283f5300c7f94785c9">glfwGetFramebufferSize</a> for directly retrieving the current size of the framebuffer of a window.</p>
-<div class="fragment"><div class="line"><span class="keywordtype">int</span> width, height;</div>
-<div class="line"><a class="code" href="group__window.html#ga0e2637a4161afb283f5300c7f94785c9">glfwGetFramebufferSize</a>(window, &amp;width, &amp;height);</div>
-<div class="line">glViewport(0, 0, width, height);</div>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> m_width, m_height;</div>
+<div class="line"><a class="code" href="group__window.html#ga0e2637a4161afb283f5300c7f94785c9">glfwGetFramebufferSize</a>(window, &amp;m_width, &amp;m_height);</div>
+<div class="line">glViewport(0, 0, m_width, m_height);</div>
 </div><!-- fragment --><p>The size of a framebuffer may change independently of the size of a window, for example if the window is dragged between a regular monitor and a high-DPI one.</p>
 <h2><a class="anchor" id="window_pos"></a>
 Window position</h2>

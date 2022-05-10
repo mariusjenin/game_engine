@@ -167,7 +167,7 @@ const unsigned char floor_texture[ F_TEX_WIDTH * F_TEX_HEIGHT ] = {
 // Bounce friction (1.0 = no friction, 0.0 = maximum friction)
 #define FRICTION        0.75f
 
-// "Fountain" height (m)
+// "Fountain" m_height (m)
 #define FOUNTAIN_HEIGHT 3.f
 
 // Fountain radius (m)

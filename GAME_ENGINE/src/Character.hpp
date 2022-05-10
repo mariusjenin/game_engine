@@ -7,6 +7,7 @@
 #include "src/utils/meshloader.hpp"
 #include "src/material/MaterialColor.hpp"
 #include "MouseView.hpp"
+#include "src/shader/MainShaders.hpp"
 
 class Character {
 private:
@@ -23,42 +24,99 @@ private:
     PhysicsSystem *m_physics;
     double m_act_timestamp;
 
-public:
-    bool has_item;
+    bool m_has_item;
 
     //Class to compute character's sight with mouse motion.
     MouseView *m_mouse_view = nullptr;
 
     //Scene root to cut childs from character.
     ElementSG *m_scene_root;
+public:
 
-    Character(Shaders *, ElementSG *, PhysicsSystem *);
+    /**
+     * Getter of the MouseView
+     * @return mouse view
+     */
+    MouseView* get_mouse_view()const;
 
+    /**
+     * Setter of the MouseView
+     * @param mouse_view
+     */
+    void set_mouse_view(MouseView* mouse_view) ;
+
+    /**
+     * Constructor of a Character
+     * @param shaders
+     * @param node
+     * @param ps
+     */
+    Character(MainShaders * shaders, ElementSG * node, PhysicsSystem *ps);
+
+    /**
+     * Getter of the body node of the Charachter
+     * @return body node
+     */
     NodeGameSG *get_character_node();
 
+    /**
+     * Getter of the body
+     * @return body
+     */
     RigidBodyVolume *get_body();
 
+    /**
+     * Getter of the camera
+     */
     NodeGameSG *get_camera();
 
-    void set_camera(NodeGameSG *);
-
-    PhysicsSystem *get_physics();
-
-    void set_physics(PhysicsSystem *);
-
+    /**
+     * Getter of the sight of the Character
+     * @return sight
+     */
     glm::vec3 get_sight();
 
-    void grab_item(RigidBodyVolume *, double, float = 9.f);
+    /**
+     * Grab the RigidBodyVolume given
+     * @param rbv
+     * @param ts
+     * @param action_area
+     */
+    void grab_item(RigidBodyVolume * rbv,  double ts, float action_area = 9.f);
 
+    /**
+     * Accumulate power to launch item
+     */
     void accumulate_power();
 
-    void throw_item(double);
+    /**
+     * Throw the item handed
+     * @param ts
+     */
+    void throw_item(double ts);
 
-    // bool has_item();
+    /**
+     * Getter of the item handed
+     * @return
+     */
     RigidBodyVolume *get_item();
 
-    bool can_interact(double) const;
+    /**
+     * Getter of whether or not the Character has an item
+     * @return has item
+     */
+    bool has_item();
 
+    /**
+     * Getter of whether or not the Character can interact
+     * @param timestamp
+     * @return can_interact
+     */
+    bool can_interact(double timestamp) const;
+
+    /**
+     * Make the Character jump
+     */
     void jump();
 
 };

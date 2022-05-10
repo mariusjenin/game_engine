@@ -27,7 +27,7 @@ namespace light {
              */
             explicit PositionLightBehavior(float ca, float la, float qa);
 
-            void apply_to(LightShader *light_shader) override;
+            void apply_to(LightInfo *light_shader, glm::mat4 model_mat) override;
         };
     }
 

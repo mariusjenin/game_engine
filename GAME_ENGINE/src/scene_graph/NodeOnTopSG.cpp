@@ -6,8 +6,7 @@
 
 using namespace scene_graph;
 
-NodeOnTopSG::NodeOnTopSG(Shaders *shaders, ElementSG *parent, NodeGameSG *on_node,  BB_TYPE bb_type) : NodeGameSG(shaders,
-                                                                                                          parent,bb_type) {
+NodeOnTopSG::NodeOnTopSG(ElementSG *parent, NodeGameSG *on_node, BB_TYPE bb_type) : NodeGameSG(parent, bb_type) {
     m_on_node = on_node;
 }
 
@@ -32,13 +31,13 @@ bool NodeOnTopSG::get_data_on(glm::vec3 pos_camera, glm::vec3 &position, glm::ve
     return false;
 }
 
-void NodeOnTopSG::draw(glm::vec3 pos_camera) {
+void NodeOnTopSG::draw(Shaders *shaders,glm::vec3 pos_camera, bool allow_debug) {
     glm::vec3 position;
     glm::vec2 uv;
     glm::vec3 normal;
     float height_adjustement;
     bool is_on_top_bounds = get_data_on(pos_camera, position, uv, normal, height_adjustement);
-    ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
+    ShadersDataManager *shader_data_manager = shaders->get_shader_data_manager();
     glUniform1f(shader_data_manager->get_location(ShadersDataManager::ON_TOP_HEIGHT_ADJUSTMENT_LOC_NAME),
                 height_adjustement);
     glUniform3fv(shader_data_manager->get_location(ShadersDataManager::ON_TOP_POSITION_LOC_NAME), 1, &position[0]);
@@ -47,6 +46,6 @@ void NodeOnTopSG::draw(glm::vec3 pos_camera) {
     glUniform1i(shader_data_manager->get_location(ShadersDataManager::IS_NODE_ON_TOP_LOC_NAME), is_on_top_bounds);
     glUniformMatrix4fv(shader_data_manager->get_location(ShadersDataManager::ON_TOP_MODEL_LOC_NAME), 1, GL_FALSE,
                        &m_on_node->get_matrix_recursive_local()[0][0]);
-    NodeGameSG::draw(pos_camera);
+    NodeGameSG::draw(shaders,pos_camera, allow_debug);
 }
 

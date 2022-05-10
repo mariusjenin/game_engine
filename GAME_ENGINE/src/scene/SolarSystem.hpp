@@ -39,22 +39,22 @@ namespace scene {
         NodeGameSG *m_moon2{};
         NodeGameSG *m_moon3{};
     protected:
-        void process_input(GLFWwindow *window, float delta_time) override;
+        void process_input(float delta_time) override;
 
         /// Load the star type to the shader
         void load_type_star_location() const;
 
     public:
-
         /**
          * Constructor of the SolarSystem
+         * @param window
          * @param vertex_shader_path
          * @param fragment_shader_path
          * @param mult_physics
          */
-        SolarSystem(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
+        SolarSystem(GLFWwindow *window, const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
 
-        void update(GLFWwindow *window, float delta_time) override;
+        void update(float delta_time) override;
     };
 }
 

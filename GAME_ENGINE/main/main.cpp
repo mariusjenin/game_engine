@@ -10,16 +10,21 @@
 GLFWwindow *window;
 
 
- #include <src/scene/SceneLand.hpp>
- #include <src/scene/SolarSystem.hpp>
+#include <src/scene/SceneLand.hpp>
+#include <src/scene/SolarSystem.hpp>
 #include <src/scene/BounceOBBScene.hpp>
 #include <src/scene/BounceAABBScene.hpp>
 #include <src/scene/BounceSphereBBScene.hpp>
 #include <src/scene/LabScene.hpp>
+#include <src/scene/ShadowedScene.hpp>
 
 #include <src/utils/printer.hpp>
 
 using namespace scene;
+
+void window_size_callback(GLFWwindow *window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
 
 int main() {
     
@@ -68,10 +73,11 @@ int main() {
         return -1;
     }
 
+    //Callback resize
+    glfwSetWindowSizeCallback(window, window_size_callback);
+
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    // Hide the mouse and enable unlimited mouvement
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // Set the mouse at the center of the screen
     glfwPollEvents();
@@ -84,11 +90,6 @@ int main() {
 
     // Cull triangles which normal is not towards the camera
 //    glEnable(GL_CULL_FACE);
-
-    //MOUSE PROCESSING
-    // glfwSetCursorPosCallback(window, process_mouse);
-    // Character* character = scene.get_character();
-    glfwSetCursorPosCallback(window, MouseView::process_mouse);
 
     // For speed computation
     auto last_time = (float)glfwGetTime();
@@ -106,12 +107,13 @@ int main() {
     float mult_physics = (float)frames_by_second/8.f;
 
     //CREATE THE SCENE
-//    SceneLand scene = SceneLand("../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl",mult_physics);
-//    LabScene scene = LabScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
-//     BounceOBBScene scene = BounceOBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
-//     BounceAABBScene scene = BounceAABBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
-     BounceSphereBBScene scene = BounceSphereBBScene("../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
-//    SolarSystem scene = SolarSystem("../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl",mult_physics);
+//    SceneLand scene = SceneLand(window,"../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl",mult_physics);
+    LabScene scene = LabScene(window,"../shader/shadowed_scene/vertex_shader.glsl","../shader/shadowed_scene/fragment_shader.glsl",mult_physics);
+//     BounceOBBScene scene = BounceOBBScene(window,"../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
+//     BounceAABBScene scene = BounceAABBScene(window,"../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
+//    BounceSphereBBScene scene = BounceSphereBBScene(window,"../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
+//    ShadowedScene scene = ShadowedScene(window,"../shader/shadowed_scene/vertex_shader.glsl","../shader/shadowed_scene/fragment_shader.glsl",mult_physics);
+//    SolarSystem scene = SolarSystem(window,"../shader/solar_system/vertex_shader.glsl", "../shader/solar_system/fragment_shader.glsl",mult_physics);
     scene.setup();
 
     do {
@@ -125,8 +127,8 @@ int main() {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             //RENDER SCENE
+            scene.update(delta_time_frame_fixed);
             scene.render();
-            scene.update(window, delta_time_frame_fixed);
 
             // Swap buffers
             glfwSwapBuffers(window);
@@ -135,7 +137,7 @@ int main() {
 
         if (delta_time_physics_acc > delta_time_physics_fixed) {
             delta_time_physics_acc -= delta_time_physics_fixed;
-            scene.update_physics(window,delta_time_physics_fixed);
+            scene.update_physics(delta_time_physics_fixed);
         }
 
         last_time = current_time;
@@ -148,12 +150,4 @@ int main() {
     glfwTerminate();
 
     return 0;
-}
-
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow *wdow, int width, int height) {
-    // make sure the viewport matches the new window dimensions; note that width and
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
 }

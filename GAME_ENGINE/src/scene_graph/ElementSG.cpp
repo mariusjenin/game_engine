@@ -11,8 +11,7 @@
 
 using namespace scene_graph;
 
-ElementSG::ElementSG(Shaders *shaders) {
-    m_shaders = shaders;
+ElementSG::ElementSG() {
     m_children = {};
     m_children_dirty = true;
     m_trsf = new Transform();
@@ -23,9 +22,9 @@ void ElementSG::add_child(NodeSG *node) {
     m_children_dirty = true;
 }
 
-void ElementSG::draw(glm::vec3 pos_camera) {
+void ElementSG::draw(Shaders *shaders, glm::vec3 pos_camera, bool allow_debug) {
     for (auto &child: m_children) {
-        child->draw(pos_camera);
+        child->draw(shaders,pos_camera, allow_debug);
     }
 }
 

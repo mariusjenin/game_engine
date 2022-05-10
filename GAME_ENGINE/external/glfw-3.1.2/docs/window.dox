@@ -63,8 +63,8 @@ information about retrieving video modes, see @ref monitor_modes.
 
 Video mode field        | Corresponds to
 ----------------------- | ------------------------
-GLFWvidmode.width       | `width` parameter
-GLFWvidmode.height      | `height` parameter
+GLFWvidmode.m_width       | `m_width` parameter
+GLFWvidmode.m_height      | `m_height` parameter
 GLFWvidmode.redBits     | `GLFW_RED_BITS` hint
 GLFWvidmode.greenBits   | `GLFW_GREEN_BITS` hint
 GLFWvidmode.blueBits    | `GLFW_BLUE_BITS` hint
@@ -97,7 +97,7 @@ glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 
-GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "My Title", monitor, NULL);
+GLFWwindow* window = glfwCreateWindow(mode->m_width, mode->m_height, "My Title", monitor, NULL);
 @endcode
 
 
@@ -415,7 +415,7 @@ The callback function receives the new size, in screen coordinates, of the
 client area of the window when it is resized.
 
 @code
-void window_size_callback(GLFWwindow* window, int width, int height)
+void window_size_callback(GLFWwindow* window, int m_width, int m_height)
 {
 }
 @endcode
@@ -424,8 +424,8 @@ There is also @ref glfwGetWindowSize for directly retrieving the current size of
 a window.
 
 @code
-int width, height;
-glfwGetWindowSize(window, &width, &height);
+int m_width, m_height;
+glfwGetWindowSize(window, &m_width, &m_height);
 @endcode
 
 @note Do not pass the window size to `glViewport` or other pixel-based OpenGL
@@ -466,9 +466,9 @@ The callback function receives the new size of the framebuffer when it is
 resized, which can for example be used to resolve the OpenGL viewport.
 
 @code
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow* window, int m_width, int m_height)
 {
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, m_width, m_height);
 }
 @endcode
 
@@ -476,9 +476,9 @@ There is also @ref glfwGetFramebufferSize for directly retrieving the current
 size of the framebuffer of a window.
 
 @code
-int width, height;
-glfwGetFramebufferSize(window, &width, &height);
-glViewport(0, 0, width, height);
+int m_width, m_height;
+glfwGetFramebufferSize(window, &m_width, &m_height);
+glViewport(0, 0, m_width, m_height);
 @endcode
 
 The size of a framebuffer may change independently of the size of a window, for

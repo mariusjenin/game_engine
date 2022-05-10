@@ -11,17 +11,20 @@
 #include "src/mesh/Mesh.hpp"
 #include <src/physics/RigidBodyVolume.hpp>
 
-using namespace light;
 using namespace mesh;
 using namespace material;
-
+namespace light{
+    class Light;
+}
+using namespace light;
 namespace scene_graph {
     ///NodeSG that can have \link mesh::Mesh Meshes\endlink, light and camera
     class NodeGameSG : public NodeSG {
 
-    #define CAMERA_INIT_POSITION glm::vec3(0, 0, 0)
-    #define CAMERA_INIT_FORWARD glm::vec3(0, 0, -1)
-    #define CAMERA_INIT_UP glm::vec3(0, 1, 0)
+#define NODE_INIT_POSITION glm::vec3(0, 0, 0)
+#define NODE_INIT_FORWARD glm::vec3(0, 0, -1)
+#define NODE_INIT_UP glm::vec3(0, 1, 0)
+
     private:
         //Meshes
         std::vector<Mesh *> m_meshes;
@@ -34,12 +37,12 @@ namespace scene_graph {
         //Light
         Light *m_light;
         //BoundingBox
-        BoundingBox* m_bb{};
+        BoundingBox *m_bb{};
         BB_TYPE m_bb_type;
         //Render
         bool m_see_both_face;
         //RigidBody
-        RigidBodyVolume* m_rigid_body{};
+        RigidBodyVolume *m_rigid_body{};
         //Debug Rendering
         bool m_debug_rendering{};
         glm::vec3 m_color_rendering;
@@ -60,21 +63,21 @@ namespace scene_graph {
          * @return has refresh
          */
         bool refresh_bb_recursive(glm::vec3 pos_camera, bool change_dirty_flags = true);
+
     public:
         /**
          * Constructor of the NodeGameSG
-         * @param shaders
-         * @param parent parent in the scene graph
-         * @param name
+         * @param parent
+         * @param bb_type
          */
-        NodeGameSG(Shaders *shaders, ElementSG *parent, BB_TYPE bb_type = AABB_TYPE);
+        NodeGameSG(ElementSG *parent, BB_TYPE bb_type = AABB_TYPE);
 
         /**
          * Setter of the Debug rendering
          * @param dr
          * @param color_rendering
          */
-        void set_debug_rendering(bool dr, glm::vec3 color_rendering = {1,0,0});
+        void set_debug_rendering(bool dr, glm::vec3 color_rendering = {1, 0, 0});
 
         bool is_node_game() override;
 
@@ -116,18 +119,25 @@ namespace scene_graph {
         bool has_light();
 
         /**
-         * Give the \link light::LightShader LightShader\endlink that correspond to the \link light::Light Light\endlink
+         * Give the \link light::LightInfo LightInfo\endlink that correspond to the \link light::Light Light\endlink
          * @return light_shader
          */
-        LightShader generate_light_struct();
+        LightInfo generate_light_struct();
 
-        ///Update the view matrix in the shader
-        void update_view_mat();
+        /**
+         * Update the view matrix in the shader
+         * @param shaders
+         */
+        void update_view_mat(Shaders* shaders);
 
-        ///Update the view position in the shader
-        void update_view_pos();
+        /**
+         * pdate the view position in the shader
+         * @param shaders
+         */
+        void update_view_pos(Shaders* shaders);
 
-        void draw(glm::vec3 pos_camera) override;
+        void draw(Shaders *shaders, glm::vec3 pos_camera, bool allow_debug) override;
+
         /**
         * Setter of the \link mesh::Mesh Mesh\endlink list of the NodeGameSG
         * @param meshes
@@ -144,7 +154,7 @@ namespace scene_graph {
          * Getter of the material
          * @return material
          */
-        Material* get_material() const;
+        Material *get_material() const;
 
         /**
          * Getter of the \link mesh::Mesh Mesh\endlink list of the NodeGameSG

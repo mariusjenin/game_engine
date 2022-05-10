@@ -15,15 +15,14 @@ namespace light {
         /// Behavior of a directed Light
         class DirectionLightBehavior : public LightBehavior {
         private:
-            glm::vec3 m_direction;
         public:
+             
             /**
-             * Constructor of a DirectionLightBehavior with the direction
-             * @param direction
+             * Constructor of a DirectionLightBehavior
              */
-            explicit DirectionLightBehavior(glm::vec3 direction);
+            explicit DirectionLightBehavior();
 
-            void apply_to(LightShader *light_shader) override;
+            void apply_to(LightInfo *light_shader, glm::mat4 model_mat) override;
         };
     }
 }

@@ -6,6 +6,11 @@
 #define GAME_ENGINE_LIGHTBEHAVIOR_H
 
 #include "src/light/LightShader.hpp"
+#include "src/scene_graph/NodeGameSG.hpp"
+
+namespace scene_graph{
+    class NodeGameSG;
+}
 
 namespace light {
     namespace behavior {
@@ -13,11 +18,13 @@ namespace light {
         /// Behavior of a Light (Abstract)
         class LightBehavior {
         public:
+
             /**
              * Apply the behavior on the LightShader to resolve its data's
-             * @param light_shader
+             * @param light_info
+             * @param model_mat
              */
-            virtual void apply_to(LightShader *light_shader) = 0;
+            virtual void apply_to(LightInfo *light_info, glm::mat4 model_mat) = 0;
         };
     }
 }

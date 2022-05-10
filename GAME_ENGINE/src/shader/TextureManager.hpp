@@ -40,16 +40,10 @@ namespace shader {
         GLint load_texture(const std::string &path);
 
         /**
-         * Increment the counter of id_texture
+         * Getter of the next id_texture and increment it
+         * @return id_texture
          */
-        void increment_id_texture();
-
-        /**
-         * Getter of the next id_texture
-         * @return
-         */
-        GLint get_next_id_texture() const;
-
+        GLint get_and_increment_id_texture();
     };
 }
 

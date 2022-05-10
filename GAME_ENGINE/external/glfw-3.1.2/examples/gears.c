@@ -39,7 +39,7 @@
 
   Input:  inner_radius - radius of hole at center
           outer_radius - radius at center of teeth
-          width - width of gear teeth - number of teeth
+          m_width - m_width of gear teeth - number of teeth
           tooth_depth - depth of tooth
 
  **/

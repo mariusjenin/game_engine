@@ -136,8 +136,8 @@ for (i = 0;  i < count;  i++)
 
     if (hmd->WindowsPos.x == xpos &&
         hmd->WindowsPos.y == ypos &&
-        hmd->Resolution.w == mode->width &&
-        hmd->Resolution.h == mode->height)
+        hmd->Resolution.w == mode->m_width &&
+        hmd->Resolution.h == mode->m_height)
     {
         return monitors[i];
     }
@@ -172,13 +172,13 @@ Before configuring SDK distortion rendering you should make your context
 current.
 
 @code
-    int width, height;
+    int m_width, m_height;
     union ovrGLConfig config;
 
-    glfwGetFramebufferSize(window, &width, &height);
+    glfwGetFramebufferSize(window, &m_width, &m_height);
 
-    config.OGL.Header.BackBufferSize.w = width;
-    config.OGL.Header.BackBufferSize.h = height;
+    config.OGL.Header.BackBufferSize.w = m_width;
+    config.OGL.Header.BackBufferSize.h = m_height;
 #if defined(_WIN32)
     config.OGL.Window = glfwGetWin32Window(window);
 #elif defined(__APPLE__)

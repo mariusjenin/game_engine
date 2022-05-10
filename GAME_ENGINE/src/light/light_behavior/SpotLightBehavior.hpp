@@ -6,6 +6,7 @@
 #define GAME_ENGINE_SPOTLIGHTBEHAVIOR_H
 
 
+#include <src/shader/ShadowMap.hpp>
 #include "src/light/light_behavior/LightBehavior.hpp"
 #include "src/light/Light.hpp"
 
@@ -17,15 +18,26 @@ namespace light {
         private:
             float m_inner_cut_off;
             float m_outer_cut_off; // if inner == outer then no smooth edge
+            float m_cut_off_angle; // if inner == outer then no smooth edge
+            float m_z_near;
+            float m_z_far;
+            GLuint m_id_texture_shadow_map;
+            ShadowMap * m_shadow_map;
+
         public:
+
             /**
-             * Constructor of a SpotLightBehavior with the inner and outer cut off
+             * Constructor of a SpotLightBehavior with the inner, the outer cut off and the id texture for the shadow map
+             * @param id_texture_shadow_map
              * @param icoa
              * @param ocoa
+             * @param resol
+             * @param z_near
+             * @param z_far
              */
-            explicit SpotLightBehavior(float icoa, float ocoa);
+            explicit SpotLightBehavior(GLuint id_texture_shadow_map, float icoa = 20.f, float ocoa = 25.f, int resol = 1000, float z_near=1.0f, float z_far = 1000.f);
 
-            void apply_to(LightShader *light_shader) override;
+            void apply_to(LightInfo *light_shader, glm::mat4 model_mat) override;
         };
     }
 }

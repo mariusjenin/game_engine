@@ -21,17 +21,17 @@ namespace scene {
     private:
         NodeGameSG *m_cube;
     protected:
-        void process_input(GLFWwindow *window, float delta_time) override;
+        void process_input(float delta_time) override;
 
     public:
-
         /**
          * Constructor of the BounceOBBScene
+         * @param window
          * @param vertex_shader_path
          * @param fragment_shader_path
          * @param mult_physics
          */
-        BounceOBBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
+        BounceOBBScene(GLFWwindow *window, const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
     };
 
 }

@@ -15,26 +15,27 @@ namespace light {
     /// Light with a direction, a position and angles of diffusion
     class SpotLight : public Light {
     public:
+
         /**
          * Constructor of a Spot Light (has a DirectionLightBehavior, a PositionLightBehavior and a SpotLightBehavior)
          * @param ambient
          * @param diffuse
          * @param specular
-         * @param direction
+         * @param id_texture_shadow_map
          * @param inner_cut_off_angle
          * @param outer_cut_off_angle
+         * @param resol
+         * @param z_near
+         * @param z_far
          * @param constant_attenuation
          * @param linear_attenuation
          * @param quadratic_attenuation
          */
-        explicit SpotLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 direction,
-                           float inner_cut_off_angle,
-                           float outer_cut_off_angle, float constant_attenuation = 0.f, float linear_attenuation = 0.f,
+        explicit SpotLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, GLuint id_texture_shadow_map, float inner_cut_off_angle = 20.f, float outer_cut_off_angle = 25.f, float resol = 1000, float z_near=1.0f, float z_far = 1000.f,
+                           float constant_attenuation = 0.f, float linear_attenuation = 0.f,
                            float quadratic_attenuation = 0.f);
 
-        void to_light_shader(LightShader *light_struct) override;
-
-        bool positionned_light() override;
+        void to_light_info(LightInfo *light_struct, glm::mat4 model_mat) override;
     };
 }
 

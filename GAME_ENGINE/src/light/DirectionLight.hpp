@@ -19,11 +19,10 @@ namespace light {
          * @param ambient
          * @param diffuse
          * @param specular
-         * @param direction
          */
-        explicit DirectionLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 direction);
+        explicit DirectionLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
 
-        void to_light_shader(LightShader *light_struct) override;
+        void to_light_info(LightInfo *light_struct, glm::mat4 model_mat) override;
     };
 }
 

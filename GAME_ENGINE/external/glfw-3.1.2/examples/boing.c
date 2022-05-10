@@ -64,7 +64,7 @@ void DrawGrid( void );
 #define DIST_BALL       (RADIUS * 2.f + RADIUS * 0.1f)
 
 #define VIEW_SCENE_DIST (DIST_BALL * 3.f + 200.f)/* distance from viewer to middle of boing area */
-#define GRID_SIZE       (RADIUS * 4.5f)          /* length (width) of grid */
+#define GRID_SIZE       (RADIUS * 4.5f)          /* length (m_width) of grid */
 #define BOUNCE_HEIGHT   (RADIUS * 2.1f)
 #define BOUNCE_WIDTH    (RADIUS * 2.1f)
 

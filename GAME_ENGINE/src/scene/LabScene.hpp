@@ -22,21 +22,29 @@ namespace scene {
         Character* m_character;
         float m_timing_camera_switch;
     protected:
-        void process_input(GLFWwindow *window, float delta_time) override;
+        void process_input(float delta_time) override;
     public:
-
         /**
          * Constructor of the LabScene
+         * @param window
          * @param vertex_shader_path
          * @param fragment_shader_path
          * @param mult_physics
          */
-        LabScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
-        
-        void update(GLFWwindow *window, float delta_time);
-        
-        Character* get_character();
+        LabScene(GLFWwindow *window, const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
+
+        void update(float delta_time) override;
+
+        /**
+         * Get all the items grabbable
+         * @return items
+         */
         std::vector<RigidBodyVolume*> get_items();
+
+        /**
+         * Check whether or not a RigidBodyVolume is grabbable
+         * @return in_sight
+         */
         RigidBodyVolume* in_sight();
     
     };

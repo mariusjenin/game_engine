@@ -18,10 +18,12 @@
 #include "LightShader.hpp"
 #include "src/light/light_behavior/LightBehavior.hpp"
 
-using namespace light::behavior;
 
 namespace light {
-
+    namespace behavior{
+        class LightBehavior;
+    }
+    using namespace behavior;
     /// Base %Light (Abstract)
     class Light {
     private:
@@ -46,17 +48,11 @@ namespace light {
         const static int LIGHT_TYPE_SPOT = 2;
 
         /**
-         * fill the data into a LightShader
+         * fill the data into a LightInfo
          * @param light_shader
+         * @param model_mat
          */
-        virtual void to_light_shader(LightShader *light_shader);
-
-        /**
-         * Getter of if the Light has a position
-         * @return is_positionned
-         */
-        virtual bool positionned_light();
-
+        virtual void to_light_info(LightInfo *light_shader, glm::mat4 model_mat);
     };
 
 }

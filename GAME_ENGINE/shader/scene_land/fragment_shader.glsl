@@ -31,6 +31,11 @@ struct Light {
     //SpotLight
     float inner_cut_off;
     float outer_cut_off; // if inner == outer then no smooth edge
+    //Depth and Shadow Map
+    bool generate_shadow_map;
+    mat4 depth_model_mat;
+    mat4 depth_view_mat;
+    mat4 depth_proj_mat;
 };
 
 //CONSTANT

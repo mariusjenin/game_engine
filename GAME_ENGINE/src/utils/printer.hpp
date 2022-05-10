@@ -2,6 +2,10 @@
 #ifndef GAME_ENGINE_PRINTER_HPP
 #define GAME_ENGINE_PRINTER_HPP
 
+#include <vector>
+#include <iostream>
+#include <glm/glm.hpp>
+
 /**
  * print a glm::vec3
  * @param v

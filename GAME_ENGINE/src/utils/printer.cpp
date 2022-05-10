@@ -1,7 +1,5 @@
 
-#include <vector>
-#include <iostream>
-#include <glm/glm.hpp>
+#include <src/utils/printer.hpp>
 
 using namespace glm;
 

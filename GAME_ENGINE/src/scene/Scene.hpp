@@ -14,35 +14,53 @@
 #include <src/utils/texture.hpp>
 #include <src/utils/meshloader.hpp>
 #include <src/physics/PhysicsSystem.hpp>
-#include "src/shader/Shaders.hpp"
+#include "src/shader/MainShaders.hpp"
 
 using namespace scene_graph;
 namespace scene {
     /// Base %Scene (Abstract)
     class Scene {
     protected :
+        float m_fovy{};
+        float m_z_near{};
+        float m_z_far{};
+        GLFWwindow * m_window;
         RootSG *m_root{};
         std::vector<NodeGameSG *> m_cameras;
         std::vector<NodeGameSG *> m_lights;
         int m_camera_index{};
-        Shaders *m_shaders{};
+        MainShaders *m_shaders{};
         PhysicsSystem* m_physics_system{};
 
         /**
          * Process the input of the user to have actions on the Scene
-         * @param window
          * @param delta_time
          */
-        virtual void process_input(GLFWwindow *window, float delta_time) = 0;
+        virtual void process_input(float delta_time) = 0;
 
+        /**
+         * Load the lights in the shaders
+         */
+        void load_lights();
+
+        /**
+         * Load the Projection Matrix
+         */
+        void load_projection_matrix();
+
+        /**
+         * Adapt the Viewport to the window
+         */
+        void adapt_viewport();
     public:
         /**
          * Constructor of the Scene with the paths to the shader files
+         * @param window
          * @param vertex_shader_path
          * @param fragment_shader_path
          * @param mult_physics
          */
-        Scene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
+        Scene(GLFWwindow *window, const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
 
         /// Set up to load and compute datas of the Scene
         virtual void setup();
@@ -55,23 +73,27 @@ namespace scene {
 
         /**
          * Render the Scene
-         * @param window
          * @param delta_time
          */
-        virtual void update(GLFWwindow *window, float delta_time);
+        virtual void update(float delta_time);
 
         /**
          * Update the PhysicsSystem
-         * @param window
          * @param delta_time
          */
-        virtual void update_physics(GLFWwindow *window, float delta_time);
+        virtual void update_physics(float delta_time);
 
-        /// Destructor of the Scene
+        /**
+         * Destructor of the Scene
+         */
         virtual ~Scene();
 
-        ///Render the Scene
-        void render();
+        /**
+         * Render the Scene
+         * @param allow_debug
+         * @param other_shaders
+         */
+        void render(bool allow_debug = true, Shaders* shaders = nullptr);
     };
 }
 

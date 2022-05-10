@@ -19,7 +19,7 @@ namespace scene {
     private:
         NodeGameSG *m_ball;
     protected:
-        void process_input(GLFWwindow *window, float delta_time) override;
+        void process_input(float delta_time) override;
 
     public:
         static constexpr const char *HM_LAND_LOC_NAME = "hm_land";
@@ -27,11 +27,12 @@ namespace scene {
 
         /**
          * Constructor of the SceneLand
+         * @param window
          * @param vertex_shader_path
          * @param fragment_shader_path
          * @param mult_physics
          */
-        SceneLand(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
+        SceneLand(GLFWwindow *window, const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics = 1.0f);
     };
 
 }

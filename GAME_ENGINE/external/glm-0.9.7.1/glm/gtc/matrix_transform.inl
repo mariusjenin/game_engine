@@ -279,7 +279,7 @@ namespace glm
 	)
 	{
 		#ifdef GLM_LEFT_HANDED
-			return perspectiveFovLH(fov, width, height, zNear, zFar);
+			return perspectiveFovLH(fov, m_width, m_height, zNear, zFar);
 		#else
 			return perspectiveFovRH(fov, width, height, zNear, zFar);
 		#endif
@@ -301,7 +301,7 @@ namespace glm
 	
 		T const rad = fov;
 		T const h = glm::cos(static_cast<T>(0.5) * rad) / glm::sin(static_cast<T>(0.5) * rad);
-		T const w = h * height / width; ///todo max(width , Height) / min(width , Height)?
+		T const w = h * height / width; ///todo max(m_width , Height) / min(m_width , Height)?
 
 		tmat4x4<T, defaultp> Result(static_cast<T>(0));
 		Result[0][0] = w;
@@ -328,7 +328,7 @@ namespace glm
 	
 		T const rad = fov;
 		T const h = glm::cos(static_cast<T>(0.5) * rad) / glm::sin(static_cast<T>(0.5) * rad);
-		T const w = h * height / width; ///todo max(width , Height) / min(width , Height)?
+		T const w = h * height / width; ///todo max(m_width , Height) / min(m_width , Height)?
 
 		tmat4x4<T, defaultp> Result(static_cast<T>(0));
 		Result[0][0] = w;

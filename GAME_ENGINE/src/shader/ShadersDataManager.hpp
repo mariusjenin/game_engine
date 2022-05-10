@@ -61,7 +61,8 @@ namespace shader {
         static constexpr const char *ON_TOP_MODEL_LOC_NAME = "on_top_model";
         static constexpr const char *ON_TOP_HEIGHT_ADJUSTMENT_LOC_NAME = "on_top_height_adjustement";
         //SHADOW MAP
-        //TODO
+        static constexpr const char *SHADOW_MAP_ARRAY_LOC_NAME = "shadow_maps";
+        static constexpr const char *SHADOW_MAP_DEPTH_VP_MAT_LOC_NAME = "depth_vp_mat";
         //DEBUG RENDERING
         static constexpr const char *DEBUG_RENDERING_LOC_NAME = "debug_rendering";
         static constexpr const char *DEBUG_RENDERING_COLOR_LOC_NAME = "debug_rendering_color";
@@ -136,6 +137,18 @@ namespace shader {
          * @param size_lights
          */
         void load_lights(GLuint program_id,  LightShader lights_shader[], int size_lights);
+
+        /**
+         * Load the location of the matrix of the shadow map
+         * @param program_id
+         */
+        void load_shadow_map_matrix_location(GLuint program_id);
+
+        /**
+         * Load the locations of the shadow map
+         * @param program_id
+         */
+        void load_shadow_maps_location(GLuint program_id);
     };
 }
 #endif //GAME_ENGINE_SHADERSDATAMANAGER_HPP

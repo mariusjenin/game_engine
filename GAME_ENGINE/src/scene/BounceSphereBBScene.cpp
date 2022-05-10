@@ -8,7 +8,7 @@
 
 using namespace scene;
 
-BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(
+BounceSphereBBScene::BounceSphereBBScene(GLFWwindow *window,const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(window,
         vertex_shader_path, fragment_shader_path, mult_physics)  {
 
     //Physics System
@@ -26,27 +26,28 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
 //    auto *plane_mesh2 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
 
     //Light
-    auto *light_source = new DirectionLight({0.1, 0.1, 0.1}, {1., 1., 1.}, {0.8, 0.8, 0.8}, {0., -1., -0.5});
-    auto *light_node = new NodeGameSG(m_shaders, m_root,SPHEREBB_TYPE);
+    auto *light_source = new DirectionLight({0.1, 0.1, 0.1}, {1., 1., 1.}, {0.8, 0.8, 0.8});
+    auto *light_node = new NodeGameSG(m_root,SPHEREBB_TYPE);
+    light_node->get_trsf()->set_rotation({-90,0,0});
     light_node->set_light(light_source);
     m_lights.push_back(light_node);
 
     //Big Ball
     auto *big_ball_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
-    auto *big_ball = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    auto *big_ball = new NodeGameSG(m_root, SPHEREBB_TYPE);
     float gap = 4;
     big_ball->get_trsf()->set_translation({-gap, 0, -gap});
     big_ball->set_meshes({ball_mesh2});
     big_ball->set_material(big_ball_mat_color);
-    auto *big_ball2 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    auto *big_ball2 = new NodeGameSG(m_root, SPHEREBB_TYPE);
     big_ball2->get_trsf()->set_translation({-gap, 0, gap});
     big_ball2->set_meshes({ball_mesh2});
     big_ball2->set_material(big_ball_mat_color);
-    auto *big_ball3 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    auto *big_ball3 = new NodeGameSG(m_root, SPHEREBB_TYPE);
     big_ball3->get_trsf()->set_translation({gap, 0, -gap});
     big_ball3->set_meshes({ball_mesh2});
     big_ball3->set_material(big_ball_mat_color);
-    auto *big_ball4 = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    auto *big_ball4 = new NodeGameSG(m_root, SPHEREBB_TYPE);
     big_ball4->get_trsf()->set_translation({gap, 0, gap});
     big_ball4->set_meshes({ball_mesh2});
     big_ball4->set_material(big_ball_mat_color);
@@ -67,10 +68,10 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
 //    big_ball3->set_debug_rendering(true,{0,0,1});
 //    big_ball4->set_debug_rendering(true,{0,1,1});
 
-    m_node_balls = new NodeGameSG(m_shaders, m_root, SPHEREBB_TYPE);
+    m_node_balls = new NodeGameSG(m_root, SPHEREBB_TYPE);
 
     //Ball
-    m_ball = new NodeGameSG(m_shaders, m_node_balls, SPHEREBB_TYPE);
+    m_ball = new NodeGameSG(m_node_balls, SPHEREBB_TYPE);
     m_ball->get_trsf()->set_translation({2.5, 30, 2.9});
     m_ball->get_trsf()->set_rotation({25, 74, 42});
     m_ball->get_trsf()->set_uniform_scale(1 / 2.f);
@@ -84,7 +85,7 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     m_physics_system->add_collider(rbv_ball);
 
     //Ball2
-    auto *m_ball2 = new NodeGameSG(m_shaders, m_ball, SPHEREBB_TYPE);
+    auto *m_ball2 = new NodeGameSG(m_ball, SPHEREBB_TYPE);
     m_ball2->get_trsf()->set_translation({2, 2, 2});
     m_ball2->get_trsf()->set_rotation({0, 90, 0});
     m_ball2->set_meshes({ball_mesh1});
@@ -92,35 +93,37 @@ BounceSphereBBScene::BounceSphereBBScene(const std::string &vertex_shader_path, 
     m_ball2->set_debug_rendering(true,{1,1,1});
     
     //Ball3
-    auto *m_ball3 = new NodeGameSG(m_shaders, m_ball2, SPHEREBB_TYPE);
+    auto *m_ball3 = new NodeGameSG(m_ball2, SPHEREBB_TYPE);
     m_ball3->get_trsf()->set_translation({4, 2, 4});
     m_ball3->set_meshes({ball_mesh1});
     m_ball3->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
     m_ball3->set_debug_rendering(true,{0,1,1});
 
     //CAMERA
-    auto *camera_node = new NodeGameSG(m_shaders, m_root);
+    auto *camera_node = new NodeGameSG(m_root);
     camera_node->get_trsf()->set_translation({0, 17, 28});
     camera_node->get_trsf()->set_rotation({-27, 0, 0});
     m_cameras.push_back(camera_node);
 
+
     //PROJECTION
-    mat4 projection_mat = perspective(radians(45.0f), 4.f / 3.0f, 0.1f, 10000.0f);
-    glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
-                       GL_FALSE, &projection_mat[0][0]);
+    m_fovy = 45.0f;
+    m_z_near = 0.1f;
+    m_z_far = 10000.0f;
+
 
     m_timer = 0;
 }
 
 
-void BounceSphereBBScene::process_input(GLFWwindow *window, float delta_time) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+void BounceSphereBBScene::process_input(float delta_time) {
+    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(m_window, true);
     float camera_speed = 15.f * delta_time;
     float camera_speed_rot = 150 * delta_time;
     float ball_translate_speed = 15 * delta_time;
 
-    if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS && m_timer <= 0) {
+    if (glfwGetKey(m_window, GLFW_KEY_G) == GLFW_PRESS && m_timer <= 0) {
         generate_balls(10, 1, 4, 60, true);
         m_timer = 1;
     } else {
@@ -129,42 +132,42 @@ void BounceSphereBBScene::process_input(GLFWwindow *window, float delta_time) {
 
     Transform *camera_trsf = m_cameras.at(m_camera_index)->get_trsf();
     //Camera Translation
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
+    if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
         glm::vec3 dir;
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
             dir += glm::vec3(camera_speed, 0.f, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
             dir += glm::vec3(-camera_speed, 0.f, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS) {
             dir += glm::vec3(0.f, camera_speed, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS) {
             dir += glm::vec3(0.f, -camera_speed, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
             dir += glm::vec3(0.f, 0.f, +camera_speed);
         }
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
             dir += glm::vec3(0.f, 0.f, -camera_speed);
         }
         camera_trsf->set_translation(camera_trsf->get_translation() + camera_trsf->apply_to_vector(dir));
     }
 
     //Camera rotation
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
         glm::vec3 rot;
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
             rot += glm::vec3(camera_speed_rot, 0.f, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
             rot -= glm::vec3(camera_speed_rot, 0.f, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
             rot += glm::vec3(0.f, camera_speed_rot, 0.f);
         }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
             rot -= glm::vec3(0.f, camera_speed_rot, 0.f);
         }
         camera_trsf->set_rotation(camera_trsf->get_rotation() + rot);
@@ -175,19 +178,19 @@ void BounceSphereBBScene::process_input(GLFWwindow *window, float delta_time) {
     glm::vec3 translate_ball;
     bool impulse_ball = false;
     //Scene rotation
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         translate_ball += glm::vec3(ball_translate_speed, 0.f, 0.f);
         impulse_ball = true;
     }
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS) {
         translate_ball -= glm::vec3(ball_translate_speed, 0.f, 0.f);
         impulse_ball = true;
     }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS) {
         translate_ball += glm::vec3(0.f, 0.f, ball_translate_speed);
         impulse_ball = true;
     }
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS) {
         translate_ball -= glm::vec3(0.f, 0.f, ball_translate_speed);
         impulse_ball = true;
     }
@@ -219,7 +222,7 @@ void BounceSphereBBScene::generate_balls(float height, float radius, float dispe
         id_texture = texture_manager->load_texture("../assets/texture/rock2.bmp");
     }
     for (int i = 0; i < nb_balls; i++) {
-        auto *ball = new NodeGameSG(m_shaders, m_node_balls, SPHEREBB_TYPE);
+        auto *ball = new NodeGameSG(m_node_balls, SPHEREBB_TYPE);
         ball->get_trsf()->set_translation(
                 {(((float) rand() / (float) RAND_MAX) - 0.5) * 2 * dispersion, height + radius * 4 * i,
                  (((float) rand() / (float) RAND_MAX) - 0.5) * 2 * dispersion});

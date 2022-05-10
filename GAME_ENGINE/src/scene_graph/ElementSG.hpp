@@ -8,6 +8,7 @@
 
 #include <map>
 #include <src/shader/VAODataManager.hpp>
+#include <src/shader/MainShaders.hpp>
 #include "src/utils/Transform.hpp"
 #include <utility>
 
@@ -24,7 +25,6 @@ namespace scene_graph {
     protected:
         /// Transformation applied to the ElementSG and all the children
         Transform * m_trsf;
-        Shaders *m_shaders;
         std::vector<NodeSG *> m_children;
         bool m_children_dirty;
         std::map<GLuint, int> m_uniform_1i; //add others type of uniform value possible
@@ -61,10 +61,8 @@ namespace scene_graph {
 
         /**
          * Constructor of the ElementSG
-         * @param shaders
-         * @param name
          */
-        explicit ElementSG(Shaders *shaders);
+        explicit ElementSG();
 
         /**
          * Getter of the transformation matrix of the ElementSG
@@ -117,8 +115,13 @@ namespace scene_graph {
         /// Compute all the Transform list (itself and children)
         virtual void compute_trsf_scene_graph();
 
-        /// Draw recursively the graph of the scene
-        virtual void draw(glm::vec3 pos_camera);
+        /**
+         * Draw recursively the graph of the scene
+         * @param shaders
+         * @param pos_camera
+         * @param allow_debug
+         */
+        virtual void draw(Shaders *shaders, glm::vec3 pos_camera, bool allow_debug);
 
         /// Destructor of the ElementSG
         virtual ~ElementSG();

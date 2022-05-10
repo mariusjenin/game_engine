@@ -26,9 +26,7 @@ namespace light {
                                float constant_attenuation = 0.f,
                                float linear_attenuation = 0.f, float quadratic_attenuation = 0.f);
 
-        void to_light_shader(LightShader *light_shader) override;
-
-        bool positionned_light() override;
+        void to_light_info(LightInfo *light_shader, glm::mat4 model_mat) override;
     };
 }
 

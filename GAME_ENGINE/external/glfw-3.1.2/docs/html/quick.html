@@ -178,9 +178,9 @@ Receiving input events</h2>
 <h2><a class="anchor" id="quick_render"></a>
 Rendering with OpenGL</h2>
 <p>Once you have a current OpenGL context, you can use OpenGL normally. In this tutorial, a multi-colored rotating triangle will be rendered. The framebuffer size needs to be retrieved for <code>glViewport</code>.</p>
-<div class="fragment"><div class="line"><span class="keywordtype">int</span> width, height;</div>
-<div class="line"><a class="code" href="group__window.html#ga0e2637a4161afb283f5300c7f94785c9">glfwGetFramebufferSize</a>(window, &amp;width, &amp;height);</div>
-<div class="line">glViewport(0, 0, width, height);</div>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> m_width, m_height;</div>
+<div class="line"><a class="code" href="group__window.html#ga0e2637a4161afb283f5300c7f94785c9">glfwGetFramebufferSize</a>(window, &amp;m_width, &amp;m_height);</div>
+<div class="line">glViewport(0, 0, m_width, m_height);</div>
 </div><!-- fragment --><p>You can also set a framebuffer size callback using <a class="el" href="group__window.html#ga3203461a5303bf289f2e05f854b2f7cf">glfwSetFramebufferSizeCallback</a> and call <code>glViewport</code> from there.</p>
 <h2><a class="anchor" id="quick_timer"></a>
 Reading the timer</h2>
@@ -246,12 +246,12 @@ Putting it together</h1>
 <div class="line">    <span class="keywordflow">while</span> (!<a class="code" href="group__window.html#ga24e02fbfefbb81fc45320989f8140ab5">glfwWindowShouldClose</a>(window))</div>
 <div class="line">    {</div>
 <div class="line">        <span class="keywordtype">float</span> ratio;</div>
-<div class="line">        <span class="keywordtype">int</span> width, height;</div>
+<div class="line">        <span class="keywordtype">int</span> m_width, m_height;</div>
 <div class="line"></div>
-<div class="line">        <a class="code" href="group__window.html#ga0e2637a4161afb283f5300c7f94785c9">glfwGetFramebufferSize</a>(window, &amp;width, &amp;height);</div>
-<div class="line">        ratio = width / (float) height;</div>
+<div class="line">        <a class="code" href="group__window.html#ga0e2637a4161afb283f5300c7f94785c9">glfwGetFramebufferSize</a>(window, &amp;m_width, &amp;m_height);</div>
+<div class="line">        ratio = m_width / (float) m_height;</div>
 <div class="line"></div>
-<div class="line">        glViewport(0, 0, width, height);</div>
+<div class="line">        glViewport(0, 0, m_width, m_height);</div>
 <div class="line">        glClear(GL_COLOR_BUFFER_BIT);</div>
 <div class="line"></div>
 <div class="line">        glMatrixMode(GL_PROJECTION);</div>

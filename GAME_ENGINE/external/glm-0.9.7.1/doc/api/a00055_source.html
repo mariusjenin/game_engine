@@ -15,7 +15,7 @@
 <div id="titlearea">
 <table cellspacing="0" cellpadding="0">
  <tbody>
- <tr style="height: 56px;">
+ <tr style="m_height: 56px;">
   <td id="projectlogo"><img alt="Logo" src="logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">0.9.7
@@ -82,7 +82,7 @@
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                        <span class="keywordtype">bool</span>       formatted;</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                        <span class="keywordtype">unsigned</span>   precision;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                        <span class="keywordtype">unsigned</span>   width;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                        <span class="keywordtype">unsigned</span>   m_width;</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                        char_type  separator;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                        char_type  delim_left;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                        char_type  delim_right;</div>
@@ -148,11 +148,11 @@
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                        <span class="keyword">explicit</span> precision(<span class="keywordtype">unsigned</span>);</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                };</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                <span class="keyword">struct </span>width</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                <span class="keyword">struct </span>m_width</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                {</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                        <span class="keywordtype">unsigned</span> value;</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                        <span class="keyword">explicit</span> width(<span class="keywordtype">unsigned</span>);</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                        <span class="keyword">explicit</span> m_width(<span class="keywordtype">unsigned</span>);</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;                };</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;                <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CTy&gt;</div>
@@ -182,7 +182,7 @@
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CTy, <span class="keyword">typename</span> CTr&gt;</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                std::basic_ostream&lt;CTy, CTr&gt;&amp; operator&lt;&lt;(std::basic_ostream&lt;CTy, CTr&gt;&amp;, precision <span class="keyword">const</span>&amp;);</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CTy, <span class="keyword">typename</span> CTr&gt;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                std::basic_ostream&lt;CTy, CTr&gt;&amp; operator&lt;&lt;(std::basic_ostream&lt;CTy, CTr&gt;&amp;, width <span class="keyword">const</span>&amp;);</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                std::basic_ostream&lt;CTy, CTr&gt;&amp; operator&lt;&lt;(std::basic_ostream&lt;CTy, CTr&gt;&amp;, m_width <span class="keyword">const</span>&amp;);</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;                <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CTy, <span class="keyword">typename</span> CTr&gt;</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;                std::basic_ostream&lt;CTy, CTr&gt;&amp; operator&lt;&lt;(std::basic_ostream&lt;CTy, CTr&gt;&amp;, delimeter&lt;CTy&gt; <span class="keyword">const</span>&amp;);</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                <span class="keyword">template</span> &lt;<span class="keyword">typename</span> CTy, <span class="keyword">typename</span> CTr&gt;</div>

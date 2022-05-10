@@ -5,6 +5,7 @@
 #include "ShadersDataManager.hpp"
 #include <src/material/Material.hpp>
 #include <src/light/Light.hpp>
+#include <src/shader/ShadowMapShaders.hpp>
 
 using namespace shader;
 using namespace material;
@@ -97,3 +98,10 @@ void ShadersDataManager::load_debug_const(GLuint program_id) {
     m_locations[DEBUG_RENDERING_COLOR_LOC_NAME] = glGetUniformLocation(program_id, DEBUG_RENDERING_COLOR_LOC_NAME);
 }
 
+void ShadersDataManager::load_shadow_map_matrix_location(GLuint program_id) {
+    m_locations[SHADOW_MAP_DEPTH_VP_MAT_LOC_NAME] = glGetUniformLocation(program_id, SHADOW_MAP_DEPTH_VP_MAT_LOC_NAME);
+}
+
+void ShadersDataManager::load_shadow_maps_location(GLuint program_id) {
+    m_locations[SHADOW_MAP_ARRAY_LOC_NAME] = glGetUniformLocation(program_id, SHADOW_MAP_ARRAY_LOC_NAME);
+}

@@ -12,8 +12,8 @@
 
 using namespace scene_graph;
 
-NodeSG::NodeSG(Shaders *shaders, ElementSG *parent)
-        : ElementSG(shaders) {
+NodeSG::NodeSG(ElementSG *parent)
+        : ElementSG() {
     m_parent = parent;
     m_parent->add_child(this);
     m_local_trsf = new Transform();
@@ -63,8 +63,8 @@ Transform *NodeSG::get_local_trsf() {
     return m_local_trsf;
 }
 
-void NodeSG::load_model_matrices() {
-    ShadersDataManager *shader_data_manager = m_shaders->get_shader_data_manager();
+void NodeSG::load_model_matrices(Shaders* shaders) {
+    ShadersDataManager *shader_data_manager = shaders->get_shader_data_manager();
 
     //Model matrix and Normal model (if non scalar transform)
     glm::mat4 model = get_matrix_recursive_local();

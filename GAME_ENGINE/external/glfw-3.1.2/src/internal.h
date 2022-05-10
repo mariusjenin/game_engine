@@ -673,16 +673,16 @@ void _glfwInputWindowPos(_GLFWwindow* window, int xpos, int ypos);
 
 /*! @brief Notifies shared code of a window resize event.
  *  @param[in] window The window that received the event.
- *  @param[in] width The new width of the client area of the window.
- *  @param[in] height The new height of the client area of the window.
+ *  @param[in] width The new m_width of the client area of the window.
+ *  @param[in] height The new m_height of the client area of the window.
  *  @ingroup event
  */
 void _glfwInputWindowSize(_GLFWwindow* window, int width, int height);
 
 /*! @brief Notifies shared code of a framebuffer resize event.
  *  @param[in] window The window that received the event.
- *  @param[in] width The new width, in pixels, of the framebuffer.
- *  @param[in] height The new height, in pixels, of the framebuffer.
+ *  @param[in] width The new m_width, in pixels, of the framebuffer.
+ *  @param[in] height The new m_height, in pixels, of the framebuffer.
  *  @ingroup event
  */
 void _glfwInputFramebufferSize(_GLFWwindow* window, int width, int height);
@@ -859,8 +859,8 @@ void _glfwFreeGammaArrays(GLFWgammaramp* ramp);
 /*! @brief Allocates and returns a monitor object with the specified name
  *  and dimensions.
  *  @param[in] name The name of the monitor.
- *  @param[in] widthMM The width, in mm, of the monitor's display area.
- *  @param[in] heightMM The height, in mm, of the monitor's display area.
+ *  @param[in] widthMM The m_width, in mm, of the monitor's display area.
+ *  @param[in] heightMM The m_height, in mm, of the monitor's display area.
  *  @return The newly created object.
  *  @ingroup utility
  */

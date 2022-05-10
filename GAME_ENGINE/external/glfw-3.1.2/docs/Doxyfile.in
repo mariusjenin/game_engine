@@ -41,8 +41,8 @@ PROJECT_NUMBER         = @GLFW_VERSION_FULL@
 PROJECT_BRIEF          = "A multi-platform library for OpenGL, window and input"
 
 # With the PROJECT_LOGO tag one can specify an logo or icon that is
-# included in the documentation. The maximum height of the logo should not
-# exceed 55 pixels and the maximum width should not exceed 200 pixels.
+# included in the documentation. The maximum m_height of the logo should not
+# exceed 55 pixels and the maximum m_width should not exceed 200 pixels.
 # Doxygen will copy the logo to the output directory.
 
 PROJECT_LOGO           =
@@ -1166,7 +1166,7 @@ GENERATE_TREEVIEW      = NO
 ENUM_VALUES_PER_LINE   = 4
 
 # If the treeview is enabled (see GENERATE_TREEVIEW) then this tag can be
-# used to set the initial width (in pixels) of the frame in which the tree
+# used to set the initial m_width (in pixels) of the frame in which the tree
 # is shown.
 
 TREEVIEW_WIDTH         = 300

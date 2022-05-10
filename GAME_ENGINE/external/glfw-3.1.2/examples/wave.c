@@ -190,7 +190,7 @@ void init_opengl(void)
 
 
 //========================================================================
-// Modify the height of each vertex according to the pressure
+// Modify the m_height of each vertex according to the pressure
 //========================================================================
 
 void adjust_grid(void)
@@ -444,7 +444,7 @@ int main(int argc, char* argv[])
             calc_grid();
         }
 
-        // Compute height of each vertex
+        // Compute m_height of each vertex
         adjust_grid();
 
         // Draw wave grid to OpenGL display

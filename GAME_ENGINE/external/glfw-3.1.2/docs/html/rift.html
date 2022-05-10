@@ -162,8 +162,8 @@ Detecting a HMD with GLFW</h2>
 <div class="line"></div>
 <div class="line">    <span class="keywordflow">if</span> (hmd-&gt;WindowsPos.x == xpos &amp;&amp;</div>
 <div class="line">        hmd-&gt;WindowsPos.y == ypos &amp;&amp;</div>
-<div class="line">        hmd-&gt;Resolution.w == mode-&gt;<a class="code" href="structGLFWvidmode.html#a698dcb200562051a7249cb6ae154c71d">width</a> &amp;&amp;</div>
-<div class="line">        hmd-&gt;Resolution.h == mode-&gt;<a class="code" href="structGLFWvidmode.html#ac65942a5f6981695517437a9d571d03c">height</a>)</div>
+<div class="line">        hmd-&gt;Resolution.w == mode-&gt;<a class="code" href="structGLFWvidmode.html#a698dcb200562051a7249cb6ae154c71d">m_width</a> &amp;&amp;</div>
+<div class="line">        hmd-&gt;Resolution.h == mode-&gt;<a class="code" href="structGLFWvidmode.html#ac65942a5f6981695517437a9d571d03c">m_height</a>)</div>
 <div class="line">    {</div>
 <div class="line">        <span class="keywordflow">return</span> monitors[i];</div>
 <div class="line">    }</div>
@@ -179,13 +179,13 @@ Rendering to the HMD</h1>
 SDK distortion rendering</h2>
 <p>If you wish to use SDK distortion rendering you will need some information from GLFW to configure the renderer. Below are the parts of the <code>ovrGLConfig</code> union that need to be filled with from GLFW. Note that there are other fields that also need to be filled for <code>ovrHmd_ConfigureRendering</code> to succeed.</p>
 <p>Before configuring SDK distortion rendering you should make your context current.</p>
-<div class="fragment"><div class="line">    <span class="keywordtype">int</span> width, height;</div>
+<div class="fragment"><div class="line">    <span class="keywordtype">int</span> m_width, m_height;</div>
 <div class="line">    <span class="keyword">union </span>ovrGLConfig config;</div>
 <div class="line"></div>
-<div class="line">    <a class="code" href="group__window.html#ga0e2637a4161afb283f5300c7f94785c9">glfwGetFramebufferSize</a>(window, &amp;width, &amp;height);</div>
+<div class="line">    <a class="code" href="group__window.html#ga0e2637a4161afb283f5300c7f94785c9">glfwGetFramebufferSize</a>(window, &amp;m_width, &amp;m_height);</div>
 <div class="line"></div>
-<div class="line">    config.OGL.Header.BackBufferSize.w = width;</div>
-<div class="line">    config.OGL.Header.BackBufferSize.h = height;</div>
+<div class="line">    config.OGL.Header.BackBufferSize.w = m_width;</div>
+<div class="line">    config.OGL.Header.BackBufferSize.h = m_height;</div>
 <div class="line"><span class="preprocessor">#if defined(_WIN32)</span></div>
 <div class="line">    config.OGL.Window = <a class="code" href="group__native.html#gafe5079aa79038b0079fc09d5f0a8e667">glfwGetWin32Window</a>(window);</div>
 <div class="line"><span class="preprocessor">#elif defined(__APPLE__)</span></div>

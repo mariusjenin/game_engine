@@ -2,6 +2,7 @@
 // Created by mariusjenin on 09/05/2022.
 //
 
+#include <iostream>
 #include "TextureManager.hpp"
 
 using namespace shader;
@@ -19,16 +20,13 @@ GLuint TextureManager::load_uniform_texture(GLuint program_id, const std::string
 }
 
 GLint TextureManager::load_texture(const std::string &path) {
-    GLint id_texture = m_next_id_texture;
+    GLint id_texture = get_and_increment_id_texture();
     load_bmp_custom(path, id_texture);
-    increment_id_texture();
     return id_texture;
 }
 
-void TextureManager::increment_id_texture() {
+GLint TextureManager::get_and_increment_id_texture() {
+    GLint id_texture = m_next_id_texture;
     m_next_id_texture++;
-}
-
-GLint TextureManager::get_next_id_texture() const {
-    return m_next_id_texture;
+    return id_texture;
 }

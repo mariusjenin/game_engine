@@ -18,7 +18,3 @@ glm::mat4 RootSG::get_matrix_recursive(TransformDirty* dirty,bool inverse) {
         return m_trsf->get_matrix();
     }
 }
-
-RootSG::RootSG(Shaders *shaders) : ElementSG(shaders) {
-
-}

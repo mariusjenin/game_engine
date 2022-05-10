@@ -7,7 +7,7 @@
 
 using namespace scene;
 
-LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(
+LabScene::LabScene(GLFWwindow *window, const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) : Scene(window,
         vertex_shader_path, fragment_shader_path, mult_physics)  {
 
     //PHYSICS SYSTEM
@@ -17,8 +17,6 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     //BACKGROUND
     glClearColor(0.15f, 0.15f, 0.15f, 0.0f);
 
-    //TEXTURES
-    int id_ball_texture = texture_manager->load_texture("../assets/texture/rock.bmp");
 
     //MESHES
     auto *slab_mesh = new Mesh("../assets/mesh/slab.obj", true, OBB_TYPE);
@@ -29,15 +27,22 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
 //    auto *plane_mesh2 = new LODMesh(create_plane(100, 100, {-10, 0, -10}, {10, 0, 10}, Y_INV_NORMAL_DIRECTION), 2, 30, 60, 5, 10,AABB_TYPE);
 
     //Light
-    auto *light_source = new DirectionLight({0.2, 0.2, 0.2}, {1., 1., 1.}, {0.8, 0.8, 0.8}, {-0.2, -1., -0.5});
-    auto *light_node = new NodeGameSG(m_shaders, m_root);
+    auto *light_source = new SpotLight({0.2, 0.2, 0.2}, {1., 1., 1.}, {0.8, 0.8, 0.8},texture_manager->get_and_increment_id_texture(),35,45,2000);
+//    auto *light_source = new DirectionLight({0.2, 0.2, 0.2}, {1., 1., 1.}, {0.8, 0.8, 0.8});
+    auto *light_node = new NodeGameSG(m_root,SPHEREBB_TYPE);
+    light_node->get_trsf()->set_translation({30,30,-30});
+    light_node->get_trsf()->set_rotation({-110,25,0});
+    light_node->get_trsf()->set_order_rotation(ORDER_ZXY);
+    light_node->set_meshes({ball_mesh1});
+    light_node->set_material(new MaterialColor(m_shaders, {1., 1., 0.8}, 50));
+    light_node->set_debug_rendering(true, {0.7, 0.7, 0.4});
     light_node->set_light(light_source);
     m_lights.push_back(light_node);
 
     auto* lab_mat_color = new MaterialColor(m_shaders, {0.15, 0.3, 0.7}, 50);
     
     //floor
-    auto* floor = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+    auto* floor = new NodeGameSG(m_root,OBB_TYPE);
     floor->get_trsf()->set_translation({0,0,0});
     // floor->get_trsf()->set_rotation({0, 0, -20});
     floor->get_trsf()->set_scale({10, 2, 10});
@@ -49,7 +54,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_physics_system->add_collider(floor_rbv);
 
     //walls
-    auto* wall = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+    auto* wall = new NodeGameSG(m_root,OBB_TYPE);
     wall->get_trsf()->set_translation({0.2,10,0});
     wall->get_trsf()->set_scale({1, 2, 1});
     wall->get_trsf()->set_rotation({0, 0, -90});
@@ -57,13 +62,13 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     wall->set_material(new MaterialColor(m_shaders, {0.79, 0.3, 0.3}, 50));
     wall->set_debug_rendering(true, {0.25, 0.65, 0.8});
     auto * wall_rbv = new RigidBodyVolume(wall);
-    wall_rbv->add_behavior(new MovementBehavior(false,false,mult_physics,0));
+    wall_rbv->add_behavior(new MovementBehavior(false,false,mult_physics,0,2));
     wall_rbv->add_behavior(new SwitchColorBehavior(new MaterialColor(m_shaders,{1,1,0},50)));
     m_physics_system->add_collider(wall_rbv);
 
 
     //cube
-    m_cube = new NodeGameSG(m_shaders, m_root,OBB_TYPE);
+    m_cube = new NodeGameSG(m_root,OBB_TYPE);
     m_cube->get_trsf()->set_translation({1,20,0});
     m_cube->get_trsf()->set_rotation({46,12,33});
    m_cube->get_trsf()->set_uniform_scale(3);
@@ -71,8 +76,12 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
     // m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
 
+
+    //TEXTURES
+    int id_ball_texture = texture_manager->load_texture("../assets/texture/rock.bmp");
+
     //ball
-    auto* m_ball = new NodeGameSG(m_shaders, m_root,SPHEREBB_TYPE);
+    auto* m_ball = new NodeGameSG(m_root,SPHEREBB_TYPE);
     m_ball->get_trsf()->set_translation({0.,20,0});
     m_ball->get_trsf()->set_uniform_scale(2);
     m_ball->set_meshes({ball_mesh1});
@@ -99,7 +108,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_cameras.push_back(m_character->get_camera());
 
 //    //CAMERA
-   auto *camera_node = new NodeGameSG(m_shaders, m_root);
+   auto *camera_node = new NodeGameSG(m_root);
    camera_node->get_trsf()->set_translation({0, 9, 17});
    camera_node->get_trsf()->set_rotation({-20, 0, 0});
    m_cameras.push_back(camera_node);
@@ -111,11 +120,19 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     m_items.push_back(rbv_cube);
     m_items.push_back(rbv_sphere);
 
-    
+
     //PROJECTION
-    mat4 projection_mat = perspective(radians(65.0f), 4.f / 3.0f, 0.1f, 10000.0f);
-    glUniformMatrix4fv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::PROJ_MAT_LOC_NAME), 1,
-                       GL_FALSE, &projection_mat[0][0]);
+    m_fovy = 65.0f;
+    m_z_near = 0.1f;
+    m_z_far = 10000.0f;
+
+
+    // Hide the mouse and enable unlimited mouvement
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //MOUSE PROCESSING
+    // glfwSetCursorPosCallback(window, process_mouse);
+    // Character* character = scene.get_character();
+    glfwSetCursorPosCallback(window, MouseView::process_mouse);
 
    m_camera_index = 0;
    m_timing_camera_switch = 0;
@@ -163,26 +180,26 @@ RigidBodyVolume* LabScene::in_sight(){
 }
 
 
-void LabScene::update(GLFWwindow *window, float delta_time){
+void LabScene::update(float delta_time){
 
-    Scene::update(window, delta_time);
+    Scene::update(delta_time);
 
     //CAMERA
     NodeGameSG *camera_node = m_cameras[m_camera_index];
     
     //Camera node rotates along y axis.
-    float yaw = m_character->m_mouse_view->get_yaw();
-    float pitch = m_character->m_mouse_view->get_pitch();
+    float yaw = m_character->get_mouse_view()->get_yaw();
+    float pitch = m_character->get_mouse_view()->get_pitch();
 
     camera_node->get_trsf()->set_rotation({pitch, -yaw, 0});
     camera_node->compute_trsf_scene_graph();
         
 }
 
-void LabScene::process_input(GLFWwindow *window, float delta_time) {
+void LabScene::process_input(float delta_time) {
 
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(m_window, true);
 
     float camera_speed = 15.f * delta_time;
     float camera_speed_rot = 150 * delta_time;
@@ -205,7 +222,7 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     glm::vec3 right_vec = glm::cross(forward_vec, up);
 
    m_timing_camera_switch -= delta_time;
-   if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && m_timing_camera_switch <= 0) {
+   if (glfwGetKey(m_window, GLFW_KEY_C) == GLFW_PRESS && m_timing_camera_switch <= 0) {
        m_timing_camera_switch = 1;
        m_camera_index++;
        if(m_camera_index == m_cameras.size()) m_camera_index = 0;
@@ -213,21 +230,21 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
 
     glm::vec3 dir;
     //Camera Translation
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE) {
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
             dir += character_speed * right_vec;
         }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
             dir += -character_speed * right_vec;
 
         }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
             dir += -character_speed * forward_vec;
         }
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
             dir += character_speed * forward_vec;
         }
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        if (glfwGetKey(m_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             m_character->jump();
         }
         character_trsf->set_translation(character_trsf->get_translation() + dir);
@@ -235,14 +252,14 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     if (!character_trsf->is_up_to_date()) character_trsf->compute();
 
     //Be sure to get only 1 input
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        if(m_character->has_item)
+    if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS) {
+        if(m_character->has_item())
             m_character->accumulate_power();
 
-        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE) {
+        if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_RELEASE) {
             bool available = m_character->can_interact(timestamp);
 
-            if(m_character->has_item && available){
+            if(m_character->has_item() && available){
 
                 m_character->throw_item(timestamp);
                 
@@ -262,19 +279,19 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     glm::vec3 translate_cube;
     bool impulse_cube = false;
     //Scene rotation
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
         translate_cube += glm::vec3(cube_translate_speed, 0.f, 0.f);
         impulse_cube =  true;
     }
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS) {
         translate_cube -= glm::vec3(cube_translate_speed, 0.f, 0.f);
         impulse_cube =  true;
     }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS) {
         translate_cube += glm::vec3(0.f, 0.f, cube_translate_speed);
         impulse_cube =  true;
     }
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS) {
         translate_cube -= glm::vec3(0.f, 0.f, cube_translate_speed);
         impulse_cube =  true;
     }
@@ -284,16 +301,16 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
    if(m_camera_index == 1){
        glm::vec3 translate_camera_free = {0,0,0};
        //Scene rotation
-       if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS) {
+       if (glfwGetKey(m_window, GLFW_KEY_SEMICOLON) == GLFW_PRESS) {
            translate_camera_free += glm::vec3(camera_speed, 0.f, 0.f);
        }
-       if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+       if (glfwGetKey(m_window, GLFW_KEY_K) == GLFW_PRESS) {
            translate_camera_free -= glm::vec3(camera_speed, 0.f, 0.f);
        }
-       if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+       if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS) {
            translate_camera_free += glm::vec3(0.f, 0.f, camera_speed);
        }
-       if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+       if (glfwGetKey(m_window, GLFW_KEY_O) == GLFW_PRESS) {
            translate_camera_free -= glm::vec3(0.f, 0.f, camera_speed);
        }
        auto* camera_trsf = m_cameras[m_camera_index]->get_trsf();
@@ -308,9 +325,4 @@ void LabScene::process_input(GLFWwindow *window, float delta_time) {
     // glm::vec3 chara_pos = character_trsf->get_translation();
     // std::cout<<"CHARACTER POS: "<<chara_pos[0]<<","<<chara_pos[1]<<","<<chara_pos[2]<<std::endl;
 }
-
-Character* LabScene::get_character(){
-    return m_character;
-}
-
 

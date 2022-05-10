@@ -1,15 +1,15 @@
 #include "Character.hpp"
 #include <src/physics/rigid_body_behavior/MovementBehavior.hpp>
 
-Character::Character(Shaders* shaders, ElementSG* parent, PhysicsSystem* phi){
+Character::Character(MainShaders* shaders, ElementSG* parent, PhysicsSystem* phi){
     m_physics = phi;
     m_scene_root = parent;
     m_item = nullptr;
-    has_item = false;
+    m_has_item = false;
     m_power = POWER_INIT;
     m_act_timestamp = 0;
 
-    auto* body_node = new NodeGameSG(shaders, parent, OBB_TYPE);
+    auto* body_node = new NodeGameSG(parent, OBB_TYPE);
 
     Mesh* body_mesh = new Mesh(create_rectangle_cuboid({2,8,2}), true, OBB_TYPE);
     Mesh* arm_mesh = new Mesh("../assets/mesh/arm_3_3.obj", true, OBB_TYPE);
@@ -18,12 +18,12 @@ Character::Character(Shaders* shaders, ElementSG* parent, PhysicsSystem* phi){
     
     body_node->get_trsf()->set_translation({2.,4,0});
     body_node->get_trsf()->set_translation({-20, 10, 0});
-    body_node->set_debug_rendering(true, {0, 0.5, 0.7});
+//    body_node->set_debug_rendering(true, {0, 0.5, 0.7});
     body_node->set_meshes({body_mesh});
 
 
     //Initial camera (FPS)
-    m_camera = new NodeGameSG(shaders, body_node, OBB_TYPE);
+    m_camera = new NodeGameSG(body_node, OBB_TYPE);
    
     glm::vec3 pos;
     m_camera->get_trsf()->set_translation({0, 5, 0});
@@ -32,18 +32,15 @@ Character::Character(Shaders* shaders, ElementSG* parent, PhysicsSystem* phi){
     // m_camera->get_trsf()->set_rotation({-10, 0, 0});
     
     //Arm mesh 
-    auto* arm_node = new NodeGameSG(shaders, m_camera, OBB_TYPE);
+    auto* arm_node = new NodeGameSG(m_camera, OBB_TYPE);
     arm_node->set_meshes({arm_mesh});
     arm_node->set_material(material_character);
 
-//   TODO use these to have the arm placed better
-//    arm_node->get_local_trsf()->set_uniform_scale(0.5f);
-   arm_node->get_trsf()->set_uniform_scale(0.5f);
+   arm_node->get_trsf()->set_uniform_scale(0.4f);
    arm_node->get_trsf()->set_order_rotation(ORDER_ZXY);
-   arm_node->get_trsf()->set_rotation({20, -90, 35});
+   arm_node->get_trsf()->set_rotation({20, -100, 30});
 
-    // arm_node->get_trsf()->set_rotation({0, -90, 0});
-    arm_node->get_trsf()->set_translation({1.2, -1.2, -2.1});
+    arm_node->get_trsf()->set_translation({1.7, -1.0, -2.5});
     // arm_node->set_debug_rendering(true, {0.6, 0, 0.7});
 
 
@@ -65,21 +62,8 @@ NodeGameSG* Character::get_character_node(){
     return m_body->get_node();
 }
 
-void Character::set_camera(NodeGameSG* cam){
-    m_camera = cam;
-    m_body->get_node()->add_child(cam);
-}
-
-PhysicsSystem* Character::get_physics(){
-    return m_physics;
-}
-
-void Character::set_physics(PhysicsSystem* system){
-    m_physics = system;
-}
-
 glm::vec3 Character::get_sight(){
-    glm::vec3 fwd = CAMERA_INIT_FORWARD;
+    glm::vec3 fwd = NODE_INIT_FORWARD;
     return m_camera->get_trsf()->apply_to_vector(fwd);
 }
 
@@ -109,7 +93,7 @@ void Character::grab_item(RigidBodyVolume* item, double ts, float action_area){
         // glm::vec3 item_translation = m_camera->get_trsf()->apply_to_vector(fwd);
         m_item->get_node()->get_trsf()->set_translation(trsf);
 
-        has_item = true;
+        m_has_item = true;
     }
 }
 
@@ -124,9 +108,9 @@ RigidBodyVolume* Character::get_body(){
 
 void Character::throw_item(double ts){
     m_act_timestamp = ts;
-    has_item = false;
+    m_has_item = false;
 
-    glm::vec3 fwd = CAMERA_INIT_FORWARD;
+    glm::vec3 fwd = NODE_INIT_FORWARD;
     glm::vec3 dir = m_camera->get_trsf()->apply_to_vector(fwd);
     glm::vec3 throw_dir = m_power * dir;
     
@@ -170,6 +154,18 @@ void Character::accumulate_power(){
 
 bool Character::can_interact(double timestamp) const{
     return (timestamp - m_act_timestamp) > 0.5;
+}
+
+MouseView *Character::get_mouse_view()const {
+    return m_mouse_view;
+}
+
+void Character::set_mouse_view(MouseView *mouse_view) {
+    m_mouse_view = mouse_view;
+}
+
+bool Character::has_item() {
+    return m_has_item;
 }
 
 

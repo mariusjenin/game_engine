@@ -300,8 +300,8 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">monitor</td><td>The monitor to query. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">widthMM</td><td>Where to store the width, in millimetres, of the monitor's display area, or <code>NULL</code>. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">heightMM</td><td>Where to store the height, in millimetres, of the monitor's display area, or <code>NULL</code>.</td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">widthMM</td><td>Where to store the m_width, in millimetres, of the monitor's display area, or <code>NULL</code>. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">heightMM</td><td>Where to store the m_height, in millimetres, of the monitor's display area, or <code>NULL</code>.</td></tr>
   </table>
   </dd>
 </dl>
@@ -466,7 +466,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>This function returns an array of all video modes supported by the specified monitor. The returned array is sorted in ascending order, first by color bit depth (the sum of all channel depths) and then by resolution area (the product of width and height).</p>
+<p>This function returns an array of all video modes supported by the specified monitor. The returned array is sorted in ascending order, first by color bit depth (the sum of all channel depths) and then by resolution area (the product of m_width and m_height).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">monitor</td><td>The monitor to query. </td></tr>

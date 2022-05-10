@@ -280,7 +280,7 @@ static GLboolean createWindow(_GLFWwindow* window,
                                            _glfw.x11.root,
                                            0, 0,
                                            wndconfig->width, wndconfig->height,
-                                           0,          // Border width
+                                           0,          // Border m_width
                                            vi->depth,  // Color depth
                                            InputOutput,
                                            vi->visual,

@@ -20,19 +20,18 @@ namespace scene_graph {
     protected:
         /**
          * Constructor of the NodeSG
-         * @param shaders
-         * @param parent parent in the scene graph
-         * @param name
+         * @param parent
          */
-        NodeSG(Shaders *shaders, ElementSG *parent);
+        NodeSG(ElementSG *parent);
 
         Transform *m_local_trsf;
     public:
 
         /**
-         * Load the Model matrices of the NodeSG
+         * Load the Model matrices of the NodeSG in the Shaders
+         * @param shaders
          */
-        void load_model_matrices();
+        void load_model_matrices(Shaders *shaders);
 
         /**
          * Getter of the local transformation matrix of the NodeSG
