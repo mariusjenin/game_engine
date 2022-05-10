@@ -109,7 +109,7 @@ int main() {
     //CREATE THE SCENE
 //    SceneLand scene = SceneLand(window,"../shader/scene_land/vertex_shader.glsl", "../shader/scene_land/fragment_shader.glsl",mult_physics);
     LabScene scene = LabScene(window,"../shader/shadowed_scene/vertex_shader.glsl","../shader/shadowed_scene/fragment_shader.glsl",mult_physics);
-//     BounceOBBScene scene = BounceOBBScene(window,"../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
+    // BounceOBBScene scene = BounceOBBScene(window,"../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
 //     BounceAABBScene scene = BounceAABBScene(window,"../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
 //    BounceSphereBBScene scene = BounceSphereBBScene(window,"../shader/simple_scene/vertex_shader.glsl","../shader/simple_scene/fragment_shader.glsl",mult_physics);
 //    ShadowedScene scene = ShadowedScene(window,"../shader/shadowed_scene/vertex_shader.glsl","../shader/shadowed_scene/fragment_shader.glsl",mult_physics);

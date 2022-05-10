@@ -32,7 +32,7 @@ ShadowedScene::ShadowedScene(GLFWwindow *window, const std::string &vertex_shade
     m_sphere_light->get_trsf()->set_order_rotation(ORDER_ZXY);
     m_sphere_light->set_light(light_source);
     m_sphere_light->set_meshes({ball_mesh});
-    m_sphere_light->set_material(new MaterialColor(m_shaders, {1., 1., 0.8}, 50));
+    m_sphere_light->set_material(new MaterialColor({1., 1., 0.8}, 50));
     m_sphere_light->set_debug_rendering(true, {0.7, 0.7, 0.4});
     m_lights.push_back(m_sphere_light);
 
@@ -43,12 +43,12 @@ ShadowedScene::ShadowedScene(GLFWwindow *window, const std::string &vertex_shade
     sphere_light_2->get_trsf()->set_order_rotation(ORDER_ZXY);
     sphere_light_2->set_light(light_source2);
     sphere_light_2->set_meshes({ball_mesh});
-    sphere_light_2->set_material(new MaterialColor(m_shaders, {1., 1., 0.8}, 50));
+    sphere_light_2->set_material(new MaterialColor({1., 1., 0.8}, 50));
     sphere_light_2->set_debug_rendering(true, {0.7, 0.7, 0.4});
     m_lights.push_back(sphere_light_2);
 
     //Plane
-    auto* floor_color = new MaterialColor(m_shaders, {0.3, 0.75, 0.2}, 100);
+    auto* floor_color = new MaterialColor({0.3, 0.75, 0.2}, 100);
     auto* floor = new NodeGameSG(m_root,AABB_TYPE);
     floor->set_meshes({floor_mesh});
     floor->set_material(floor_color);
@@ -63,7 +63,7 @@ ShadowedScene::ShadowedScene(GLFWwindow *window, const std::string &vertex_shade
     auto* cube = new NodeGameSG(m_root,OBB_TYPE);
     cube->get_trsf()->set_translation({-2,4,-2});
     cube->set_meshes({cube_mesh});
-    cube->set_material(new MaterialColor(m_shaders, {0.9, 0.3, 0.2}, 100));
+    cube->set_material(new MaterialColor({0.9, 0.3, 0.2}, 100));
 //    cube->set_debug_rendering(true, {1., 0.4, 0.3});
     auto* rbv_cube = new RigidBodyVolume(cube);
     rbv_cube->add_behavior(new MovementBehavior(true,true, mult_physics,1,0.3,0.5));
@@ -74,7 +74,7 @@ ShadowedScene::ShadowedScene(GLFWwindow *window, const std::string &vertex_shade
     auto* sphere = new NodeGameSG(m_root,SPHEREBB_TYPE);
     sphere->get_trsf()->set_translation({2,5,3});
     sphere->set_meshes({ball_mesh});
-    sphere->set_material(new MaterialColor(m_shaders, {0.2, 0.3, 0.9}, 100));
+    sphere->set_material(new MaterialColor({0.2, 0.3, 0.9}, 100));
 //    sphere->set_debug_rendering(true, {0.3, 0.4, 1.});
     auto* rbv_sphere = new RigidBodyVolume(sphere);
     rbv_sphere->add_behavior(new MovementBehavior(true,true, mult_physics,1,0.3,0.5));

@@ -35,7 +35,7 @@ SceneLand::SceneLand(GLFWwindow *window, const std::string &vertex_shader_path, 
 
     //Land
     auto *land_node = new NodeGameSG(m_root);
-    land_node->set_material(new MaterialTexture(m_shaders, id_land_texture));
+    land_node->set_material(new MaterialTexture(id_land_texture));
     land_node->get_local_trsf()->set_uniform_scale(5);
     land_node->set_meshes({land_mesh});
     land_node->set_see_both_face(true);
@@ -52,7 +52,7 @@ SceneLand::SceneLand(GLFWwindow *window, const std::string &vertex_shader_path, 
     m_ball = new NodeOnTopSG(land_node, land_node);
     m_ball->get_trsf()->set_translation({-8, 0, 10});
     m_ball->set_meshes({ball_mesh});
-    m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
+    m_ball->set_material(new MaterialColor({0.75, 0.3, 0.95}, 50));
     m_ball->add_uniform_1i(has_hm_location, false);
 
     //CAMERA

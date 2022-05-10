@@ -33,7 +33,7 @@ BounceSphereBBScene::BounceSphereBBScene(GLFWwindow *window,const std::string &v
     m_lights.push_back(light_node);
 
     //Big Ball
-    auto *big_ball_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
+    auto *big_ball_mat_color = new MaterialColor({0.15, 0.55, 0.7}, 50);
     auto *big_ball = new NodeGameSG(m_root, SPHEREBB_TYPE);
     float gap = 4;
     big_ball->get_trsf()->set_translation({-gap, 0, -gap});
@@ -76,7 +76,7 @@ BounceSphereBBScene::BounceSphereBBScene(GLFWwindow *window,const std::string &v
     m_ball->get_trsf()->set_rotation({25, 74, 42});
     m_ball->get_trsf()->set_uniform_scale(1 / 2.f);
     m_ball->set_meshes({ball_mesh1});
-    m_ball->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
+    m_ball->set_material(new MaterialColor({0.75, 0.3, 0.95}, 50));
     m_ball->set_debug_rendering(true, {1, 0, 1});
     auto *gravity_force = new GravityForce();
     auto *rbv_ball = new RigidBodyVolume(m_ball);
@@ -89,14 +89,14 @@ BounceSphereBBScene::BounceSphereBBScene(GLFWwindow *window,const std::string &v
     m_ball2->get_trsf()->set_translation({2, 2, 2});
     m_ball2->get_trsf()->set_rotation({0, 90, 0});
     m_ball2->set_meshes({ball_mesh1});
-    m_ball2->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
+    m_ball2->set_material(new MaterialColor({0.85, 0.5, 0.45}, 50));
     m_ball2->set_debug_rendering(true,{1,1,1});
     
     //Ball3
     auto *m_ball3 = new NodeGameSG(m_ball2, SPHEREBB_TYPE);
     m_ball3->get_trsf()->set_translation({4, 2, 4});
     m_ball3->set_meshes({ball_mesh1});
-    m_ball3->set_material(new MaterialColor(m_shaders, {0.85, 0.5, 0.45}, 50));
+    m_ball3->set_material(new MaterialColor({0.85, 0.5, 0.45}, 50));
     m_ball3->set_debug_rendering(true,{0,1,1});
 
     //CAMERA
@@ -228,11 +228,11 @@ void BounceSphereBBScene::generate_balls(float height, float radius, float dispe
                  (((float) rand() / (float) RAND_MAX) - 0.5) * 2 * dispersion});
         ball->set_meshes({ball_mesh1});
         if (texture) {
-            ball->set_material(new MaterialTexture(m_shaders, id_texture));
+            ball->set_material(new MaterialTexture(id_texture));
         } else {
             glm::vec3 color = {(float) rand() / (float) RAND_MAX, (float) rand() / (float) RAND_MAX,
                                (float) rand() / (float) RAND_MAX,};
-            ball->set_material(new MaterialColor(m_shaders, color, 50));
+            ball->set_material(new MaterialColor(color, 50));
         }
         auto *rbv = new RigidBodyVolume(ball);
         rbv->add_behavior(new MovementBehavior( true,true,m_physics_system->get_multiplicator_physics(),100, 0.01, 0.2));

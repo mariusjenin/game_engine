@@ -1,7 +1,7 @@
 #include "Character.hpp"
 #include <src/physics/rigid_body_behavior/MovementBehavior.hpp>
 
-Character::Character(MainShaders* shaders, ElementSG* parent, PhysicsSystem* phi){
+Character::Character(ElementSG* parent, PhysicsSystem* phi){
     m_physics = phi;
     m_scene_root = parent;
     m_item = nullptr;
@@ -14,10 +14,10 @@ Character::Character(MainShaders* shaders, ElementSG* parent, PhysicsSystem* phi
     Mesh* body_mesh = new Mesh(create_rectangle_cuboid({2,8,2}), true, OBB_TYPE);
     Mesh* arm_mesh = new Mesh("../assets/mesh/arm_3_3.obj", true, OBB_TYPE);
 
-    auto* material_character = new MaterialColor(shaders, {0.8,0.8,0.8}, 100);
+    auto* material_character = new MaterialColor({0.8,0.8,0.8}, 100);
     
     body_node->get_trsf()->set_translation({2.,4,0});
-    body_node->get_trsf()->set_translation({-20, 10, 0});
+    body_node->get_trsf()->set_translation({20, 10, 0});
 //    body_node->set_debug_rendering(true, {0, 0.5, 0.7});
     body_node->set_meshes({body_mesh});
 
@@ -120,17 +120,28 @@ void Character::throw_item(double ts){
     m_item = nullptr;
     m_camera->get_children()[0]->clear_children();
 
-
     //Get closest pt to item pos on character boundingbox
     glm::vec3 pos = item->get_node()->get_position_in_world();
     glm::vec3 bb_pt = get_character_node()->get_bb()->closest_point(pos);
+    item->get_node()->get_bb()->get_position();
+
+
+    float offset = item->get_node()->get_bb()->get_max_dist() / 2.f;
+    // if(item->get_node()->get_bb()->get_type() == SPHEREBB_TYPE){
+    //     SphereBB* bb = (SphereBB*) item->get_node()->get_bb();
+    //     offset = bb->get_radius();
+    // }else{
+    //     //OBB
+    //     OBB* bb = (OBB*) item->get_node()->get_bb();
+    //     offset = bb->get;
+    // }
 
     //Add item back to physics
     m_physics->add_collider(item);
     item->get_node()->set_parent(m_scene_root);
     m_scene_root->add_child(item->get_node());
     
-    item->get_node()->get_trsf()->set_translation(bb_pt);
+    item->get_node()->get_trsf()->set_translation(bb_pt + dir*offset);
 
     //Add force back and throw item.
     item->get_movement_behavior()->add_linear_impulse(throw_dir);

@@ -23,7 +23,7 @@ namespace material {
          * @param path_specular_texture
          * @param shininess
          */
-        MaterialTexture(Shaders *shaders, TextureManager* texture_manager, const std::string &path_diffuse_texture,
+        MaterialTexture(TextureManager* texture_manager, const std::string &path_diffuse_texture,
                         const std::string &path_specular_texture, float shininess = 0.);
 
         /**
@@ -33,7 +33,7 @@ namespace material {
          * @param id_specular_texture
          * @param shininess
          */
-        MaterialTexture(Shaders *shaders, int id_diffuse_texture, int id_specular_texture, float shininess = 0.);
+        MaterialTexture(int id_diffuse_texture, int id_specular_texture, float shininess = 0.);
 
         /**
          * Constructor of a textured Material with the id of the texture file already loaded for the both components diffuse and specular
@@ -41,9 +41,9 @@ namespace material {
          * @param id_texture
          * @param shininess
          */
-        MaterialTexture(Shaders *shaders, int id_texture, float shininess = 0.);
+        MaterialTexture(int id_texture, float shininess = 0.);
 
-        void load_in_shader() override;
+        void load_in_shader(Shaders *shaders) override;
 
     };
 }

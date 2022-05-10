@@ -20,21 +20,20 @@ namespace material {
     class Material {
     protected :
         float m_shininess;
-        Shaders *m_shaders;
 
         /**
          * Constructor of a Material
          * @param shaders
          * @param shininess
          */
-        explicit Material(Shaders *shaders, float shininess = 0.);
+        explicit Material(float shininess = 0.);
 
     public :
         const static int MATERIAL_TYPE_COLOR = 0;
         const static int MATERIAL_TYPE_TEXTURE = 1;
 
         /// Load the Material datas in the shader
-        virtual void load_in_shader();
+        virtual void load_in_shader(Shaders* shaders);
     };
 }
 #endif //GAME_ENGINE_MATERIAL_HPP

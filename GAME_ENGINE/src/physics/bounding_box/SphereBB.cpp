@@ -168,3 +168,7 @@ glm::vec3 SphereBB::get_tensor() {
     return glm::vec3(m_radius*m_radius * fraction);
 }
 
+float SphereBB::get_max_dist() {
+    return m_radius*2;
+}
+

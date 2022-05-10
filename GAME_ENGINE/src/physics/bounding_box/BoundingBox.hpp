@@ -125,6 +125,14 @@ namespace physics {
              * @return tensor matrix
              */
             virtual glm::vec3 get_tensor() = 0;
+            
+            /**
+             * Getter of the max distance between two points in a bb
+             * @return float distance
+             */
+            virtual float get_max_dist() = 0;
+
+
         };
     }
 }

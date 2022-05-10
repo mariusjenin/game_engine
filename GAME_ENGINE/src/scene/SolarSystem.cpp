@@ -52,7 +52,7 @@ SolarSystem::SolarSystem(GLFWwindow *window, const std::string &vertex_shader_pa
     m_sky = new NodeGameSG((ElementSG *) m_root);
     m_sky->get_local_trsf()->set_rotation({-90, 0, 0});
     m_sky->set_meshes({sky_mesh});
-    m_sky->set_material(new MaterialTexture(m_shaders, id_skymap_texture));
+    m_sky->set_material(new MaterialTexture(id_skymap_texture));
     m_sky->add_uniform_1i(star_id_location, NOT_STAR_ID);
     m_sky->add_uniform_1i(always_enlightened_location, true);
     m_sky->set_see_both_face(true);
@@ -63,7 +63,7 @@ SolarSystem::SolarSystem(GLFWwindow *window, const std::string &vertex_shader_pa
     m_sun->set_light(sun_light);
     m_sun->get_local_trsf()->set_rotation({-90, 0, 0});
     m_sun->set_meshes({sun_mesh});
-    m_sun->set_material(new MaterialTexture(m_shaders, id_sun_texture));
+    m_sun->set_material(new MaterialTexture(id_sun_texture));
     m_sun->add_uniform_1i(star_id_location, SUN_ID);
     m_sun->add_uniform_1i(always_enlightened_location, true);
     m_lights.push_back(m_sun);
@@ -78,7 +78,7 @@ SolarSystem::SolarSystem(GLFWwindow *window, const std::string &vertex_shader_pa
     m_earth3->get_trsf()->set_translation({10, 0, 0});
     m_earth3->set_meshes({earth_mesh});
 //    m_earth3->set_material(new MaterialColor(m_shaders,{0.8,0.2,0.4},15));
-    m_earth3->set_material(new MaterialTexture(m_shaders, id_earth_texture));
+    m_earth3->set_material(new MaterialTexture(id_earth_texture));
     m_earth3->add_uniform_1i(star_id_location, EARTH_ID);
     m_earth3->add_uniform_1i(always_enlightened_location, false);
 
@@ -93,7 +93,7 @@ SolarSystem::SolarSystem(GLFWwindow *window, const std::string &vertex_shader_pa
     m_moon3->get_trsf()->set_translation({3, 0, 0});
     m_moon3->set_meshes({moon_mesh});
 //    m_moon->set_material(new MaterialColor(m_shaders,{0.4,0.2,0.8},15));
-    m_moon3->set_material(new MaterialTexture(m_shaders, id_moon_texture));
+    m_moon3->set_material(new MaterialTexture(id_moon_texture));
     m_moon3->add_uniform_1i(star_id_location, MOON_ID);
     m_moon3->add_uniform_1i(always_enlightened_location, false);
 

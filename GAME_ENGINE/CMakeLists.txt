@@ -51,17 +51,17 @@ add_definitions(
 )
 
 add_executable(
-        #		MAIN
+        #	MAIN
         main
         main/main.cpp
-        #		UTILS
+        #	UTILS
         src/utils/meshloader.cpp src/utils/meshloader.hpp
         src/utils/texture.cpp src/utils/texture.hpp
         src/utils/objloader.cpp src/utils/objloader.hpp
         src/utils/printer.cpp src/utils/printer.hpp
         src/utils/Transform.cpp src/utils/Transform.hpp
         src/utils/Geometry3D.cpp src/utils/Geometry3D.hpp
-        #		SHADERS
+        #	SHADERS
         src/shader/ShadersDataManager.cpp src/shader/ShadersDataManager.hpp
         src/shader/VAODataManager.cpp src/shader/VAODataManager.hpp
         src/shader/TextureManager.cpp src/shader/TextureManager.hpp
@@ -69,16 +69,16 @@ add_executable(
         src/shader/ShadowMap.cpp src/shader/ShadowMap.hpp
         src/shader/MainShaders.cpp src/shader/MainShaders.hpp
         src/shader/Shaders.cpp src/shader/Shaders.hpp
-        #		MESH
+        #	MESH
         src/mesh/Mesh.cpp src/mesh/Mesh.hpp
         src/mesh/LODMesh.cpp src/mesh/LODMesh.hpp
-        #		SCENE GRAPH
+        #	SCENE GRAPH
         src/scene_graph/NodeSG.cpp src/scene_graph/NodeSG.hpp
         src/scene_graph/NodeOnTopSG.cpp src/scene_graph/NodeOnTopSG.hpp
         src/scene_graph/RootSG.cpp src/scene_graph/RootSG.hpp
         src/scene_graph/ElementSG.cpp src/scene_graph/ElementSG.hpp
         src/scene_graph/NodeGameSG.cpp src/scene_graph/NodeGameSG.hpp
-        #		SCENE
+        #	SCENE
         src/scene/SolarSystem.cpp src/scene/SolarSystem.hpp
         src/scene/SceneLand.cpp src/scene/SceneLand.hpp
         src/scene/Scene.cpp src/scene/Scene.hpp
@@ -87,11 +87,11 @@ add_executable(
         src/scene/BounceSphereBBScene.cpp src/scene/BounceSphereBBScene.hpp
         src/scene/LabScene.cpp src/scene/LabScene.hpp
         src/scene/ShadowedScene.cpp src/scene/ShadowedScene.hpp
-        #		MATERIAL
+        #	MATERIAL
         src/material/Material.cpp src/material/Material.hpp
         src/material/MaterialColor.cpp src/material/MaterialColor.hpp
         src/material/MaterialTexture.cpp src/material/MaterialTexture.hpp
-        #		LIGHT
+        #	LIGHT
         src/light/Light.cpp src/light/Light.hpp
         src/light/LightShader.cpp src/light/LightShader.hpp
         src/light/light_behavior/LightBehavior.cpp src/light/light_behavior/LightBehavior.hpp
@@ -101,7 +101,7 @@ add_executable(
         src/light/light_behavior/DirectionLightBehavior.cpp src/light/light_behavior/DirectionLightBehavior.hpp
         src/light/light_behavior/PositionLightBehavior.cpp src/light/light_behavior/PositionLightBehavior.hpp
         src/light/light_behavior/SpotLightBehavior.cpp src/light/light_behavior/SpotLightBehavior.hpp
-        #		PHYSICS
+        #	PHYSICS
         src/physics/bounding_box/BoundingBox.cpp src/physics/bounding_box/BoundingBox.hpp
         src/physics/bounding_box/AABB.cpp src/physics/bounding_box/AABB.hpp
         src/physics/bounding_box/OBB.cpp src/physics/bounding_box/OBB.hpp
@@ -116,7 +116,9 @@ add_executable(
         src/physics/rigid_body_behavior/RigidBodyBehavior.cpp src/physics/rigid_body_behavior/RigidBodyBehavior.hpp
         src/physics/rigid_body_behavior/MovementBehavior.cpp src/physics/rigid_body_behavior/MovementBehavior.hpp
         src/physics/rigid_body_behavior/SwitchColorBehavior.cpp src/physics/rigid_body_behavior/SwitchColorBehavior.hpp
-        #		CHARACTER
+        src/physics/rigid_body_behavior/MoveDoorBehavior.cpp src/physics/rigid_body_behavior/MoveDoorBehavior.hpp
+
+        #       CHARACTER
         src/Character.cpp src/Character.hpp
         src/MouseView.cpp src/MouseView.hpp
         #       ODE
@@ -125,6 +127,11 @@ add_executable(
         src/physics/ode/EulerODE.cpp src/physics/ode/EulerODE.hpp
         src/physics/ode/VerletODE.cpp src/physics/ode/VerletODE.hpp
         src/physics/ode/RungeKutta4ODE.cpp src/physics/ode/RungeKutta4ODE.hpp
+
+        #       GAME ELEMENTS
+        src/game_element/DoorElement.cpp src/game_element/DoorElement.hpp
+        src/game_element/ButtonElement.cpp src/game_element/ButtonElement.hpp
+
 )
 target_link_libraries(main
         ${ALL_LIBS}

@@ -28,7 +28,7 @@ namespace material {
          * @param specular
          * @param shininess
          */
-        explicit MaterialColor(Shaders *shaders, glm::vec3 ambient = {0, 0, 0}, glm::vec3 diffuse = {0, 0,
+        explicit MaterialColor(glm::vec3 ambient = {0, 0, 0}, glm::vec3 diffuse = {0, 0,
                                                                                                      0},
                                glm::vec3 specular = {
                                        0, 0, 0}, float shininess = 1.);
@@ -39,9 +39,9 @@ namespace material {
          * @param color
          * @param shininess
          */
-        explicit MaterialColor(Shaders *shaders, glm::vec3 color = {0, 0, 0}, float shininess = 1.);
+        explicit MaterialColor(glm::vec3 color = {0, 0, 0}, float shininess = 1.);
 
-        void load_in_shader() override;
+        void load_in_shader(Shaders *shaders) override;
     };
 }
 #endif //GAME_ENGINE_MATERIALCOLOR_HPP

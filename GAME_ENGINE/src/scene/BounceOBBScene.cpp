@@ -30,7 +30,7 @@ BounceOBBScene::BounceOBBScene(GLFWwindow *window, const std::string &vertex_sha
     m_lights.push_back(light_node);
 
     //Big cube
-    auto* big_cube_mat_color = new MaterialColor(m_shaders, {0.15, 0.55, 0.7}, 50);
+    auto* big_cube_mat_color = new MaterialColor({0.15, 0.55, 0.7}, 50);
     auto* big_cube = new NodeGameSG(m_root,OBB_TYPE);
     big_cube->get_trsf()->set_translation({0,0,0});
 //    big_cube->get_trsf()->set_rotation({75, -90, 0});
@@ -48,7 +48,7 @@ BounceOBBScene::BounceOBBScene(GLFWwindow *window, const std::string &vertex_sha
      m_cube->get_trsf()->set_rotation({0,0,35});
     m_cube->get_trsf()->set_uniform_scale(2.f);
     m_cube->set_meshes({cube_mesh2});
-    m_cube->set_material(new MaterialColor(m_shaders, {0.75, 0.3, 0.95}, 50));
+    m_cube->set_material(new MaterialColor({0.75, 0.3, 0.95}, 50));
     m_cube->set_debug_rendering(true, {0.85, 0.5, 1});
     auto* gravity_force = new GravityForce();
     auto* rbv_cube = new RigidBodyVolume(m_cube);

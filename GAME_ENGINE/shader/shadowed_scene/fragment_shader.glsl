@@ -1,5 +1,5 @@
 #version 430 core
-#define NB_MAX_LIGHTS 200
+#define NB_MAX_LIGHTS 20
 
 struct Material{
     int type;

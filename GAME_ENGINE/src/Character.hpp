@@ -51,7 +51,7 @@ public:
      * @param node
      * @param ps
      */
-    Character(MainShaders * shaders, ElementSG * node, PhysicsSystem *ps);
+    Character(ElementSG * node, PhysicsSystem *ps);
 
     /**
      * Getter of the body node of the Charachter
@@ -82,7 +82,7 @@ public:
      * @param ts
      * @param action_area
      */
-    void grab_item(RigidBodyVolume * rbv,  double ts, float action_area = 9.f);
+    void grab_item(RigidBodyVolume * rbv,  double ts, float action_area = 12.f);
 
     /**
      * Accumulate power to launch item

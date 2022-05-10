@@ -34,7 +34,7 @@ void NodeGameSG::draw(Shaders *shaders, glm::vec3 pos_camera, bool allow_debug) 
         }
 
         if (m_has_material) {
-            m_material->load_in_shader();
+            m_material->load_in_shader(shaders);
             for (auto mesh: m_meshes) {
                 mesh->update_mesh(get_distance_from(pos_camera, pos_camera));
                 VAODataManager::bind_vao(mesh->get_vao_id());
