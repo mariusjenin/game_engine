@@ -58,5 +58,16 @@ glm::mat3 OBB::get_orientation() const {
     return m_orientation;
 }
 
+float OBB::get_max_dist(){
+    std::vector<glm::vec3> vecs_add = {m_size.x * m_orientation[0],m_size.y* m_orientation[1],m_size.z* m_orientation[2]};
+    std::vector<glm::vec3> vecs_substract = {-m_size.x* m_orientation[0],-m_size.y* m_orientation[1],-m_size.z* m_orientation[2]};
+    
+    glm::vec3 min = m_position+vecs_substract[0]+vecs_substract[1]+vecs_substract[2];
+    glm::vec3 max = m_position+vecs_add[0]+vecs_add[1]+vecs_add[2];
+
+    return glm::length(max - min);
+}
+
+
 
 

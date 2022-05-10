@@ -49,6 +49,8 @@ namespace physics {
             glm::vec3 closest_point(glm::vec3 pt) const override;
 
             glm::vec3 get_tensor() override;
+
+            float get_max_dist() override;
         };
     }
 }

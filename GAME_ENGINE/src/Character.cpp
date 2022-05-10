@@ -136,17 +136,28 @@ void Character::throw_item(double ts){
     m_item = nullptr;
     m_camera->get_children()[0]->clear_children();
 
-
     //Get closest pt to item pos on character boundingbox
     glm::vec3 pos = item->get_node()->get_position_in_world();
     glm::vec3 bb_pt = get_character_node()->get_bb()->closest_point(pos);
+    item->get_node()->get_bb()->get_position();
+
+
+    float offset = item->get_node()->get_bb()->get_max_dist() / 2.f;
+    // if(item->get_node()->get_bb()->get_type() == SPHEREBB_TYPE){
+    //     SphereBB* bb = (SphereBB*) item->get_node()->get_bb();
+    //     offset = bb->get_radius();
+    // }else{
+    //     //OBB
+    //     OBB* bb = (OBB*) item->get_node()->get_bb();
+    //     offset = bb->get;
+    // }
 
     //Add item back to physics
     m_physics->add_collider(item);
     item->get_node()->set_parent(m_scene_root);
     m_scene_root->add_child(item->get_node());
     
-    item->get_node()->get_trsf()->set_translation(bb_pt);
+    item->get_node()->get_trsf()->set_translation(bb_pt + dir*offset);
 
     //Add force back and throw item.
     item->get_movement_behavior()->add_linear_impulse(throw_dir);

@@ -72,4 +72,8 @@ glm::mat3 AABB::get_orientation() const {
     return glm::mat3(1);
 };
 
+float AABB::get_max_dist(){
+    return RCBB::get_max_dist();
+}
+
 

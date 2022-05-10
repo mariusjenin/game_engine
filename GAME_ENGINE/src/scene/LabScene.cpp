@@ -167,6 +167,7 @@ LabScene::LabScene(const std::string &vertex_shader_path, const std::string &fra
     //ball
     auto* m_ball = new NodeGameSG(m_shaders, m_root,SPHEREBB_TYPE);
     m_ball->get_trsf()->set_translation({5.,10,0});
+    m_ball->get_trsf()->set_uniform_scale(3);
     m_ball->set_meshes({ball_mesh1});
     m_ball->set_material(new MaterialTexture(m_shaders, id_ball_texture));
     // m_ball->set_debug_rendering(true);

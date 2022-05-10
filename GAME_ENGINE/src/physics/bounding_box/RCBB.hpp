@@ -80,6 +80,9 @@ namespace physics {
             glm::vec3 closest_point(glm::vec3 pt) const override;
 
             float is_intersected(Ray ray) override;
+
+            virtual float get_max_dist();
+
         };
     }
 }

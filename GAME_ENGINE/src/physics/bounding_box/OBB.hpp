@@ -28,6 +28,10 @@ namespace physics {
             std::vector<glm::vec3> to_vertices() const override;
 
             void apply_transform(glm::mat4 matrix) override;
+
+            float get_max_dist() override;
+
+            
         };
     }
 }

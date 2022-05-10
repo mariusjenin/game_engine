@@ -308,3 +308,10 @@ Collision RCBB::get_data_collision(SphereBB *bb) {
 
     return collision;
 }
+
+float RCBB::get_max_dist() {
+    glm::vec3 min(m_position[0] - m_size[0], m_position[1] - m_size[1], m_position[2] - m_size[2]);
+    glm::vec3 max(m_position[0] + m_size[0], m_position[1] + m_size[1], m_position[2] + m_size[2]);
+
+    return glm::length(max - min);
+}

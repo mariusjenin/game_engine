@@ -47,6 +47,9 @@ namespace physics {
             std::vector<glm::vec3> to_vertices() const override;
 
             glm::mat3 get_orientation() const override;
+
+            float get_max_dist();
+
         };
     }
 }
