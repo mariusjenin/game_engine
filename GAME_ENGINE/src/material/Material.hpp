@@ -23,7 +23,6 @@ namespace material {
 
         /**
          * Constructor of a Material
-         * @param shaders
          * @param shininess
          */
         explicit Material(float shininess = 0.);
@@ -32,7 +31,10 @@ namespace material {
         const static int MATERIAL_TYPE_COLOR = 0;
         const static int MATERIAL_TYPE_TEXTURE = 1;
 
-        /// Load the Material datas in the shader
+        /**
+         * Load the Material datas in the shader
+         * @param shaders
+         */
         virtual void load_in_shader(Shaders* shaders);
     };
 }

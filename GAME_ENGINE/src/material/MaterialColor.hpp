@@ -22,20 +22,18 @@ namespace material {
     public:
         /**
          * Constructor of a MaterialColor
-         * @param shaders
          * @param ambient
          * @param diffuse
          * @param specular
          * @param shininess
          */
-        explicit MaterialColor(glm::vec3 ambient = {0, 0, 0}, glm::vec3 diffuse = {0, 0,
-                                                                                                     0},
+        explicit MaterialColor(glm::vec3 ambient = {0, 0, 0}, glm::vec3 diffuse = {0, 0, 0},
                                glm::vec3 specular = {
                                        0, 0, 0}, float shininess = 1.);
 
+
         /**
          * Constructor of a MaterialColor that have the same color for the ambient, diffuse and specular components
-         * @param shaders
          * @param color
          * @param shininess
          */

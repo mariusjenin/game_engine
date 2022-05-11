@@ -15,10 +15,20 @@ SwitchColorBehavior::SwitchColorBehavior(Material* material) {
 }
 
 void SwitchColorBehavior::action(PhysicsSystem* ps,Collision collision,float delta_time) {
-    if(m_timer <=0){
-        switch_color();
+    bool action = false;
+    size_t size_rbv = m_rigid_bodies.size();
+    for(int i = 0; i < size_rbv; i++){
+        if(m_rigid_bodies[i] == collision.rigid_body_1 || m_rigid_bodies[i] == collision.rigid_body_2){
+            action=true;
+            break;
+        }
     }
-    m_timer = 2;
+    if(action){
+        if(m_timer <=0){
+            switch_color();
+        }
+        m_timer = 2;
+    }
 }
 
 void SwitchColorBehavior::update_physics(float delta_time) {
@@ -38,4 +48,8 @@ void SwitchColorBehavior::switch_color(){
     Material* tmp_material = m_rigid_body->get_node()->get_material();
     m_rigid_body->get_node()->set_material(m_material);
     m_material = tmp_material;
+}
+
+void SwitchColorBehavior::can_collide_with(RigidBodyVolume *rbv) {
+    m_rigid_bodies.push_back(rbv);
 }

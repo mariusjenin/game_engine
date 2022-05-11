@@ -1,5 +1,5 @@
 #version 430 core
-#define NB_MAX_LIGHTS 20
+#define NB_MAX_LIGHTS 10
 
 struct Material{
     int type;
@@ -33,8 +33,9 @@ struct Light {
     float inner_cut_off;
     float outer_cut_off; // if inner == outer then no smooth edge
     //Depth and Shadow Map
-    bool generate_shadow_map;
+    int generate_depth_map;
     int index_shadow_map;
+//    float bias_depth_map;
     mat4 depth_vp_mat;
 };
 
@@ -74,7 +75,7 @@ out vec3 color;
 
 
 uniform bool is_node_on_top;
-vec3 compute_phong(Light light,Material material,vec3 view_pos, sampler2D shadow_map, vec3 fragment_pos){
+vec3 compute_phong(Light light, sampler2D shadow_map){
     //AMBIENT
     vec3 ambient = vec3(0,0,0);
     vec3 diffuse = vec3(0,0,0);
@@ -134,7 +135,7 @@ vec3 compute_phong(Light light,Material material,vec3 view_pos, sampler2D shadow
 
     //SHADOW MAPS
     float shadow = 0.0;
-    if(light.generate_shadow_map) {
+    if(light.generate_depth_map == 1) {
         vec4 frag_pos_light_space = light.depth_vp_mat * vec4(fragment_pos,1.0);
         //perform perspective divide
         vec3 proj_coords = frag_pos_light_space.xyz / frag_pos_light_space.w;
@@ -148,7 +149,8 @@ vec3 compute_phong(Light light,Material material,vec3 view_pos, sampler2D shadow
             int kernel_bounds = (kernel_size-1)/2;
             vec2 texel_size = 1.0 / textureSize(shadow_map, 0);
             //BIAS
-            float bias = max(0.001 * (1.0 - dot(normal, light_dir)), 0.0001);
+//            float bias = max(light.bias_depth_map * (1.0 - dot(normal, light_dir)), light.bias_depth_map);
+            float bias = max(0.004 * (1.0 - dot(normal, light_dir)), 0.0004);
             for(int x = -kernel_bounds; x <= kernel_bounds; ++x)
             {
                 for(int y = -kernel_bounds; y <= kernel_bounds; ++y)
@@ -171,7 +173,8 @@ void main() {
     } else {
         color = vec3(0,0,0);
         for(int i = 0 ; i < nb_lights ; i++) {
-            color += compute_phong(lights_from_buffer[i], material, view_pos, shadow_maps[lights_from_buffer[i].index_shadow_map], fragment_pos);
+            int shadow_map_index = int(lights_from_buffer[i].index_shadow_map);
+            color += compute_phong(lights_from_buffer[i], shadow_maps[shadow_map_index]);
         }
     }
 }

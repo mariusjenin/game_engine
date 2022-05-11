@@ -13,10 +13,20 @@ MoveDoorBehavior::MoveDoorBehavior(DoorElement* door) {
 }
 
 void MoveDoorBehavior::action(PhysicsSystem* ps,Collision collision,float delta_time) {
-    if(m_timer <=0){
-        m_door->open();
+    bool action = false;
+    size_t size_rbv = m_rigid_bodies.size();
+    for(int i = 0; i < size_rbv; i++){
+        if(m_rigid_bodies[i] == collision.rigid_body_1 || m_rigid_bodies[i] == collision.rigid_body_2){
+            action=true;
+            break;
+        }
     }
-    m_timer = 4;
+    if(action){
+        if(m_timer <=0){
+            m_door->open();
+        }
+        m_timer = 4;
+    }
 }
 
 void MoveDoorBehavior::update_physics(float delta_time) {
@@ -34,4 +44,8 @@ void MoveDoorBehavior::update_render(float delta_time, ODE* ode) {
         m_timer -= delta_time;
 
     }
+}
+
+void MoveDoorBehavior::can_collide_with(RigidBodyVolume *rbv) {
+    m_rigid_bodies.push_back(rbv);
 }

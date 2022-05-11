@@ -31,7 +31,6 @@ Collision RigidBodyVolume::find_data_collision(RigidBodyVolume &rbv) {
                 case OBB_TYPE:
                 case AABB_TYPE:
                     collision = ((SphereBB *) bb1)->get_data_collision((RCBB *) bb2);
-//                    collision.normal*=-1;
                     break;
                 default:
                     break;

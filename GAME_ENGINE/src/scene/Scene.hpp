@@ -31,6 +31,7 @@ namespace scene {
         int m_camera_index{};
         MainShaders *m_shaders{};
         PhysicsSystem* m_physics_system{};
+        float m_timer = 0;
 
         /**
          * Process the input of the user to have actions on the Scene
@@ -53,6 +54,7 @@ namespace scene {
          */
         void adapt_viewport();
     public:
+        static const int NB_MAX_LIGHTS = 10;
         /**
          * Constructor of the Scene with the paths to the shader files
          * @param window

@@ -25,9 +25,10 @@ namespace light {
         float inner_cut_off{};
         float outer_cut_off{}; // if inner == outer then no smooth edge
         //Depth and Shadow Map
-        bool generate_shadow_map{};
+        bool generate_depth_map{};
+        int index_depth_map{};
+//        float bias_depth_map{};
         glm::mat4 depth_vp_mat;
-        int depth_map{};
         ShadowMap* shadow_map;
 
         /**
@@ -54,8 +55,9 @@ namespace light {
         float inner_cut_off{};
         float outer_cut_off{}; // if inner == outer then no smooth edge
         //Depth and Shadow Map
-        bool generate_shadow_map{};
-        int index_depth_map{};
+        int generate_depth_map{};
+        int index_sampler_depth_map{};
+//        float bias_depth_map{};
         glsl_mat4 depth_vp_mat{};
 
         /**

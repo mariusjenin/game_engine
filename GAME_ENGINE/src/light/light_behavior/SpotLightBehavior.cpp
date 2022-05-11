@@ -8,23 +8,27 @@
 using namespace light;
 using namespace light::behavior;
 
-SpotLightBehavior::SpotLightBehavior(GLuint id_texture_shadow_map, float icoa, float ocoa, int resol, float z_near, float z_far) {
+SpotLightBehavior::SpotLightBehavior(GLuint id_texture_shadow_map, float icoa, float ocoa, int resol, float z_near, float z_far, float bias) {
     m_inner_cut_off = glm::cos(glm::radians(icoa));
     m_outer_cut_off = glm::cos(glm::radians(ocoa));
     m_cut_off_angle = std::fmax(icoa,ocoa);
     m_id_texture_shadow_map = id_texture_shadow_map;
     m_z_near = z_near;
     m_z_far = z_far;
+    m_bias = bias;
     m_shadow_map = new ShadowMap(resol,resol,id_texture_shadow_map);
+    m_shadow_map->activate_texture();
 }
 
 void SpotLightBehavior::apply_to(LightInfo *light_info, glm::mat4 model_mat) {
     light_info->inner_cut_off = m_inner_cut_off;
     light_info->outer_cut_off = m_outer_cut_off;
 
-    light_info->generate_shadow_map = true;
+    light_info->generate_depth_map = true;
     light_info->shadow_map = m_shadow_map;
-    light_info->depth_map = (int) m_id_texture_shadow_map;
+    light_info->index_depth_map = (int) m_id_texture_shadow_map;
+//    light_info->bias_depth_map = m_bias;
+
     Transform light_trsf_tmp = Transform();
     light_trsf_tmp.set_matrix(model_mat);
 

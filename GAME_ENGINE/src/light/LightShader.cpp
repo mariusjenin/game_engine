@@ -20,7 +20,8 @@ LightShader::LightShader(LightInfo li) {
     direction = glsl_vec3(li.direction);
     inner_cut_off = li.inner_cut_off;
     outer_cut_off = li.outer_cut_off;
-    generate_shadow_map = li.generate_shadow_map;
+    generate_depth_map = li.generate_depth_map;
+//    bias_depth_map = li.bias_depth_map;
     depth_vp_mat = glsl_mat4(li.depth_vp_mat);
 }
 

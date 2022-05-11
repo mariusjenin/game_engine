@@ -10,20 +10,39 @@
 #include "src/material/MaterialColor.hpp"
 #include "DoorElement.hpp"
 
-class ButtonElement : public NodeGameSG{
+class ButtonElement : public NodeGameSG {
 
-    private:
-        RigidBodyVolume* m_top;
-        std::vector<DoorElement*> m_linked = {};
-        // RigidBodyVolume* m_bottom;
-    public:
-        ButtonElement(ElementSG *parent, BB_TYPE bb_type, DoorElement* = nullptr);
-        void add_behavior(float mult);
+private:
+    RigidBodyVolume *m_top;
+    std::vector<DoorElement *> m_linked = {};
+    // RigidBodyVolume* m_bottom;
+public:
+    /**
+     * Constructor of the ButtonElement
+     * @param parent
+     * @param bb_type
+     */
+    ButtonElement(ElementSG *parent, BB_TYPE bb_type, DoorElement * = nullptr);
 
-        void link_door(DoorElement*);
+    /**
+     * Add all the RigidBodyBehavior
+     * @param mult
+     * @param rbv
+     */
+    void add_behavior(float mult, std::vector<RigidBodyVolume *> rbv);
 
-        RigidBodyVolume* get_top();
+    /**
+     * Link to a door
+     */
+    void link_door(DoorElement *);
+
+    /**
+     * Getter the RigidBodyVolume of the button
+     * @return rigid_body
+     */
+    RigidBodyVolume *get_rigid_body();
 
 
 };
+
 #endif

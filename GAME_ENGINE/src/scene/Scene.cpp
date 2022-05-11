@@ -29,9 +29,10 @@ void Scene::update(float delta_time) {
         m_physics_system->update_bodies(camera_node->get_position_in_world(),delta_time);
     }
 
-    load_lights();
-
     process_input(delta_time);
+
+    m_timer-= delta_time;
+    load_lights();
 }
 
 Scene::Scene(GLFWwindow *window,const std::string &vertex_shader_path, const std::string &fragment_shader_path, float mult_physics) {
@@ -65,42 +66,57 @@ void Scene::setup() {
 
 void Scene::load_lights(){
     ShadowMapShaders* shadow_map_shaders = m_shaders->get_shadow_map_shaders();
-    shadow_map_shaders->use();
 
-    size_t size_lights = std::min((int) m_lights.size(),200);
+    size_t size_lights = m_lights.size();
 
     LightShader lights_struct_array[size_lights];
 
-    GLuint depth_maps[200];
+    GLint depth_maps[NB_MAX_LIGHTS];
+    for(int & depth_map : depth_maps){depth_map = 0;}
+
     int count_index_depth_map = 0;
 
+    std::vector<ShadowMap*> shadow_maps = {};
+
+    //Use the depth shader
+    shadow_map_shaders->use();
     for(int i = 0 ; i < size_lights; i++){
         LightInfo light_info = m_lights[i]->generate_light_struct();
-        depth_maps[i] = light_info.depth_map;
         lights_struct_array[i] = LightShader(light_info);
         //Generate the Shadow if it has to
-        if(light_info.generate_shadow_map){
+        if(light_info.generate_depth_map){
+            shadow_maps.push_back(light_info.shadow_map);
+            //Bind the buffer, render the depth map and unbind it
+            light_info.shadow_map->bind();
             //Load de depth light VP into the depth pass
             light_info.load_depth_vp_matrix(shadow_map_shaders);
-            //Bind the buffer, render the depth map and unbind it
-            light_info.shadow_map->activate_texture();
-            light_info.shadow_map->bind();
+            //Render the depth map
             render(false,shadow_map_shaders);
-//            light_info.shadow_map->print_in_img((std::string("../test")+std::to_string(i)+std::string(".ppm")).c_str());
+
+            //Print the depth map
+//            if(m_timer<=0){
+//                light_info.shadow_map->print_in_img((std::string("../depth_map")+std::to_string(i)+std::string(".ppm")).c_str());
+//            }
             ShadowMap::unbind_bound_shadow_map();
 
-            lights_struct_array[i].index_depth_map = count_index_depth_map;
+            depth_maps[count_index_depth_map] = light_info.index_depth_map;
+            lights_struct_array[i].index_sampler_depth_map = count_index_depth_map;
             count_index_depth_map++;
         }
     }
-    adapt_viewport();
+//    if(m_timer<=0){
+//        m_timer = 2;
+//    }
     m_shaders->use();
+    adapt_viewport();
 
-    //Build the array of shadow maps
-    glUniform1uiv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::SHADOW_MAP_ARRAY_LOC_NAME),200, depth_maps);
+    for(auto & shadow_map : shadow_maps){
+        shadow_map->activate_texture();
+    }
+
+    glUniform1iv(m_shaders->get_shader_data_manager()->get_location(ShadersDataManager::SHADOW_MAP_ARRAY_LOC_NAME),NB_MAX_LIGHTS, depth_maps);
 
     m_shaders->get_shader_data_manager()->load_lights(m_shaders->get_program_id(), lights_struct_array,(int)size_lights);
-
 }
 
 Shaders *Scene::get_shaders() const {

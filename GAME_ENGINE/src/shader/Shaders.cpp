@@ -142,3 +142,19 @@ TextureManager *Shaders::get_texture_manager() {
 void Shaders::use() const {
     glUseProgram(m_program_id);
 }
+
+glsl_bool::glsl_bool() {
+    b = 0.0f;
+}
+
+glsl_bool::glsl_bool(bool boolean) {
+    b = boolean?1.0f:0.0f;
+}
+
+glsl_int::glsl_int() {
+    x = 0;
+}
+
+glsl_int::glsl_int(int n) {
+    x = (float)n;
+}

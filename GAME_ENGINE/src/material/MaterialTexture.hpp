@@ -17,7 +17,6 @@ namespace material {
     public:
         /**
          * Constructor of a textured Material with the paths to the texture files to has to be loaded
-         * @param shaders
          * @param texture_manager
          * @param path_diffuse_texture
          * @param path_specular_texture
@@ -28,7 +27,6 @@ namespace material {
 
         /**
          * Constructor of a textured Material with the ids of the texture files already loaded
-         * @param shaders
          * @param id_diffuse_texture
          * @param id_specular_texture
          * @param shininess
@@ -37,11 +35,10 @@ namespace material {
 
         /**
          * Constructor of a textured Material with the id of the texture file already loaded for the both components diffuse and specular
-         * @param shaders
          * @param id_texture
          * @param shininess
          */
-        MaterialTexture(int id_texture, float shininess = 0.);
+        explicit MaterialTexture(int id_texture, float shininess = 0.);
 
         void load_in_shader(Shaders *shaders) override;
 

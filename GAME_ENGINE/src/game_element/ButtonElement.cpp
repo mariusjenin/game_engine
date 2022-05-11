@@ -26,17 +26,26 @@ ButtonElement::ButtonElement(
 
     // m_trsf->set_translation({-70, 12, 0});
     // m_trsf->set_uniform_scale(3);
-    // set_debug_rendering(true);
 }
 
-void ButtonElement::add_behavior(float mult){
+void ButtonElement::add_behavior(float mult, std::vector<RigidBodyVolume*> rbv){
     auto* green = new MaterialColor({0.2, 1., 0.2}, 500);
 
     m_top->add_behavior(new MovementBehavior(true,false,mult,0,0.2,1));
-    m_top->add_behavior(new SwitchColorBehavior(green));
-    if(m_linked.size() > 0){
+    auto* color_behav = new SwitchColorBehavior(green);
+
+    size_t size_rbv = rbv.size();
+    for(int i = 0; i < size_rbv; i++){
+        color_behav->can_collide_with(rbv[i]);
+    }
+    m_top->add_behavior(color_behav);
+    if(!m_linked.empty()){
         DoorElement* door = m_linked[0];
-        m_top->add_behavior(new MoveDoorBehavior(m_linked[0]));
+        auto* move_door_behav =new MoveDoorBehavior(m_linked[0]);
+        for(int i = 0; i < size_rbv; i++){
+            move_door_behav->can_collide_with(rbv[i]);
+        }
+        m_top->add_behavior(move_door_behav);
     }
     // m_bottom->add_behavior(new MovementBehavior(false,false,mult,0,0.2,1));
 }
@@ -45,7 +54,7 @@ void ButtonElement::link_door(DoorElement* door){
     m_linked.push_back(door);
 }
 
-RigidBodyVolume* ButtonElement::get_top(){
+RigidBodyVolume* ButtonElement::get_rigid_body(){
     return m_top;
 }
 

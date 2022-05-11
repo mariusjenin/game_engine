@@ -11,7 +11,7 @@
 #include <src/light/PositionLight.hpp>
 #include <src/scene_graph/NodeOnTopSG.hpp>
 #include <src/light/SpotLight.hpp>
-#include "src/Character.hpp"
+#include "src/game_element/Character.hpp"
 #include "src/game_element/DoorElement.hpp"
 #include "src/game_element/ButtonElement.hpp"
 
@@ -19,9 +19,7 @@ namespace scene {
     /// Scene with Collisions
     class LabScene : public Scene {
     private:
-        // std::vector<DoorElement*> m_doors;
         std::vector<RigidBodyVolume*> m_items;
-        std::vector<ButtonElement*> m_buttons;
         Character* m_character;
         float m_timing_camera_switch;
 

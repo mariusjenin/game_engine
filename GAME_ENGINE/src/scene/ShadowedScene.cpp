@@ -24,20 +24,20 @@ ShadowedScene::ShadowedScene(GLFWwindow *window, const std::string &vertex_shade
     auto *ball_mesh = new Mesh(create_sphere(1, 30, 30), true, SPHEREBB_TYPE);
 
     //Light
-    auto *light_source = new SpotLight({0.2, 0.2, 0.2}, {1., 1., 1.}, {0.8, 0.8, 0.8},texture_manager->get_and_increment_id_texture(),15,25);
-    m_sphere_light = new NodeGameSG(m_root,SPHEREBB_TYPE);
+    auto *light_source = new SpotLight({0.2, 0.2, 0.2}, {1., 1., 1.}, {0.8, 0.8, 0.8},texture_manager->get_and_increment_id_texture(),15,25,1000,10.0,100.f);
+    m_sphere_light = new NodeGameSG(m_root,OBB_TYPE);
 //    m_sphere_light->get_trsf()->set_translation({0,25,0});
-    m_sphere_light->get_trsf()->set_translation({0,5,20});
-//    m_sphere_light->get_trsf()->set_rotation({-90,0.f,0});
-    m_sphere_light->get_trsf()->set_order_rotation(ORDER_ZXY);
+    m_sphere_light->get_trsf()->set_translation({0,5,25});
+    m_sphere_light->get_trsf()->set_rotation({0.f,0.f,180.f});
+//    m_sphere_light->get_trsf()->set_order_rotation(ORDER_ZXY);
     m_sphere_light->set_light(light_source);
     m_sphere_light->set_meshes({ball_mesh});
     m_sphere_light->set_material(new MaterialColor({1., 1., 0.8}, 50));
     m_sphere_light->set_debug_rendering(true, {0.7, 0.7, 0.4});
     m_lights.push_back(m_sphere_light);
 
-    auto *light_source2 = new SpotLight({0.2, 0.2, 0.2}, {1., 1., 1.}, {0.8, 0.8, 0.8},texture_manager->get_and_increment_id_texture(),15,25);
-    auto* sphere_light_2 = new NodeGameSG(m_root,SPHEREBB_TYPE);
+    auto *light_source2 = new SpotLight({0.2, 0.2, 0.2}, {1., 1., 1.}, {0.8, 0.8, 0.8},texture_manager->get_and_increment_id_texture(),15,25,1000,10.0,100.f);
+    auto* sphere_light_2 = new NodeGameSG(m_root,OBB_TYPE);
     sphere_light_2->get_trsf()->set_translation({15,15,-15});
     sphere_light_2->get_trsf()->set_rotation({-135,35.f,0});
     sphere_light_2->get_trsf()->set_order_rotation(ORDER_ZXY);
@@ -70,10 +70,14 @@ ShadowedScene::ShadowedScene(GLFWwindow *window, const std::string &vertex_shade
     rbv_cube->get_movement_behavior()->add_force(gravity_force);
     m_physics_system->add_collider(rbv_cube);
 
+    //TEXTURE
+//    int id_rock = texture_manager->load_texture("../assets/texture/rock2.bmp");
+
     //Sphere
     auto* sphere = new NodeGameSG(m_root,SPHEREBB_TYPE);
     sphere->get_trsf()->set_translation({2,5,3});
     sphere->set_meshes({ball_mesh});
+//    sphere->set_material(new MaterialTexture(id_rock));
     sphere->set_material(new MaterialColor({0.2, 0.3, 0.9}, 100));
 //    sphere->set_debug_rendering(true, {0.3, 0.4, 1.});
     auto* rbv_sphere = new RigidBodyVolume(sphere);

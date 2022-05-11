@@ -45,9 +45,9 @@ ShadowMap::~ShadowMap() {
 }
 
 void ShadowMap::bind() const {
-    glViewport(0, 0, m_width, m_height);
     glBindFramebuffer(GL_FRAMEBUFFER, m_depth_map_fbo);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glViewport(0, 0, m_width, m_height);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void ShadowMap::unbind_bound_shadow_map() {

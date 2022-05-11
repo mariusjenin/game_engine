@@ -96,11 +96,11 @@ int main() {
     float current_time;
 
     //Frame updates
-    int frames_by_second = 120;
+    int frames_by_second = 60;
     float delta_time_frame_acc = 0.0f;
     float delta_time_frame_fixed = 1.0f / (float)frames_by_second;
     //Physics updates
-    int update_physics_by_second = 60;
+    int update_physics_by_second = 40;
     float delta_time_physics_acc = 0.0f;
     float delta_time_physics_fixed = 1.0f / (float)fmin(frames_by_second,update_physics_by_second);
     //Multiplicator physics

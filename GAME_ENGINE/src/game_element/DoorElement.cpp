@@ -70,11 +70,11 @@ void DoorElement::add_behavior(float mult){
     m_right->add_behavior(new MovementBehavior(true,false,mult,0,0.2,1));
 }
 
-RigidBodyVolume* DoorElement::get_left(){
+RigidBodyVolume* DoorElement::get_left_rigid_body(){
     return m_left;
 }
 
-RigidBodyVolume* DoorElement::get_right(){
+RigidBodyVolume* DoorElement::get_right_rigid_body(){
     return m_right;
 }
 

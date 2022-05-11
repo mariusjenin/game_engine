@@ -75,6 +75,7 @@ void PhysicsSystem::update_collisions(glm::vec3 pos_camera,float delta_time) {
             if (collision.colliding) {
                 //Do an action if colliding
                 collision.rigid_body_1->action(this, collision, delta_time);
+                collision.rigid_body_2->action(this, collision, delta_time);
             }
         }
     }

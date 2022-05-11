@@ -19,7 +19,7 @@ void Light::to_light_info(LightInfo *light_info, glm::mat4 model_mat) {
     light_info->ambient = m_ambient;
     light_info->diffuse = m_diffuse;
     light_info->specular = m_specular;
-    light_info->generate_shadow_map = false;
+    light_info->generate_depth_map = false;
     for(auto & light_behavior : m_light_behaviors){
         light_behavior->apply_to(light_info,model_mat);
     }

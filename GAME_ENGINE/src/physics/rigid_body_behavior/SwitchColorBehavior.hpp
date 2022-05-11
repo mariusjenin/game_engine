@@ -14,13 +14,23 @@ namespace physics {
         class SwitchColorBehavior : public RigidBodyBehavior{
         private:
             Material* m_material;
+            std::vector<RigidBodyVolume*> m_rigid_bodies;
             float m_timer;
             void switch_color();
         public:
+            /**
+             * Constructor of SwitchColorBehavior
+             * @param material
+             */
             explicit SwitchColorBehavior(Material* material);
             void action(PhysicsSystem* ps,Collision collision,float delta_time) override;
             void update_physics(float delta_time) override;
             void update_render(float delta_time, ODE* ode) override;
+            /**
+             * Specify a collider that trigger action of the SwitchColorBehavior
+             * @param rbv
+             */
+            void can_collide_with(RigidBodyVolume* rbv);
         };
     }
 }

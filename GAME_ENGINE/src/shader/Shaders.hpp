@@ -19,6 +19,36 @@ namespace shader {
     /**
      * Vec3 used in shader
      */
+    struct alignas(4) glsl_bool {
+        float b;
+
+        glsl_bool();
+
+        /**
+         * Construct a glsl_bool from a boolean
+         * @param boolean
+         */
+        explicit glsl_bool(bool boolean);
+    };
+
+    /**
+     * Vec3 used in shader
+     */
+    struct alignas(4) glsl_int {
+        float x;
+
+        glsl_int();
+
+        /**
+         * Construct a glsl_int from an int
+         * @param n
+         */
+        explicit glsl_int(int n);
+    };
+
+    /**
+     * Vec3 used in shader
+     */
     struct alignas(16) glsl_vec3 {
         float x, y, z;
 

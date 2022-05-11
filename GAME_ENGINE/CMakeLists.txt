@@ -119,7 +119,7 @@ add_executable(
         src/physics/rigid_body_behavior/MoveDoorBehavior.cpp src/physics/rigid_body_behavior/MoveDoorBehavior.hpp
 
         #       CHARACTER
-        src/Character.cpp src/Character.hpp
+        src/game_element/Character.cpp src/game_element/Character.hpp
         src/MouseView.cpp src/MouseView.hpp
         #       ODE
         src/physics/ode/ODE.cpp src/physics/ode/ODE.hpp

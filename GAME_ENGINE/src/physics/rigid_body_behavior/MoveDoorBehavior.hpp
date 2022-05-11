@@ -12,11 +12,22 @@ namespace physics {
         private:
             DoorElement* m_door;
             float m_timer;
+            std::vector<RigidBodyVolume*> m_rigid_bodies;
         public:
+            /**
+             * Constructor of MoveDoorBehavior
+             * @param door
+             */
             explicit MoveDoorBehavior(DoorElement* door);
             void action(PhysicsSystem* ps,Collision collision,float delta_time) override;
             void update_physics(float delta_time) override;
             void update_render(float delta_time, ODE* ode) override;
+
+            /**
+             * Specify a collider that trigger action of the MoveDoorBehavior
+             * @param rbv
+             */
+            void can_collide_with(RigidBodyVolume* rbv);
         };
     }
 }
