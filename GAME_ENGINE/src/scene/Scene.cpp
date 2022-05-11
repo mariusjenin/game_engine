@@ -30,8 +30,6 @@ void Scene::update(float delta_time) {
     }
 
     process_input(delta_time);
-
-    m_timer-= delta_time;
     load_lights();
 }
 
@@ -94,9 +92,7 @@ void Scene::load_lights(){
             render(false,shadow_map_shaders);
 
             //Print the depth map
-//            if(m_timer<=0){
-//                light_info.shadow_map->print_in_img((std::string("../depth_map")+std::to_string(i)+std::string(".ppm")).c_str());
-//            }
+//          light_info.shadow_map->print_in_img((std::string("../depth_map")+std::to_string(i)+std::string(".ppm")).c_str());
             ShadowMap::unbind_bound_shadow_map();
 
             depth_maps[count_index_depth_map] = light_info.index_depth_map;
@@ -104,9 +100,6 @@ void Scene::load_lights(){
             count_index_depth_map++;
         }
     }
-//    if(m_timer<=0){
-//        m_timer = 2;
-//    }
     m_shaders->use();
     adapt_viewport();
 
